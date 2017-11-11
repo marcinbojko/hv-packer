@@ -1,0 +1,102 @@
+{
+  "builders": [
+    {
+      "type": "hyperv-iso",
+      "vm_name": "packer-centos74-g2",
+      "iso_url": "{{ user `iso_url` }}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "disk_size": "70000",
+      "communicator": "ssh",
+      "ssh_username": "root",
+      "ssh_password": "password",
+      "ssh_timeout" : "4h",
+      "shutdown_timeout": "15m",
+      "shutdown_command": "echo 'password' | sudo -S shutdown -P now",
+      "ram_size": 2048,
+      "enable_dynamic_memory": "true",
+      "cpu": 2,
+      "generation": 2,
+      "switch_name": "",
+      "vlan_id": "",
+      "http_directory": "./files",
+      "boot_wait": "5s",
+      "boot_command": [
+        "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\\x207\\x20x\\86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos-gen2/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>"
+      ],
+      "guest_additions_mode":"disable",
+      "enable_secure_boot":false,
+      "output_directory": "output-centos"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "files/centos-gen2/webmin.repo",
+      "destination": "/tmp/webmin.repo"
+    },
+    {
+      "type": "file",
+      "source": "files/centos-gen2/puppet.conf",
+      "destination": "/tmp/puppet.conf"
+    },
+    {
+      "type": "file",
+      "source": "files/centos-gen2/motd.sh",
+      "destination": "/tmp/motd.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/centos-gen2/provision.sh",
+      "destination": "/tmp/provision.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/centos-gen2/scvmmguestagent.1.0.2.1075.x64.tar",
+      "destination": "/tmp/scvmmguestagent.1.0.2.1075.x64.tar"
+    },
+    {
+      "type": "file",
+      "source": "files/centos-gen2/install",
+      "destination": "/tmp/install"
+    },
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "chmod +x /tmp/install",
+      "cd /tmp",
+      "/tmp/install /tmp/scvmmguestagent.1.0.2.1075.x64.tar"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+    },
+
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "chmod +x /tmp/provision.sh",
+      "/tmp/provision.sh"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+    },
+    {
+     "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "yum update -y",
+      "systemctl set-default multi-user.target",
+      "systemctl disable initial-setup-text",
+      "systemctl disable initial-setup-graphical",
+      "systemctl stop initial-setup-text",
+      "systemctl stop initial-setup-graphical"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+    }
+  ],
+  "variables": {
+    "iso_url": "http://ftp.icm.edu.pl/pub/Linux/distributions/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1708.iso",
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "8593f5a1631ebfb7581193a7b4ef96d44f500d3ceb49cc4cfbfd71d5698e4173"
+  }
+}

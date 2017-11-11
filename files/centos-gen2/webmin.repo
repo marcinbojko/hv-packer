@@ -1,0 +1,6 @@
+[Webmin]
+name=Webmin Distribution Neutral
+timeout=60
+mirrorlist=http://download.webmin.com/download/yum/mirrorlist
+enabled=1
+
