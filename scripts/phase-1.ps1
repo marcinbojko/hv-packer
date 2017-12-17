@@ -1,4 +1,4 @@
-Write-Output Phase-1
+Write-Output "Start of Phase-1"
 Import-Module ServerManager
 Install-WindowsFeature net-framework-core
 Install-WindowsFeature net-framework-features

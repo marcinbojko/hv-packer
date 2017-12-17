@@ -1,4 +1,4 @@
-Write-Output Phase-2
+Write-Output "Start of Phase-2"
 Set-TimeZone -Id "Central European Standard Time" -Verbose
 choco feature enable -n allowEmptyChecksums
 choco source add -n=public -s"https://www.myget.org/F/public-choco" --priority=10

@@ -2,8 +2,19 @@
 #install Windows Updates
 # For test run disable updates
 # exit
+Write-Output "Start Phase-3 - Updates"
 Install-PackageProvider -Name Nuget -Force
-Install-Module PSWindowsUpdate -Force -Confirm:$false
+# workaround for lastest PSWindowsUpdate
 
+Install-Module PSWindowsUpdate -Force -Confirm:$false -ErrorAction SilentlyContinue
 Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
-Get-WUInstall -MicrosoftUpdate -AcceptAll -IgnoreReboot
+
+$modversion=((get-module -listavailable -name pswindowsupdate -ErrorAction SilentlyContinue).version.major|select-object -first 1)
+
+if ($modversion -gt 1) {
+    Install-WindowsUpdate -AcceptAll -MicrosoftUpdate -IgnoreReboot
+    }
+else {
+    Get-WUInstall -MicrosoftUpdate -AcceptAll -IgnoreReboot
+    }
+Write-Output "End Phase-3 - Updates"

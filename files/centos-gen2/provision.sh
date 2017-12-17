@@ -1,11 +1,11 @@
 #!/bin/bash
-# generic
+# generic - basic repositories and basic stuff
 rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY*
 yum -y clean all
 yum -y makecache fast
 yum -y update all
 yum -y install epel-release
-yum -y install yum-priorities yum-utils
+yum -y install yum-priorities yum-utils yum-cron
 yum -y install mc wget curl
 yum-config-manager -y --enable epel --setopt="epel.priority=60"
 yum -y update all
@@ -47,7 +47,8 @@ fi
 # misc
 timedatectl set-timezone Europe/Copenhagen --no-ask-password
 yum -y groupinstall "X Window System"
-yum -y install htop atop iftop iotop killall nmap realmd samba samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation
+yum -y install htop atop iftop iotop killall nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient
+yum -y install jq
 yum -y install firefox gparted
 yum -y install ftp://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/s/screenfetch-3.8.0-2.fc27.noarch.rpm
 if [ -f /tmp/motd.sh ]; then
@@ -80,9 +81,9 @@ systemctl enable firewalld
 systemctl enable ntp
 systemctl set-default multi-user.target
 
-
 # almost done
 yum clean all
 yum -y update all
 package-cleanup --oldkernels --count=2
 yum clean all
+rm -rf /var/cache/yum

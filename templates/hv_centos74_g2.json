@@ -3,6 +3,7 @@
     {
       "type": "hyperv-iso",
       "vm_name": "packer-centos74-g2",
+      "temp_path": ".",
       "iso_url": "{{ user `iso_url` }}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
@@ -11,14 +12,14 @@
       "ssh_username": "root",
       "ssh_password": "password",
       "ssh_timeout" : "4h",
-      "shutdown_timeout": "15m",
+      "shutdown_timeout": "30m",
       "shutdown_command": "echo 'password' | sudo -S shutdown -P now",
-      "ram_size": 2048,
+      "ram_size": 4096,
       "enable_dynamic_memory": "true",
-      "cpu": 2,
+      "cpu": 4,
       "generation": 2,
-      "switch_name": "",
-      "vlan_id": "",
+      "switch_name": "{{user `switch_name`}}",
+      "vlan_id": "{{user `vlan_id`}}",
       "http_directory": "./files",
       "boot_wait": "5s",
       "boot_command": [
@@ -26,7 +27,7 @@
       ],
       "guest_additions_mode":"disable",
       "enable_secure_boot":false,
-      "output_directory": "output-centos"
+      "output_directory": "output-centos7"
     }
   ],
   "provisioners": [
@@ -88,7 +89,8 @@
       "systemctl disable initial-setup-text",
       "systemctl disable initial-setup-graphical",
       "systemctl stop initial-setup-text",
-      "systemctl stop initial-setup-graphical"
+      "systemctl stop initial-setup-graphical",
+      "/bin/rm -f /etc/ssh/*key*"
     ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
@@ -97,6 +99,8 @@
   "variables": {
     "iso_url": "http://ftp.icm.edu.pl/pub/Linux/distributions/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1708.iso",
     "iso_checksum_type": "sha256",
-    "iso_checksum": "8593f5a1631ebfb7581193a7b4ef96d44f500d3ceb49cc4cfbfd71d5698e4173"
+    "iso_checksum": "8593f5a1631ebfb7581193a7b4ef96d44f500d3ceb49cc4cfbfd71d5698e4173",
+    "switch_name": "",
+    "vlan_id": ""
   }
 }

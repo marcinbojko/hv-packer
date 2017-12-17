@@ -6,18 +6,19 @@
       "iso_url": "{{ user `iso_url` }}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
-      "disk_size": "60000",
+      "temp_path": ".",
+      "disk_size": "70000",
       "communicator": "winrm",
       "winrm_username": "Administrator",
       "winrm_password": "password",
       "winrm_timeout": "8h",
-      "shutdown_timeout": "15m",
+      "shutdown_timeout": "30m",
       "ram_size": 4096,
       "enable_dynamic_memory": "true",
       "cpu": 4,
       "generation": 1,
-      "switch_name": "",
-      "vlan_id": "",
+      "switch_name": "{{user `switch_name`}}",
+      "vlan_id": "{{user `vlan_id`}}",
       "output_directory": "output-windows-g1",
       "floppy_files": [
         "./files/gen1/Autounattend.xml",
@@ -60,41 +61,21 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "inline": [
-        "Get-WUInstall -MicrosoftUpdate -AcceptAll -IgnoreReboot"
-      ]
+      "script": "./scripts/windows-updates.ps1"
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "1h"
+      "restart_timeout": "2h"
     },
     {
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "inline": [
-        "Get-WUInstall -MicrosoftUpdate -AcceptAll -IgnoreReboot"
-      ]
+      "script": "./scripts/windows-updates.ps1"
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "1h"
-    },
-    {
-      "type": "windows-restart",
-      "restart_timeout": "1h"
-    },
-    {
-      "type": "powershell",
-      "elevated_user": "Administrator",
-      "elevated_password": "password",
-      "inline": [
-        "Get-WUInstall -AcceptAll -IgnoreReboot"
-      ]
-    },
-    {
-      "type": "windows-restart",
-      "restart_timeout": "1h"
+      "restart_timeout": "2h"
     },
     {
       "type": "powershell",
@@ -105,7 +86,7 @@
     {
       "type": "powershell",
       "inline": [
-        "Write-Output Phase-3-Deprovisioning",
+        "Write-Output Phase-5-Deprovisioning",
         "if( Test-Path $Env:SystemRoot\\windows\\system32\\Sysprep\\unattend.xml ){ rm $Env:SystemRoot\\windows\\system32\\Sysprep\\unattend.xml -Force}",
         "& $Env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /shutdown /quiet"
       ]
@@ -114,6 +95,8 @@
   "variables": {
     "iso_url": ".\\iso\\SW_DVD9_Win_Svr_STD_Core_and_DataCtr_Core_2016_64Bit_English_-3_MLF_X21-30350.ISO",
     "iso_checksum_type": "sha256",
-    "iso_checksum": "36b60c31cafa2d488fe5d842d1ffba623381f5e9f70e9359b3aa05282c9d232d"
+    "iso_checksum": "36b60c31cafa2d488fe5d842d1ffba623381f5e9f70e9359b3aa05282c9d232d",
+    "switch_name": "",
+    "vlan_id": ""
   }
 }
