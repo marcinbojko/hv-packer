@@ -27,7 +27,7 @@
       "guest_additions_mode":"disable",
       "enable_secure_boot":true,
       "secondary_iso_images": [
-        "./files/secondary.iso"
+        "./extra/files/gen2-2016/secondary.iso"
       ]
     }
   ],
@@ -36,7 +36,7 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./scripts/phase-1.ps1"
+      "script": "./extra/scripts/phase-1.ps1"
     },
     {
       "type": "windows-restart",
@@ -46,7 +46,13 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./scripts/phase-2.ps1"
+      "script": "./extra/scripts/phase-2.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "Administrator",
+      "elevated_password": "password",
+      "script": "./extra/scripts/phase-3.ps1"
     },
     {
       "type": "windows-restart",
@@ -56,7 +62,7 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./scripts/windows-updates.ps1"
+      "script": "./extra/scripts/windows-updates.ps1"
     },
     {
       "type": "windows-restart",
@@ -66,7 +72,7 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./scripts/windows-updates.ps1"
+      "script": "./extra/scripts/windows-updates.ps1"
     },
     {
       "type": "windows-restart",
@@ -76,7 +82,16 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./scripts/windows-updates.ps1"
+      "script": "./extra/scripts/windows-updates.ps1"    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "2h"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "Administrator",
+      "elevated_password": "password",
+      "script": "./extra/scripts/windows-updates.ps1"
     },
     {
       "type": "windows-restart",
@@ -86,7 +101,7 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./scripts/windows-compress.ps1"
+      "script": "./extra/scripts/windows-compress.ps1"
     },
     {
       "type": "powershell",

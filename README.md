@@ -15,6 +15,11 @@ To adjust to your Hyper-V, please check variables below:
 * proper checksum type (possible passing as variable `-var 'iso_checksum_type=sha256'` )
 * proper checksum  (possible passing as variable `-var 'iso_checksum=aaaabbbbbbbcccccccddddd'` )
 
+### Scripts
+
+* `run_all.cmd` - runs all build tasks
+* `validate_all.sh` - validates all tasks
+
 ### Windows Machines
 
 * all available updates will be applied (3 passes)
@@ -29,14 +34,15 @@ To adjust to your Hyper-V, please check variables below:
 
 ### Linux Machines
 
-* adjust `/files/provision.sh` to modify package's versions
+* adjust `/files/provision.sh` to modify package's versions/servers
 * `screenfetch` as default banner during after the login
+* latest System Center Virtual Machine Agent
 
 ## Templates Windows 2016
 
 ### Hyper-V Generation 1 Windows Server 2016 Standard Image
 
-Run `hv_win2016_g1.sh`  (Linux & Mac)
+Run `hv_win2016_g1.sh`  (WSL)
 
 Run `hv_win2016_g1.cmd` (Windows)
 
@@ -46,12 +52,23 @@ Run `hv_win2016_g1.cmd` (Windows)
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
-* ./files/gen2/Autounattend.xml     => /Autounattend.xml
-* ./scripts/bootstrap.ps1           => /bootstrap.ps1
+* ./extra/files/gen2-2016/Autounattend.xml     => /Autounattend.xml
+* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
 
-Run `hv_win2016_g2.sh` (Linux & Mac)
+Run `hv_win2016_g2.sh` (WSL)
 
 Run `hv_win2016_g2.cmd` (Windows)
+
+### Hyper-V Generation 2 Windows Server 1709 Standard Image
+
+#### 1709 Generation 2 Prerequisites
+
+For Generation 2 prepare `secondary1709.iso` with folder structure:
+
+* ./extra/files/gen2-1709/Autounattend.xml     => /Autounattend.xml
+* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+Run `hv_win2016_1709_g2.cmd` (Windows)
 
 ## Templates CentOS 7.x
 
@@ -70,9 +87,23 @@ Run `hv_centos74_g2.cmd` (Windows)
 * credentials for Windows machines: Administrator/password (removed after sysprep)
 * credentials for Linux machines: root/password
 * for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-* for Linux based machines adjust your settings in ./files/centos-gen2/provision.sh and ./files/centos-gen2/puppet.conf
+* for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
 ## Changelog
+
+### Version 1.0.3 2018-02-23
+
+* `BREAKING FEATURE` - preparing switching to submodules/subtree for ./scripts and ./files - to share common code with other providers
+* tree structure in `./scripts` and `./files`, moved to `./extras`
+* [Windows] adding `phase-3.ps1` script to put less generic stuff there. Just uncomment line with `exit` to get rid of it
+* [Windows] added support for `Windows Server 1709 Edition (Standard)`
+* [Windows] remove some clutter from `bootstrap.ps1`
+* [Windows] added `exit 0` for most of the scripts as some external commands were leaving packer with non-zero exit codes
+* [CentOS] added `zeroing.sh` script to make compacting more efficient
+* [CentOS] reworked bug with UEFI - this time after deploying from image you can run sscript `/usr/local/bin/uefi.sh` which will recheck and readd CentOS UEFI entries. For SCVMM deployments (which separates vhdx from vmcx) use `RunOnce`
+* [CentOS] removed clutter from `provision.sh`
+* [CentOS] removed screenfetch, replaced with neofetch
+* [CentOS] reworked `motd.sh` in `/etc/profile.d` to reflect .Xauthority existence
 
 ### Version 1.0.2 2017-12-17
 
@@ -114,6 +145,12 @@ Run `hv_centos74_g2.cmd` (Windows)
 * fixed cmd scripts with Windows current catalog syntax.
 * added `cmd` scripts for Windows deployment
 * initial build
+
+## Known issues
+
+### Infamous UEFI/Secure boot WIndows implementation.
+During the deployment secure keys are store in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extre step (manual) in a form of `/usr/local/bin/uefi.sh` script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
+In manual setup you can run it as a part of deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
 
 ## About
 

@@ -1,0 +1,1 @@
+slmgr -rearm

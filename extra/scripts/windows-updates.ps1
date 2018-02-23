@@ -2,7 +2,7 @@
 #install Windows Updates
 # For test run disable updates
 # exit
-Write-Output "Start Phase-3 - Updates"
+Write-Output "Start Phase-4 - Updates"
 Install-PackageProvider -Name Nuget -Force
 # workaround for lastest PSWindowsUpdate
 
@@ -17,4 +17,5 @@ if ($modversion -gt 1) {
 else {
     Get-WUInstall -MicrosoftUpdate -AcceptAll -IgnoreReboot
     }
-Write-Output "End Phase-3 - Updates"
+Write-Output "End Phase-4 - Updates"
+exit 0

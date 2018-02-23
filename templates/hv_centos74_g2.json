@@ -20,45 +20,55 @@
       "generation": 2,
       "switch_name": "{{user `switch_name`}}",
       "vlan_id": "{{user `vlan_id`}}",
-      "http_directory": "./files",
+      "http_directory": "./extra/files",
       "boot_wait": "5s",
       "boot_command": [
-        "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\\x207\\x20x\\86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos-gen2/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>"
+        "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\\x207\\x20x\\86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-centos/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>"
       ],
       "guest_additions_mode":"disable",
-      "enable_secure_boot":false,
+      "enable_secure_boot": false,
       "output_directory": "output-centos7"
     }
   ],
   "provisioners": [
     {
       "type": "file",
-      "source": "files/centos-gen2/webmin.repo",
+      "source": "extra/files/gen2-centos/webmin.repo",
       "destination": "/tmp/webmin.repo"
     },
     {
       "type": "file",
-      "source": "files/centos-gen2/puppet.conf",
+      "source": "extra/files/gen2-centos/puppet.conf",
       "destination": "/tmp/puppet.conf"
     },
     {
       "type": "file",
-      "source": "files/centos-gen2/motd.sh",
+      "source": "extra/files/gen2-centos/motd.sh",
       "destination": "/tmp/motd.sh"
     },
     {
       "type": "file",
-      "source": "files/centos-gen2/provision.sh",
+      "source": "extra/files/gen2-centos/provision.sh",
       "destination": "/tmp/provision.sh"
     },
     {
       "type": "file",
-      "source": "files/centos-gen2/scvmmguestagent.1.0.2.1075.x64.tar",
+      "source": "extra/files/gen2-centos/zeroing.sh",
+      "destination": "/tmp/zeroing.sh"
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-centos/uefi.sh",
+      "destination": "/usr/local/bin/uefi.sh"
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-centos/scvmmguestagent.1.0.2.1075.x64.tar",
       "destination": "/tmp/scvmmguestagent.1.0.2.1075.x64.tar"
     },
     {
       "type": "file",
-      "source": "files/centos-gen2/install",
+      "source": "extra/files/gen2-centos/install",
       "destination": "/tmp/install"
     },
     {
@@ -71,7 +81,6 @@
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
     },
-
     {
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
@@ -82,18 +91,30 @@
     "type": "shell"
     },
     {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "chmod +x /usr/local/bin/uefi.sh"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+    },
+    {
      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
-      "yum update -y",
+      "echo Last Phase",
+      "yum -y -e 0 update",
       "systemctl set-default multi-user.target",
       "systemctl disable initial-setup-text",
       "systemctl disable initial-setup-graphical",
       "systemctl stop initial-setup-text",
       "systemctl stop initial-setup-graphical",
-      "/bin/rm -f /etc/ssh/*key*"
+      "/bin/rm -f /etc/ssh/*key*",
+      "chmod +x /tmp/zeroing.sh",
+      "/tmp/zeroing.sh"
     ],
     "inline_shebang": "/bin/sh -x",
-    "type": "shell"
+    "type": "shell",
+    "pause_before": "60s"
     }
   ],
   "variables": {

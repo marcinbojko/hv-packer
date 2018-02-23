@@ -4,11 +4,8 @@
 # http://msdn.microsoft.com/en-us/library/windows/desktop/aa370750(v=vs.85).aspx
 # http://blogs.msdn.com/b/powershell/archive/2009/04/03/setting-network-location-to-private.aspx
 
-Write-Host "Copy unattend.xml to C:\Windows\Panther\Unattend\"
-New-Item C:\Windows\Panther\Unattend -Type Directory
-New-Item c:\Logs -Type Directory
-New-Item c:\Scripts -Type Directory
-#Copy-Item a:\unattend.xml C:\Windows\Panther\Unattend\
+#Write-Host "Copy unattend.xml to C:\Windows\Panther\Unattend\"
+#New-Item C:\Windows\Panther\Unattend -Type Directory
 
 # Get network connections
 $networkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]'{DCB00C01-570F-4A9B-8D69-199FDBA5723B}'))
