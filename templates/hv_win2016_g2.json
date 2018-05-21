@@ -21,7 +21,7 @@
       "vlan_id": "{{user `vlan_id`}}",
       "boot_wait": "0s",
       "boot_command": [
-        "a<enter><wait>a<enter><wait>a<enter><wait>a<enter>"
+        "a<enter><wait>"
       ],
       "output_directory": "output-windows-g2",
       "guest_additions_mode":"disable",
@@ -113,9 +113,9 @@
     }
   ],
   "variables": {
-    "iso_url": ".\\iso\\SW_DVD9_Win_Svr_STD_Core_and_DataCtr_Core_2016_64Bit_English_-3_MLF_X21-30350.ISO",
+    "iso_url": ".\\iso\\SW_DVD9_Win_Server_STD_CORE_2016_64Bit_English_-4_DC_STD_MLF_X21-70526.ISO",
     "iso_checksum_type": "sha256",
-    "iso_checksum": "36b60c31cafa2d488fe5d842d1ffba623381f5e9f70e9359b3aa05282c9d232d",
+    "iso_checksum": "47919ce8b4993f531ca1fa3f85941f4a72b47ebaa4d3a321fecf83ca9d17e6b8",
     "switch_name": "",
     "vlan_id": ""
   }

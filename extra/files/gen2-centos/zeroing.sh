@@ -1,5 +1,5 @@
 #!/bin/bash
 # Zeroing
 echo "Zeroing phase"
-time dd if=/dev/zero|pv -treb|dd of=/plik.zero bs=4096;sync;sync;rm -rfv /plik.zero;sync;sync
+time dd if=/dev/zero|pv -treb|dd of=/file.zero bs=4096;sync;sync;rm -rfv /file.zero;sync;sync
 echo "Zeroing done"

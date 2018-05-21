@@ -53,14 +53,34 @@ timedatectl set-timezone Europe/Copenhagen --no-ask-password
 yum -y groups mark install "X Window System"
 # neofetch
 curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
-yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch
-
-# yum -y install ftp://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/s/screenfetch-3.8.0-2.fc27.noarch.rpm
+yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen
 
 if [ -f /tmp/motd.sh ]; then
     mv /tmp/motd.sh /etc/profile.d/motd.sh
     chmod +x /etc/profile.d/motd.sh
 fi
+
+# Create neofetch entries
+config="/etc/neofetch/config.conf"
+
+if [ -e $config ]; then
+  # comment
+  sed -i -e 's/^[[:blank:]]*info "Packages" packages/#info "Packages" packages/g' $config
+  sed -i -e 's/^[[:blank:]]*info "Resolution" resolution/#info "Resolution" resolution/g' $config
+  sed -i -e 's/^[[:blank:]]*info "DE" de/#info "DE" de/g' $config
+  sed -i -e 's/^[[:blank:]]*info "WM" wm/#info "WM" wm/g' $config
+  sed -i -e 's/^[[:blank:]]*info "WM Theme" wm_theme/#info "WM Theme" wm_theme/g' $config
+  sed -i -e 's/^[[:blank:]]*info "Theme" theme/#info "Theme" theme/g' $config
+  sed -i -e 's/^[[:blank:]]*info "Icons" icons/#info "Icons" icons/g' $config
+  sed -i -e 's/^[[:blank:]]*info "Terminal" term/#info "Terminal" term/g' $config
+  sed -i -e 's/^[[:blank:]]*info "Terminal Font" term_font/#info "Terminal Font" term_font/g' $config
+  # uncomment
+  sed -i -e 's/^[[:blank:]]*# info "Disk" disk/info "Disk" disk/g' $config
+  sed -i -e 's/^[[:blank:]]*# info "Local IP" local_ip/info "Local IP" local_ip/g' $config
+else
+ echo "File doesn't exist"
+fi
+# end of neofetch entries
 
 # hyper-v daemons
 yum -y install hyperv-daemons

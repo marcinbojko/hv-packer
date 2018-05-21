@@ -31,11 +31,11 @@ if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem')
     }
 
 # Spectre and Meltdown AV
-if (!(Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'))
-    {
-        New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat' -Verbose -Force
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'-name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -Value 0 -Verbose -Force
-    }
+if (!(Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat')) {
+    New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat' -Verbose -Force
+}
+    Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'-name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -Value 0 -Verbose -Force
+
 # Spectre and Meltdown Mitigations enable
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management'-name "FeatureSettingsOverride" -Value 0 -Verbose -Force
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management'-name "FeatureSettingsOverrideMask" -Value 3 -Verbose -Force

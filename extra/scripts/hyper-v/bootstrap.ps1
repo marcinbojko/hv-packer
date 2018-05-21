@@ -13,15 +13,15 @@ $connections = $networkListManager.GetNetworkConnections()
 
 $connections |ForEach-Object {
     Write-Host "Setting network config"
-    $_.GetNetwork().GetName() + 'category was previously set to' + $_.GetNetwork().GetCategory() | Out-File c:\logs\logfile.txt
+    $_.GetNetwork().GetName() + 'category was previously set to' + $_.GetNetwork().GetCategory() | Out-File c:\windows\temp\logfile.txt
     $_.GetNetwork().SetCategory(1)
-    $_.GetNetwork().GetName() + 'change to ' + $_.GetNetwork().GetCategory() | Out-File C:\Logs\logfile.txt -Append
+    $_.GetNetwork().GetName() + 'change to ' + $_.GetNetwork().GetCategory() | Out-File C:\windows\temp\logfile.txt -Append
 }
 
 Function Enable-WinRM {
 Write-Host "Enable WinRM"
 netsh advfirewall firewall set rule group="remote administration" new enable=yes
-netsh advfirewall firewall add rule name="Open Port 5985" dir=in action=allow protocol=TCP localport=5985
+netsh advfirewall firewall add rule name="WinRM open Port 5985" dir=in action=allow protocol=TCP localport=5985
 
 winrm quickconfig -q
 winrm quickconfig -transport:http

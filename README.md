@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* packer >= `1.1.3`
+* packer >= `1.2.3`
 * Microsoft Hyper-V Server 2016/Microsoft Windows Server 2016
 
 ## Usage
@@ -26,7 +26,6 @@ To adjust to your Hyper-V, please check variables below:
 * latest chocolatey and packages will be installed:
   * `puppet-agent`
   * `conemu`
-  * `dotnet4.7`
   * `dotnet4.7.1`
   * `sysinternals`
 
@@ -35,8 +34,8 @@ To adjust to your Hyper-V, please check variables below:
 ### Linux Machines
 
 * adjust `/files/provision.sh` to modify package's versions/servers
-* `screenfetch` as default banner during after the login
-* latest System Center Virtual Machine Agent
+* `neofetchfetch` as default banner during after the login - change required fields in `provision.sh`
+* latest System Center Virtual Machine Agent available
 
 ## Templates Windows 2016
 
@@ -90,6 +89,17 @@ Run `hv_centos74_g2.cmd` (Windows)
 * for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
 ## Changelog
+
+### Version 1.0.4 2018-05-21
+
+* fixed some inconsistency in `extra` scripts when creating registry entries
+* fixed `boostrap.ps1` for Windows based machines (inproper output for network list)
+* fixes in CentOS `'provision.sh` to include proper config for neofetch
+* switch to `neofetch`, reworked motd.sh to use neofetch with config (instead of defaults)
+* added `screen` as essential package for CentOS
+* added `azure-placeholder.sh` for Azure-related CentOS machines
+* switched to packer 1.2.3
+* added `disk_block_size` with 1 MiB for Linux/CentOS machines
 
 ### Version 1.0.3 2018-02-23
 
@@ -148,9 +158,14 @@ Run `hv_centos74_g2.cmd` (Windows)
 
 ## Known issues
 
-### Infamous UEFI/Secure boot WIndows implementation.
+### Infamous UEFI/Secure boot WIndows implementation
+
 During the deployment secure keys are store in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extre step (manual) in a form of `/usr/local/bin/uefi.sh` script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
 In manual setup you can run it as a part of deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
+
+### When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface
+
+No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting those ends with timeout errors.
 
 ## About
 

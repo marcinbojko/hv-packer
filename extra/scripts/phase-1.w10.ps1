@@ -52,9 +52,8 @@ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModel
 if (!(Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\'))
     {
         New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore' -Verbose -Force
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\'-name "AutoDownload" -Value 2 -Verbose -Force
     }
-
+   Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\'-name "AutoDownload" -Value 2 -Verbose -Force
 # Disable consumer experience
 # if (!(Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent'))
 #     {
@@ -77,8 +76,7 @@ Set-ExecutionPolicy Bypass;Invoke-Expression ((new-object net.webclient).Downloa
 if (!(Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'))
     {
         New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat' -Verbose -Force
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'-name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -Value 0 -Verbose -Force
     }
-
+    Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'-name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -Value 0 -Verbose -Force
 Write-Output "End of Phase 1"
 exit 0

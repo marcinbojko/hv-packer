@@ -1,10 +1,13 @@
 Write-Output "Start Phase-5c - Cleaning/zeroing/compacting"
 Write-Output "Phase-5c.1: Cleaning updates.."
+# Clean WU downloads
 Stop-Service -Name wuauserv -Force
-if (Test-Path -Path c:\Windows\SoftwareDistribution\Download )
-    { Remove-Item c:\Windows\SoftwareDistribution\Download\* -Recurse -Force }
-if (Test-Path -Path c:\Windows\Prefetch)
-    {Remove-Item c:\Windows\Prefetch\*.* -Recurse -Force}
+    if (Test-Path -Path c:\Windows\SoftwareDistribution\Download ) {
+        Remove-Item c:\Windows\SoftwareDistribution\Download\* -Recurse -Force
+    }
+    if (Test-Path -Path c:\Windows\Prefetch) {
+        Remove-Item c:\Windows\Prefetch\*.* -Recurse -Force
+    }
 Start-Service -Name wuauserv
 
 # remove logs
@@ -13,6 +16,11 @@ wevtutil el | Foreach-Object {wevtutil cl "$_"}
 # resetbase/thin winsxs
 dism /online /cleanup-image /StartComponentCleanup /ResetBase
 dism /online /cleanup-Image /SPSuperseded
+
+# Remove leftovers from deploy
+if (Test-Path -Path c:\Windows\Temp ) {
+    Remove-Item c:\Windows\Temp\* -Recurse -Force
+}
 
 # optimize disk
 Write-Output "Phase-5c.2: Defragging.."
@@ -27,7 +35,7 @@ Write-Output "Phase-5c.3: Zeroing out empty space..."
  $FilePath="c:\zero.tmp"
  $Volume = Get-WmiObject win32_logicaldisk -filter "DeviceID='C:'"
  $ArraySize= 4096kb
- $SpaceToLeave= $Volume.Size * 0.02
+ $SpaceToLeave= $Volume.Size * 0.001
  $FileSize= $Volume.FreeSpace - $SpacetoLeave
  $ZeroArray= new-object byte[]($ArraySize)
 
