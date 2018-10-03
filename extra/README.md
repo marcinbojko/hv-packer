@@ -1,5 +1,7 @@
 # Set of various shared scripts and files for packer templates
 
-## Hyper-v
+## 2018-05-31
 
-## Virtualbox
+### CentOS
+
+* added telnet ncdu screen to `provision.sh`

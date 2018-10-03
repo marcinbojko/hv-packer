@@ -1,6 +1,20 @@
 #!/bin/bash
 # prepare (comment/uncomment lines according to our needs)
+
 config="/etc/neofetch/config.conf"
+config_dir="/etc/neofetch"
+
+if [ ! -d $config_dir ];then
+ echo "No $config_dir exists"
+ mkdir $config_dir
+fi
+
+if [ ! -e $config ];then
+  if [ -e /root/.config/neofetch/config.conf ];then
+  echo "Copying config from root to /etc/neofetch"
+  cp -pv /root/.config/neofetch/config.conf $config
+  fi
+fi
 
 if [ -e $config ]; then
   # comment
@@ -17,5 +31,5 @@ if [ -e $config ]; then
   sed -i -e 's/^[[:blank:]]*# info "Disk" disk/info "Disk" disk/g' $config
   sed -i -e 's/^[[:blank:]]*# info "Local IP" local_ip/info "Local IP" local_ip/g' $config
 else
- echo "File doesn't exist"
+ echo "File $config doesn't exist"
 fi

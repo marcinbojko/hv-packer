@@ -54,6 +54,11 @@
     },
     {
       "type": "file",
+      "source": "extra/files/gen2-centos/prepare_neofetch.sh",
+      "destination": "/tmp/prepare_neofetch.sh"
+    },
+    {
+      "type": "file",
       "source": "extra/files/gen2-centos/zeroing.sh",
       "destination": "/tmp/zeroing.sh"
     },
@@ -86,7 +91,9 @@
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
       "chmod +x /tmp/provision.sh",
-      "/tmp/provision.sh"
+      "chmod +x /tmp/prepare_neofetch.sh",
+      "/tmp/provision.sh",
+      "/tmp/prepare_neofetch.sh"
     ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"

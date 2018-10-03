@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* packer >= `1.2.3`
+* packer >= `1.2.5`. Do not use packer 1.3.0/1.3.1 - [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733)
 * Microsoft Hyper-V Server 2016/Microsoft Windows Server 2016
 
 ## Usage
@@ -17,7 +17,6 @@ To adjust to your Hyper-V, please check variables below:
 
 ### Scripts
 
-* `run_all.cmd` - runs all build tasks
 * `validate_all.sh` - validates all tasks
 
 ### Windows Machines
@@ -26,7 +25,7 @@ To adjust to your Hyper-V, please check variables below:
 * latest chocolatey and packages will be installed:
   * `puppet-agent`
   * `conemu`
-  * `dotnet4.7.1`
+  * `dotnet4.7.2`
   * `sysinternals`
 
 * puppet agent settings will be customized (server=foreman.spcph.local). Please adjust it to your needs.
@@ -34,18 +33,14 @@ To adjust to your Hyper-V, please check variables below:
 ### Linux Machines
 
 * adjust `/files/provision.sh` to modify package's versions/servers
-* `neofetchfetch` as default banner during after the login - change required fields in `provision.sh`
+* `neofetch` as default banner during after the login - change required fields in `provision.sh`
 * latest System Center Virtual Machine Agent available
 
 ## Templates Windows 2016
 
-### Hyper-V Generation 1 Windows Server 2016 Standard Image
-
-Run `hv_win2016_g1.sh`  (WSL)
-
-Run `hv_win2016_g1.cmd` (Windows)
-
 ### Hyper-V Generation 2 Windows Server 2016 Standard Image
+
+Run `hv_win2016_g2.cmd` (Windows)
 
 #### Generation 2 Prerequisites
 
@@ -53,8 +48,6 @@ For Generation 2 prepare `secondary.iso` with folder structure:
 
 * ./extra/files/gen2-2016/Autounattend.xml     => /Autounattend.xml
 * ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_win2016_g2.sh` (WSL)
 
 Run `hv_win2016_g2.cmd` (Windows)
 
@@ -69,13 +62,22 @@ For Generation 2 prepare `secondary1709.iso` with folder structure:
 
 Run `hv_win2016_1709_g2.cmd` (Windows)
 
+### Hyper-V Generation 2 Windows Server 1803 Standard Image
+
+#### 1803 Generation 2 Prerequisites
+
+For Generation 2 prepare `secondary1803.iso` with folder structure:
+
+* ./extra/files/gen2-1803/Autounattend.xml     => /Autounattend.xml
+* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+Run `hv_win2016_1803_g2.cmd` (Windows)
+
 ## Templates CentOS 7.x
 
-### Hyper-V Generation 2 CentOS 7.4 Image
+### Hyper-V Generation 2 CentOS 7.5 Image
 
-Run `hv_centos74_g2.sh`  (Linux & Mac)
-
-Run `hv_centos74_g2.cmd` (Windows)
+Run `hv_centos75_g2.cmd` (Windows)
 
 ### Warnings
 
@@ -90,13 +92,22 @@ Run `hv_centos74_g2.cmd` (Windows)
 
 ## Changelog
 
+### Version 1.0.5 2018-10-03
+
+* updated `extra`
+* tested with packer 1.3.0/1.3.1/1.3.2-dev
+* [CentOS] removed `hv_centos74_g2`
+* [Windows] added support for `Windows Server 1803 Edition (Standard)`
+* [Windows] workarounded [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733) by using `pause_before` and `restart_check_command`
+* [Windows] removed `hv_win2016_g1`
+
 ### Version 1.0.4 2018-05-21
 
 * fixed some inconsistency in `extra` scripts when creating registry entries
-* fixed `boostrap.ps1` for Windows based machines (inproper output for network list)
-* fixes in CentOS `'provision.sh` to include proper config for neofetch
-* switch to `neofetch`, reworked motd.sh to use neofetch with config (instead of defaults)
-* added `screen` as essential package for CentOS
+* [Windows] fixed `boostrap.ps1` for Windows based machines (inproper output for network list)
+* [CentOS] fixes in CentOS `'provision.sh` to include proper config for neofetch
+* [CentOS] switch to `neofetch`, reworked motd.sh to use neofetch with config (instead of defaults)
+* [CentOS] added `screen` as essential package for CentOS
 * added `azure-placeholder.sh` for Azure-related CentOS machines
 * switched to packer 1.2.3
 * added `disk_block_size` with 1 MiB for Linux/CentOS machines
@@ -166,6 +177,10 @@ In manual setup you can run it as a part of deploy. In SCVMM deployment I'd reco
 ### When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface
 
 No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting those ends with timeout errors.
+
+### Packer version 1.3.0/1.3.1 have bug with `windows-restart` provisioner
+
+[https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733)
 
 ## About
 

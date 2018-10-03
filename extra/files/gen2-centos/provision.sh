@@ -6,7 +6,7 @@ if [ -d /etc/pki/rpm-gpg ]; then
 fi
 
 yum -y makecache fast
-yum -y -e 0 install epel-release yum-priorities yum-utils yum-cron mc wget curl
+yum -y -e 0 install epel-release yum-priorities yum-utils yum-cron yum-plugin-versionlock mc wget curl
 yum-config-manager -y -q -e 0 --enable epel --setopt="epel.priority=60"|grep -i "enabled ="
 yum -y -e 0 -q update
 yum -y -e 0 -q clean all
@@ -52,35 +52,13 @@ echo "Provisioning phase 3 - Extra packages, firewalld, settings"
 timedatectl set-timezone Europe/Copenhagen --no-ask-password
 yum -y groups mark install "X Window System"
 # neofetch
-curl -o /etc/yum.repos.d/konimex-neofetch-epel-7.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
-yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen
+curl -o /etc/yum.repos.d/konimex-neofetch.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
+yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu
 
 if [ -f /tmp/motd.sh ]; then
     mv /tmp/motd.sh /etc/profile.d/motd.sh
     chmod +x /etc/profile.d/motd.sh
 fi
-
-# Create neofetch entries
-config="/etc/neofetch/config.conf"
-
-if [ -e $config ]; then
-  # comment
-  sed -i -e 's/^[[:blank:]]*info "Packages" packages/#info "Packages" packages/g' $config
-  sed -i -e 's/^[[:blank:]]*info "Resolution" resolution/#info "Resolution" resolution/g' $config
-  sed -i -e 's/^[[:blank:]]*info "DE" de/#info "DE" de/g' $config
-  sed -i -e 's/^[[:blank:]]*info "WM" wm/#info "WM" wm/g' $config
-  sed -i -e 's/^[[:blank:]]*info "WM Theme" wm_theme/#info "WM Theme" wm_theme/g' $config
-  sed -i -e 's/^[[:blank:]]*info "Theme" theme/#info "Theme" theme/g' $config
-  sed -i -e 's/^[[:blank:]]*info "Icons" icons/#info "Icons" icons/g' $config
-  sed -i -e 's/^[[:blank:]]*info "Terminal" term/#info "Terminal" term/g' $config
-  sed -i -e 's/^[[:blank:]]*info "Terminal Font" term_font/#info "Terminal Font" term_font/g' $config
-  # uncomment
-  sed -i -e 's/^[[:blank:]]*# info "Disk" disk/info "Disk" disk/g' $config
-  sed -i -e 's/^[[:blank:]]*# info "Local IP" local_ip/info "Local IP" local_ip/g' $config
-else
- echo "File doesn't exist"
-fi
-# end of neofetch entries
 
 # hyper-v daemons
 yum -y install hyperv-daemons

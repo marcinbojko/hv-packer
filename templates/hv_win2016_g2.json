@@ -56,7 +56,9 @@
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "2h"
+      "restart_timeout": "2h",
+      "pause_before": "180s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
       "type": "powershell",
@@ -66,7 +68,9 @@
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "2h"
+      "restart_timeout": "2h",
+      "pause_before": "180s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
       "type": "powershell",
@@ -76,7 +80,9 @@
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "2h"
+      "restart_timeout": "2h",
+      "pause_before": "180s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
       "type": "powershell",
@@ -85,7 +91,9 @@
       "script": "./extra/scripts/windows-updates.ps1"    },
     {
       "type": "windows-restart",
-      "restart_timeout": "2h"
+      "restart_timeout": "2h",
+      "pause_before": "180s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
       "type": "powershell",
@@ -95,7 +103,9 @@
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "2h"
+      "restart_timeout": "2h",
+      "pause_before": "180s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
       "type": "powershell",
