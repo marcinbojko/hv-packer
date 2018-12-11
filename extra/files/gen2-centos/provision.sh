@@ -21,7 +21,7 @@ if [ -f /tmp/webmin.repo ]; then
     mv /tmp/webmin.repo /etc/yum.repos.d/webmin.repo
 fi
 # zabbix
-yum -y -e 0 install http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-release-3.4-2.el7.noarch.rpm
+yum -y -e 0 install https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
 yum-config-manager -y -q --disable zabbix-non-supported|grep -i "enabled ="
 yum-config-manager -y -q --enable zabbix --setopt="zabbix.priority=20"|grep -i "enabled ="
 yum -y -e 0 makecache fast
@@ -60,27 +60,27 @@ if [ -f /tmp/motd.sh ]; then
     chmod +x /etc/profile.d/motd.sh
 fi
 
-# hyper-v daemons
+# Hyper-v daemons
 yum -y install hyperv-daemons
 systemctl enable hypervfcopyd
 systemctl enable hypervkvpd
 systemctl enable hypervvssd
 
-# firewalld
+# Firewalld basic configuration.
 systemctl start firewalld
 firewall-cmd --permanent --zone=work --add-interface=eth0
 firewall-cmd --set-default-zone=work
 firewall-cmd --add-rich-rule 'rule family="ipv4" source address="0.0.0.0/0" port port="22" protocol="tcp" accept'  --permanent --zone=work
 firewall-cmd --add-rich-rule 'rule family="ipv4" source address="0.0.0.0/0" port port="10000" protocol="tcp" accept'  --permanent --zone=work
 firewall-cmd --add-rich-rule 'rule family="ipv4" source address="0.0.0.0/0" port port="10050-10052" protocol="tcp" accept'  --permanent --zone=work
-firewall-cmd --add-rich-rule 'rule family="ipv4" source address="0.0.0.0/0" port port="8140" protocol="tcp" accept'  --permanent --zone=work
 firewall-cmd --permanent --remove-service=ssh --zone=work
 firewall-cmd --reload
 
-# systemd -enable and disable services
+# systemd - enable and disable services
 chkconfig webmin on
 systemctl enable firewalld
 systemctl enable ntpd
+systemctl enable sshd
 systemctl set-default multi-user.target
 
 echo "Provisioning phase 4 - Final updates and cleaning up"
@@ -90,3 +90,8 @@ yum -y -e 0 update
 package-cleanup --oldkernels --count=2
 yum -y -e 0 -q clean all
 rm -rf /var/cache/yum
+## Clean logs
+truncate -s 0 /var/log/*.*
+truncate -s 0 /var/log/**/*.*
+find /var/log -type f -name '*.[0-99].gz' -exec rm {} +
+rm -rfv /var/log/anaconda/*

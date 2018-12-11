@@ -1,7 +1,8 @@
 # Phase 1 - Mandatory generic stuff
 Write-Output "Start of Phase-1"
 Import-Module ServerManager
-Install-WindowsFeature net-framework-core,net-framework-features,Telnet-Client,RSAT-Role-Tools,PowerShell-V2 -IncludeManagementTools
+Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools
+Install-WindowsFeature NET-Framework-45-Core,Telnet-Client,RSAT-Role-Tools -IncludeManagementTools
 Install-WindowsFeature SNMP-Service,SNMP-WMI-Provider -IncludeManagementTools
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop" -Verbose
 Enable-NetFirewallRule -DisplayGroup "File and Printer Sharing" -Verbose
@@ -34,6 +35,6 @@ Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityC
 # Spectre and Meltdown Mitigations enable
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management'-name "FeatureSettingsOverride" -Value 0 -Verbose -Force
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management'-name "FeatureSettingsOverrideMask" -Value 3 -Verbose -Force
-#
+# 
 Write-Output "End of Phase 1"
 exit 0

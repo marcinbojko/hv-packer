@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* packer >= `1.2.5`. Do not use packer 1.3.0/1.3.1 - [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733)
+* packer >= `1.3.2`. Do not use packer 1.3.0/1.3.1 - [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733)
 * Microsoft Hyper-V Server 2016/Microsoft Windows Server 2016
 
 ## Usage
@@ -17,24 +17,27 @@ To adjust to your Hyper-V, please check variables below:
 
 ### Scripts
 
-* `validate_all.sh` - validates all tasks
+* `validate_all.sh` - validates all templates.
 
 ### Windows Machines
 
 * all available updates will be applied (3 passes)
 * latest chocolatey and packages will be installed:
-  * `puppet-agent`
-  * `conemu`
-  * `dotnet4.7.2`
-  * `sysinternals`
 
-* puppet agent settings will be customized (server=foreman.spcph.local). Please adjust it to your needs.
+  |Package|Version|
+  |-------|-------|
+  |puppet-agent|5.5.8|
+  |conemu|latest|
+  |dotnet4.7.2|latest|
+  |sysinternals|latest|
+
+* puppet agent settings will be customized (`server=foreman.spcph.local`). Please adjust it to suit your needs.
 
 ### Linux Machines
 
 * adjust `/files/provision.sh` to modify package's versions/servers
-* `neofetch` as default banner during after the login - change required fields in `provision.sh`
-* latest System Center Virtual Machine Agent available
+* `neofetch` packageas default banner during after the login - change required fields you'd like to see in `provision.sh`
+* latest System Center Virtual Machine Agent available (with versioning, so you always can go back)
 
 ## Templates Windows 2016
 
@@ -90,93 +93,16 @@ Run `hv_centos75_g2.cmd` (Windows)
 * for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 * for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-## Changelog
-
-### Version 1.0.5 2018-10-03
-
-* updated `extra`
-* tested with packer 1.3.0/1.3.1/1.3.2-dev
-* [CentOS] removed `hv_centos74_g2`
-* [Windows] added support for `Windows Server 1803 Edition (Standard)`
-* [Windows] workarounded [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733) by using `pause_before` and `restart_check_command`
-* [Windows] removed `hv_win2016_g1`
-
-### Version 1.0.4 2018-05-21
-
-* fixed some inconsistency in `extra` scripts when creating registry entries
-* [Windows] fixed `boostrap.ps1` for Windows based machines (inproper output for network list)
-* [CentOS] fixes in CentOS `'provision.sh` to include proper config for neofetch
-* [CentOS] switch to `neofetch`, reworked motd.sh to use neofetch with config (instead of defaults)
-* [CentOS] added `screen` as essential package for CentOS
-* added `azure-placeholder.sh` for Azure-related CentOS machines
-* switched to packer 1.2.3
-* added `disk_block_size` with 1 MiB for Linux/CentOS machines
-
-### Version 1.0.3 2018-02-23
-
-* `BREAKING FEATURE` - preparing switching to submodules/subtree for ./scripts and ./files - to share common code with other providers
-* tree structure in `./scripts` and `./files`, moved to `./extras`
-* [Windows] adding `phase-3.ps1` script to put less generic stuff there. Just uncomment line with `exit` to get rid of it
-* [Windows] added support for `Windows Server 1709 Edition (Standard)`
-* [Windows] remove some clutter from `bootstrap.ps1`
-* [Windows] added `exit 0` for most of the scripts as some external commands were leaving packer with non-zero exit codes
-* [CentOS] added `zeroing.sh` script to make compacting more efficient
-* [CentOS] reworked bug with UEFI - this time after deploying from image you can run sscript `/usr/local/bin/uefi.sh` which will recheck and readd CentOS UEFI entries. For SCVMM deployments (which separates vhdx from vmcx) use `RunOnce`
-* [CentOS] removed clutter from `provision.sh`
-* [CentOS] removed screenfetch, replaced with neofetch
-* [CentOS] reworked `motd.sh` in `/etc/profile.d` to reflect .Xauthority existence
-
-### Version 1.0.2 2017-12-17
-
-* workaround for PS module `PSWindowsUpdate` in Windows Templates
-* added `nmon`, `jq` and `sssd-libwebclient` to CentOS 7.4 template
-* added `temp_path` in templates to point creation of VMs to current script's folder
-* tested with packer 1.1.3
-* added variable `vlan_id`
-* added variable `switch_name`
-* resized OS images to 70GB (Windows)
-* sector-size change in  PS cleaning script (from 64k to 4MB - double the speed)
-
-### Version 1.0.1
-
-* documentation fixes
-
-### Version 1.0.0
-
-* initial release for github
-
-### prerelease versions
-
-* serious bug with UEFI partitioning in CentOS 7.x generation 2 - `Unable to find \EFI\BOOT\grubx64.efi` [https://blogs.msdn.microsoft.com/virtual_pc_guy/2015/02/11/copying-the-vhd-of-a-generation-2-linux-vmand-not-booting-afterwards/](https://blogs.msdn.microsoft.com/virtual_pc_guy/2015/02/11/copying-the-vhd-of-a-generation-2-linux-vmand-not-booting-afterwards/)
-* disabled libvirtd in CentOS 7.4 template
-* added support for SystemCenter VMM Linux Agent for CentOS Gen 2 machines - it's required in case of per-template deployment
-* changed firewalld default configuration
-  * default zone set from `public` to `work`
-  * default set of rules for zone 'work'
-  * assigning interface `eth0` to zone `work`
-  * remove excessive logging for
-* changed `/etc/profile.d/motd.sh` to adjust missing XAUTHORITY variable
-* made files more generic, removed company's related terms
-* added adcli and krb5-workstation packages for CentOS 7.x image
-* added CentOS 7.4 Gen 2 template `hv_centos74_g2`
-* removed `vlan_id` and `switch_name` settings - revert to default ones for repository to be more generic.
-* fixed cmd scripts with Windows current catalog syntax.
-* added CentOS 7.4 Gen 2 template `hv_centos74_g2`
-* removed `vlan_id` and `switch_name` settings - revert to default ones for repository to be more generic.
-* fixed cmd scripts with Windows current catalog syntax.
-* added `cmd` scripts for Windows deployment
-* initial build
-
 ## Known issues
 
 ### Infamous UEFI/Secure boot WIndows implementation
 
-During the deployment secure keys are store in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extre step (manual) in a form of `/usr/local/bin/uefi.sh` script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
-In manual setup you can run it as a part of deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
+During the deployment secure keys are stored in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
+In manual setup you can run it as a part of your deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
 
 ### When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface
 
-No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting those ends with timeout errors.
+No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting these, end with timeout errors.
 
 ### Packer version 1.3.0/1.3.1 have bug with `windows-restart` provisioner
 

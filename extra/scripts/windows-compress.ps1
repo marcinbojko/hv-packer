@@ -1,5 +1,6 @@
 Write-Output "Start Phase-5c - Cleaning/zeroing/compacting"
 Write-Output "Phase-5c.1: Cleaning updates.."
+
 # Clean WU downloads
 Stop-Service -Name wuauserv -Force
     if (Test-Path -Path c:\Windows\SoftwareDistribution\Download ) {
@@ -10,6 +11,8 @@ Stop-Service -Name wuauserv -Force
     }
 Start-Service -Name wuauserv
 
+# Disable Windows Error Reporting
+Disable-WindowsErrorReporting -ErrorAction SilentlyContinue
 # remove logs
 wevtutil el | Foreach-Object {wevtutil cl "$_"}
 
