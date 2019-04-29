@@ -9,8 +9,16 @@ New-Item C:\Windows\Panther\Unattend -Type Directory
 New-Item c:\Scripts -Type Directory
 Copy-Item a:\unattend.xml C:\Windows\Panther\Unattend\ -Force
 New-Item -Path 'C:\Windows\Setup\Scripts' -ItemType Directory -Force
-Copy-Item a:\oracle-cert.cer c:\Scripts -Force
-certutil -addstore -f "TrustedPublisher" c:\Scripts\oracle-cert.cer
+Write-Output "Bootstrap: Copy certificates"
+try {
+    Copy-Item a:\vbox-sha256.cer c:\Scripts -Force
+    Copy-Item a:\vbox-sha1.cer c:\Scripts -Force
+    certutil -addstore -f "TrustedPublisher" c:\Scripts\vbox-sha256.cer
+    certutil -addstore -f "TrustedPublisher" c:\Scripts\vbox-sha1.cer
+}
+catch {
+    Write-Output "Bootstrap failed"
+}
 
 # Get network connections
 $networkListManager = [Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]'{DCB00C01-570F-4A9B-8D69-199FDBA5723B}'))

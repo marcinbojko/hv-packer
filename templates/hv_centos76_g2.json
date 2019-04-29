@@ -28,7 +28,7 @@
       ],
       "guest_additions_mode":"disable",
       "enable_secure_boot": false,
-      "output_directory": "output-centos76"
+      "output_directory": "{{ user `output_directory` }}"
     }
   ],
   "provisioners": [
@@ -83,7 +83,7 @@
       "chmod +x /tmp/install",
       "cd /tmp",
       "/tmp/install /tmp/scvmmguestagent.1.0.3.1022.x64.tar"
-    ],
+      ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
     },
@@ -91,18 +91,20 @@
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
       "chmod +x /tmp/provision.sh",
-      "chmod +x /tmp/prepare_neofetch.sh",
       "/tmp/provision.sh",
-      "/tmp/prepare_neofetch.sh"
-    ],
+      "reboot"
+      ],
     "inline_shebang": "/bin/sh -x",
-    "type": "shell"
+    "type": "shell",
+    "expect_disconnect": true
     },
     {
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
+      "chmod +x /tmp/prepare_neofetch.sh",
+      "/tmp/prepare_neofetch.sh",
       "chmod +x /usr/local/bin/uefi.sh"
-    ],
+      ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
     },
@@ -132,6 +134,7 @@
     "iso_checksum": "918975cdf947e858c9a0c77d6b90a9a56d9977f3a4496a56437f46f46200cf71",
     "switch_name": "",
     "vm_name": "packer-centos76-g2",
-    "vlan_id": ""
+    "vlan_id": "",
+    "output_directory": "output-centos76"
   }
 }

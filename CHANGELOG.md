@@ -1,5 +1,24 @@
 # Changelog
 
+## Version 1.0.7 2019-04-29
+
+* It's the last version before massive changes in packer >= 1.4 branch
+* [Windows] added more variables in Windows templates:
+  * `vm_name`
+  * `disk_size`
+  * `output_directory`
+  * `secondary_iso_image`
+* [Windows] switching secure boot to `false` as it could be source of problems in some cases
+* [Windows] added  `Windows Server 2019 Standard` as `hv_win2019_std_g2`
+* [Windows] added  `Windows Server 2019 Datacenter` as `hv_win2019_dc_g2`
+* [Windows] reworked `phase-1.ps1` script to recognise Windows version and adjust proper config for it
+* [Windows] reworked `phase-1.ps1` removed Spectre/Meltdown mitigations entries
+* [Docs]information `How to adjust autounattended.xml when using different image` now added to all Windows Templates.
+* [CentOS] added `reboot` after provisioning, which fixes neofetch config not being present during its customisation phase
+* [CentOS] added extra templates to make vagrant boxes from created images
+* [Extra] changes in scripts
+* [Vagrant] experimental support for Vagrant images (CentOS 7.6 added)
+
 ## Version 1.0.6 2018-12-11
 
 * [Windows] added `Windows Server 1809` as `hv_win2016_1809_g2.json`
@@ -8,7 +27,7 @@
 * [Windows] set `Disable-WindowsErrorReporting` for Windows based machines
 * [CentOS] added CentOS 7.6 as `hv_centos76_g2.json`
 * [CentOS] remove port 8140 from firewalld configuration
-* [CentOS] change zabbix repository to version 4.x (won't work with Zabbix server below 4.x)
+* [CentOS] change zabbix repository to version 4.x (agents won't work with Zabbix server below 4.x)
 * [CentOS] added log cleaning/rotating after build
 * [CentOS] upgraded SCVMM agent to version 1.0.3.1022. For older SCVMM older agent (1.0.2) is also available
 * [Windows] added `phase5b-docker.ps1` for Windows's based docker. You can choose which version you'll require inside the script. Also, if `$installCompose = $true` is true, docker-compose will also be installed

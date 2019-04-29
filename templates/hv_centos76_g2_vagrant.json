@@ -28,7 +28,7 @@
       ],
       "guest_additions_mode":"disable",
       "enable_secure_boot": false,
-      "output_directory": "output-centos75"
+      "output_directory": "{{ user `output_directory` }}"
     }
   ],
   "provisioners": [
@@ -64,17 +64,22 @@
     },
     {
       "type": "file",
+      "source": "extra/files/gen2-centos/vagrant.sh",
+      "destination": "/tmp/vagrant.sh"
+    },
+    {
+      "type": "file",
       "source": "extra/files/gen2-centos/uefi.sh",
       "destination": "/usr/local/bin/uefi.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/scagent/1.0.2.1075/scvmmguestagent.1.0.2.1075.x64.tar",
-      "destination": "/tmp/scvmmguestagent.1.0.2.1075.x64.tar"
+      "source": "extra/files/gen2-centos/scagent/1.0.3.1022/scvmmguestagent.1.0.3.1022.x64.tar",
+      "destination": "/tmp/scvmmguestagent.1.0.3.1022.x64.tar"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/scagent/1.0.2.1075/install",
+      "source": "extra/files/gen2-centos/scagent/1.0.3.1022/install",
       "destination": "/tmp/install"
     },
     {
@@ -82,8 +87,8 @@
       "inline": [
       "chmod +x /tmp/install",
       "cd /tmp",
-      "/tmp/install /tmp/scvmmguestagent.1.0.2.1075.x64.tar"
-    ],
+      "/tmp/install /tmp/scvmmguestagent.1.0.3.1022.x64.tar"
+      ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
     },
@@ -91,18 +96,22 @@
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
       "chmod +x /tmp/provision.sh",
-      "chmod +x /tmp/prepare_neofetch.sh",
       "/tmp/provision.sh",
-      "/tmp/prepare_neofetch.sh"
-    ],
+      "reboot"
+      ],
     "inline_shebang": "/bin/sh -x",
-    "type": "shell"
+    "type": "shell",
+    "expect_disconnect": true
     },
     {
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
+      "chmod +x /tmp/prepare_neofetch.sh",
+      "chmod +x /tmp/vagrant.sh",
+      "/tmp/prepare_neofetch.sh",
+      "/tmp/vagrant.sh",
       "chmod +x /usr/local/bin/uefi.sh"
-    ],
+      ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell"
     },
@@ -126,12 +135,23 @@
     "pause_before": "60s"
     }
   ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "output": "{{ user `output_vagrant` }}",
+      "vagrantfile_template": "{{ user `vagrantfile_template` }}"
+    }
+  ],
   "variables": {
-    "iso_url": "http://mirror-pl.kielcetechnologypark.net/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1804.iso",
+    "iso_url":  "http://mirror-pl.kielcetechnologypark.net/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1810.iso",
     "iso_checksum_type": "sha256",
-    "iso_checksum": "99723c8b87dcec21df8aed23de1eb810346d42cfd2a3fafafe70a68296053417",
+    "iso_checksum": "918975cdf947e858c9a0c77d6b90a9a56d9977f3a4496a56437f46f46200cf71",
     "switch_name": "",
+    "vm_name": "packer-centos76-g2",
     "vlan_id": "",
-    "vm_name": "packer-centos75-g2"
+    "output_directory": "output-centos76",
+    "output_vagrant": "./vbox/packer-centos-76-g2.box",
+    "vagrantfile_template": "./vagrant/hv_centos76_g2.template"
   }
 }

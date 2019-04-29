@@ -1,5 +1,14 @@
 # Set of various shared scripts and files for packer templates
 
+## 2019-03-04
+
+* disabled `Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools` in phase-1.ps1 script.
+
+## 2018-12-29
+
+* [Windows] reworked `phase-1.ps1` script to recognise Windows version to adjust proper config for it
+* [Windows] reworked `phase-1.ps1` removed Spectre/Meltdown migitation entries
+
 ## 2018-12-03
 
 * [CentOS] remove port 8140 from firewalld configuration

@@ -7,7 +7,7 @@
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "temp_path": ".",
-      "disk_size": "70000",
+      "disk_size": "{{ user `disk_size`}}",
       "communicator": "winrm",
       "winrm_username": "Administrator",
       "winrm_password": "password",
@@ -23,11 +23,11 @@
       "boot_command": [
         "a<enter><wait>a<enter><wait>a<enter><wait>a<enter>"
       ],
-      "output_directory": "output-windows-1803-g2",
+      "output_directory": "{{ user `output_directory`}}",
       "guest_additions_mode":"disable",
-      "enable_secure_boot":true,
+      "enable_secure_boot":false,
       "secondary_iso_images": [
-        "./extra/files/gen2-1803/secondary1803.iso"
+        "{{ user `secondary_iso_image`}}"
       ]
     }
   ],
@@ -56,7 +56,9 @@
     },
     {
       "type": "windows-restart",
-      "restart_timeout": "2h"
+      "restart_timeout": "2h",
+      "pause_before": "30s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
       "type": "powershell",
@@ -80,7 +82,7 @@
     {
       "type": "windows-restart",
       "restart_timeout": "2h",
-      "pause_before": "180s",
+      "pause_before": "120s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
@@ -100,12 +102,18 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
+      "script": "./extra/scripts/phase-5.ps1"
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "Administrator",
+      "elevated_password": "password",
       "script": "./extra/scripts/phase-5b.docker.ps1"
     },
     {
       "type": "windows-restart",
       "restart_timeout": "2h",
-      "pause_before": "120s",
+      "pause_before": "30s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
@@ -129,6 +137,9 @@
     "iso_checksum": "1f396b448ae0a68e5a2f694b0afabb61498e20a5df38c874aacb4e940a661b61",
     "switch_name": "",
     "vlan_id": "",
-    "vm_name": "packer-windows2016-1803-g2"
+    "vm_name": "packer-windows2016-1803-g2",
+    "disk_size": "70000",
+    "output_directory": "output-windows-1803-g2",
+    "secondary_iso_image": "./extra/files/gen2-1803/secondary1803.iso"
   }
 }

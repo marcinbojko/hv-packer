@@ -2,31 +2,31 @@ Write-Output "Start of Phase-1 - Enabling RDP, disabling NLA, reset SysprepStatu
 
 # features
 
-if (Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux)
-    {Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart}
-else
-    {write-output "No feature"}
+#if (Get-WindowsOptionalFeature -online -FeatureName Microsoft-Windows-Subsystem-Linux)
+#    {Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart}
+#else
+#    {write-output "No feature"}
+#
+#if (Get-WindowsOptionalFeature -online -FeatureName SimpleTCP)
+#    {Enable-WindowsOptionalFeature -Online -FeatureName SimpleTCP -NoRestart}
+#else
+#    {write-output "No feature"}
+#
+#if (Get-WindowsOptionalFeature -online -FeatureName MicrosoftWindowsPowerShellV2)
+#    {Enable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 -NoRestart}
+#else
+#    {write-output "No feature"}
 
-if (Get-WindowsOptionalFeature -online -FeatureName SimpleTCP)
-    {Enable-WindowsOptionalFeature -Online -FeatureName SimpleTCP -NoRestart}
-else
-    {write-output "No feature"}
-
-if (Get-WindowsOptionalFeature -online -FeatureName MicrosoftWindowsPowerShellV2)
-    {Enable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 -NoRestart}
-else
-    {write-output "No feature"}
-
-if (Get-WindowsOptionalFeature -online -FeatureName NetFx3) {
-    if (Test-Path d:\) {
-        {Enable-WindowsOptionalFeature -Online -FeatureName NetFx3 -NoRestart  -Source:D:\sources\sxs}
-    }
-    if (Test-Path e:\) {
-        {Enable-WindowsOptionalFeature -Online -FeatureName NetFx3 -NoRestart  -Source:e:\sources\sxs}
-    }
-}
-else
-    {write-output "No feature"}
+#if (Get-WindowsOptionalFeature -online -FeatureName NetFx3) {
+#    if (Test-Path d:\) {
+#        {Enable-WindowsOptionalFeature -Online -FeatureName NetFx3 -NoRestart  -Source:D:\sources\sxs}
+#    }
+#    if (Test-Path e:\) {
+#        {Enable-WindowsOptionalFeature -Online -FeatureName NetFx3 -NoRestart  -Source:e:\sources\sxs}
+#    }
+#}
+#else
+#    {write-output "No feature"}
 
 # Firewall rules
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
@@ -71,12 +71,12 @@ if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem')
 Set-ExecutionPolicy Bypass; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
 # Enable Ansible
-Set-ExecutionPolicy Bypass;Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))
+# Set-ExecutionPolicy Bypass;Invoke-Expression ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))
 # Spectre and Meltdown AV
-if (!(Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'))
-    {
-        New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat' -Verbose -Force
-    }
-    Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'-name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -Value 0 -Verbose -Force
-Write-Output "End of Phase 1"
+# if (!(Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'))
+#     {
+#         New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat' -Verbose -Force
+#     }
+#     Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\QualityCompat'-name "cadca5fe-87d3-4b96-b7fb-a231484277cc" -Value 0 -Verbose -Force
+# Write-Output "End of Phase 1"
 exit 0
