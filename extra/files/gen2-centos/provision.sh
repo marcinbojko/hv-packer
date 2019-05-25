@@ -53,7 +53,7 @@ timedatectl set-timezone Europe/Copenhagen --no-ask-password
 yum -y groups mark install "X Window System"
 # neofetch
 curl -o /etc/yum.repos.d/konimex-neofetch.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
-yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu
+yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu tmux
 
 if [ -f /tmp/motd.sh ]; then
     mv /tmp/motd.sh /etc/profile.d/motd.sh

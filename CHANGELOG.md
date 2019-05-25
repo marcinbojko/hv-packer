@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.0.8 2019-05-25
+
+* switch to packer `1.4` branch - be aware of syntax changes
+* [CentOS] added new deploy - 2 disk machine with separated `/var/lib/docker`
+* [Extra] changes in scripts
+* [CentOS] added `tmux` to installed packages
+
 ## Version 1.0.7 2019-04-29
 
 * It's the last version before massive changes in packer >= 1.4 branch

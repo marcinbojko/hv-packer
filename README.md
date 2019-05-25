@@ -2,17 +2,16 @@
 
 ## Requirements
 
-* packer >= `1.3.2` <=`1.3.5`. Do not use packer 1.3.0/1.3.1 - [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733)
+* packer <=`1.4.1`. Do not use packer below 1.4.0. For previous packer versions use previous releases from this repository
 * [OPTIONAL] Vagrant >= `2.2.3`
-* do not use packer >= `1.4.0` as it introduces changes in syntax (will be fixed in next release)
-* Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019
+* Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2)
 
 ## Usage
 
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.3.5
+choco install packer --version=1.4.1
 ```
 
 ### Add firewal exclusions for TCP ports 8000-9000 (default range)
@@ -167,7 +166,7 @@ Run `hv_win2016_1809_g2.cmd` (Windows)
 
 Run `hv_centos76_g2.cmd` (Windows)
 
-### Warnings
+### Warnings - CentOS
 
 * if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
 * folder `./iso` should contain iso image of your Windows 2016 Server Standard (any version will be fine)
@@ -181,6 +180,22 @@ Run `hv_centos76_g2.cmd` (Windows)
 ### Vagrant support
 
 Experimental support for vagrant machines `vagrant_hv_centos76_g2.cmd`
+
+### Hyper-V Generation 2 CentOS 7.6 Image with extra docker volume
+
+Run `hv_centos76_g2_docker.cmd` (Windows)
+
+### Warnings - CentOS Docker
+
+* if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+* folder `./iso` should contain iso image of your Windows 2016 Server Standard (any version will be fine)
+* if needed - change `iso_url` variable to a proper iso name
+* packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+* credentials for Windows machines: Administrator/password (removed after sysprep)
+* credentials for Linux machines: root/password
+* for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+* for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+* no `docker` repo will be added  and no docker-related packages will be installed
 
 ## Known issues
 
