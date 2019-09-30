@@ -5,8 +5,8 @@ config="/etc/neofetch/config.conf"
 config_dir="/etc/neofetch"
 
 if [ ! -d $config_dir ];then
- echo "No $config_dir exists"
- mkdir $config_dir
+ echo "No $config_dir exists - creating one"
+ mkdir -v $config_dir
 fi
 
 if [ ! -e $config ];then
@@ -17,6 +17,7 @@ if [ ! -e $config ];then
 fi
 
 if [ -e $config ]; then
+  echo "Starting Neofetch configuration"
   # comment
   sed -i -e 's/^[[:blank:]]*info "Packages" packages/#info "Packages" packages/g' $config
   sed -i -e 's/^[[:blank:]]*info "Resolution" resolution/#info "Resolution" resolution/g' $config
@@ -30,6 +31,9 @@ if [ -e $config ]; then
   # uncomment
   sed -i -e 's/^[[:blank:]]*# info "Disk" disk/info "Disk" disk/g' $config
   sed -i -e 's/^[[:blank:]]*# info "Local IP" local_ip/info "Local IP" local_ip/g' $config
+  # disable color block - workaround for HV console
+  sed -i -e 's/color_blocks="on"/color_blocks="off"/g' $config
+  echo "Finished Neofetch configuration"
 else
- echo "File $config doesn't exist"
+ echo "File $config doesn't exist - couldn't configure neofetch"
 fi

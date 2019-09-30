@@ -11,7 +11,7 @@
       "disk_block_size": "1",
       "communicator": "ssh",
       "ssh_username": "root",
-      "ssh_password": "password",
+      "ssh_password": "{{ user `ssh_password` }}",
       "ssh_timeout" : "4h",
       "shutdown_timeout": "30m",
       "shutdown_command": "echo 'password' | sudo -S shutdown -P now",
@@ -80,18 +80,8 @@
     {
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
-      "chmod +x /tmp/install",
-      "cd /tmp",
-      "/tmp/install /tmp/scvmmguestagent.1.0.3.1022.x64.tar"
-      ],
-    "inline_shebang": "/bin/sh -x",
-    "type": "shell"
-    },
-    {
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
-      "inline": [
       "chmod +x /tmp/provision.sh",
-      "/tmp/provision.sh",
+      "/tmp/provision.sh {{ user `provision_script_options` }}",
       "reboot"
       ],
     "inline_shebang": "/bin/sh -x",
@@ -99,20 +89,12 @@
     "expect_disconnect": true
     },
     {
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
-      "inline": [
-      "chmod +x /tmp/prepare_neofetch.sh",
-      "/tmp/prepare_neofetch.sh",
-      "chmod +x /usr/local/bin/uefi.sh"
-      ],
-    "inline_shebang": "/bin/sh -x",
-    "type": "shell"
-    },
-    {
      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
       "echo Last Phase",
-      "yum -y -e 0 update",
+      "chmod +x /usr/local/bin/uefi.sh",
+      "chmod +x /tmp/prepare_neofetch.sh",
+      "/tmp/prepare_neofetch.sh",
       "systemctl set-default multi-user.target",
       "systemctl disable initial-setup-text",
       "systemctl disable initial-setup-graphical",
@@ -121,7 +103,8 @@
       "/bin/rm -f /etc/ssh/*key*",
       "chmod +x /tmp/zeroing.sh",
       "/tmp/zeroing.sh",
-      "/bin/rm -rfv /tmp/*"
+      "/bin/rm -rfv /tmp/*",
+      "echo 'packerVersion: {{ packer_version }}' >>/etc/packerinfo"
     ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell",
@@ -129,13 +112,15 @@
     }
   ],
   "variables": {
-    "iso_url":  "http://mirror-pl.kielcetechnologypark.net/centos/7/isos/x86_64/CentOS-7-x86_64-Everything-1810.iso",
-    "iso_checksum_type": "sha256",
-    "iso_checksum": "918975cdf947e858c9a0c77d6b90a9a56d9977f3a4496a56437f46f46200cf71",
+    "iso_url":  "",
+    "iso_checksum_type": "none",
+    "iso_checksum": "",
     "switch_name": "",
-    "vm_name": "packer-centos76-g2",
+    "vm_name": "",
     "disk_size": "70000",
     "vlan_id": "",
-    "output_directory": "output-centos76"
+    "output_directory": "",
+    "ssh_password": "",
+    "provision_script_options": ""
   }
 }

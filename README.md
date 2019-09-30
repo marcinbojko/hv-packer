@@ -2,16 +2,16 @@
 
 ## Requirements
 
-* packer <=`1.4.1`. Do not use packer below 1.4.0. For previous packer versions use previous releases from this repository
-* [OPTIONAL] Vagrant >= `2.2.3`
+* packer <=`1.4.3`. Do not use packer below 1.4.0. For previous packer versions use previous releases from this repository
 * Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2)
+* [OPTIONAL] Vagrant >= `2.2.5` - for `vagrant` version of scripts
 
 ## Usage
 
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.4.1
+choco install packer --version=1.4.3
 ```
 
 ### Add firewal exclusions for TCP ports 8000-9000 (default range)
@@ -22,7 +22,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
 ```
 
-### To adjust to your Hyper-V, please check variables below:
+### To adjust to your Hyper-V, please check variables below
 
 * proper VLAN (possible passing as variable `-var 'vlan_id=0'` )
 * proper Hyper-V Virtual Switch name (access to Internet will be required) (possible passing as variable `-var 'switch_name=vSwitch'` )
@@ -32,8 +32,6 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
 ### Scripts
 
-* `validate_all.sh` - validates all templates.
-
 ### Windows Machines
 
 * all available updates will be applied (3 passes)
@@ -42,9 +40,9 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   |Package|Version|
   |-------|-------|
-  |puppet-agent|5.5.12|
+  |puppet-agent|5.5.16|
   |conemu|latest|
-  |dotnet4.7.2|latest|
+  |dotnetfx|latest|
   |sysinternals|latest|
 * latest Nuget poweshell module
 * puppet agent settings will be customized (`server=foreman.spcph.local`). Please adjust it (`/extra/scripts/phase-3.ps1`) to suit your needs. Puppet won't be running after generalize phase
@@ -53,16 +51,27 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
 * Repositories:
   * EPEL 7
-  * Zabbix 4.x
-  * Puppet 5.x
-  * Webmin
+  * Zabbix 4.2
+  * Puppet 5.x [can be switch off by -p false]
+  * Webmin/Usermin (can be switched off by setting )
   * Neofetch
 * latest System Center Virtual Machine Agent available (with versioning, so you always can go back)
 
 #### Info
 
-* adjust `/files/provision.sh` to modify package's versions/servers
-* `neofetch` packageas default banner during after the login - change required fields you'd like to see in `provision.sh`
+* adjust `/files/provision.sh` to modify package's versions/servers.
+* change "provision_script_options" variable to:
+  * -p (true/false) - switch Install Puppet on/off
+  * -w (true/false) - switch Install Webmin on/off
+  * -h (true/false) - switch Install Hyper-V integration services on/off
+  * -u (true/false) - switch yum update all on/off (usable when creating previous than `latest` version of OS)
+Example:
+
+```json
+"provision_script_options": "-p false -u true -w true -h false"
+```
+
+* `prepare_neofetch.sh`  default banner during after the login - change required fields you'd like to see in `provision.sh`
 
 ## Templates Windows 2016
 
@@ -162,9 +171,13 @@ Run `hv_win2016_1809_g2.cmd` (Windows)
 
 ## Templates CentOS 7.x
 
+### Hyper-V Generation 2 CentOS 7.7 Image
+
+Run `hv_centos77_g2.cmd`
+
 ### Hyper-V Generation 2 CentOS 7.6 Image
 
-Run `hv_centos76_g2.cmd` (Windows)
+Run `hv_centos77_g2.cmd`
 
 ### Warnings - CentOS
 
@@ -179,11 +192,15 @@ Run `hv_centos76_g2.cmd` (Windows)
 
 ### Vagrant support
 
-Experimental support for vagrant machines `vagrant_hv_centos76_g2.cmd`
+Experimental support for vagrant machines `hv_centos76_g2_vagrant.cmd`
+
+### Hyper-V Generation 2 CentOS 7.7 Image with extra docker volume
+
+Run `hv_centos77_g2_docker.cmd`
 
 ### Hyper-V Generation 2 CentOS 7.6 Image with extra docker volume
 
-Run `hv_centos76_g2_docker.cmd` (Windows)
+Run `hv_centos76_g2_docker.cmd`
 
 ### Warnings - CentOS Docker
 
@@ -204,7 +221,7 @@ Run `hv_centos76_g2_docker.cmd` (Windows)
 During the deployment secure keys are stored in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
 In manual setup you can run it as a part of your deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
 
-### On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react.
+### On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react
 
 [https://github.com/hashicorp/packer/issues/7278#issuecomment-468492880](https://github.com/hashicorp/packer/issues/7278#issuecomment-468492880)
 
@@ -223,7 +240,7 @@ No resolution so far, template needs to be changed to pass real IP address, or t
 [https://github.com/hashicorp/packer/issues/5023](https://github.com/hashicorp/packer/issues/5023)
 Will be fixed in 1.4.x revision
 
-### I have problem how to find a proper WIM  name in Windows ISO to pick proper version.
+### I have problem how to find a proper WIM  name in Windows ISO to pick proper version
 
 You can use number. If you have 4 images on the list of choice - use `ImageIndex` with proper `Value`
 

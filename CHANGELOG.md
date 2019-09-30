@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.0.9 2019-09-30
+
+* [BREAKING CHANGE] - CentOS Machines now support templating and previous version creation
+  * all CentOS deploys now consists of main template file (./templates) and var_file (./variables). This will allow to have more than 'latest' version of release when needed.
+* [Extra] reworked scripts
+* [CentOS] Upgrade Zabbix repository (4.2)
+* [CentOS] Provision script now supports flags to install or not specific portion of packages.
+* [Windows] Upgrade to dotnetfx chocolatey package (.net 4.8 by default)
+
 ## Version 1.0.8 2019-05-25
 
 * switch to packer `1.4` branch - be aware of syntax changes

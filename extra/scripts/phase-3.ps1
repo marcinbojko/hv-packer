@@ -3,7 +3,7 @@
 
 # exit 0
 Write-Output "Start of Phase-3"
-    $puppet_version="5.5.13"
+    $puppet_version="5.5.16"
     # add your stuff here
     # add my myget source
     try {

@@ -1,5 +1,5 @@
 # Enable docker
-$requiredVersion="18.09"
+$requiredVersion="19.03.1"
 $installCompose = $true
 
 Write-Output "Start Phase 5b-Docker"

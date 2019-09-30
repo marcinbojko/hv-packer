@@ -1,0 +1,15 @@
+{
+    "iso_url":  "http://ftp.ps.pl/pub/Linux/CentOS/7.7.1908/isos/x86_64/CentOS-7-x86_64-Everything-1908.iso",
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "bd5e6ca18386e8a8e0b5a9e906297b5610095e375e4d02342f07f32022b13acf",
+    "vm_name": "packer-centos77-g2",
+    "disk_size": "70000",
+    "disk_additional_size":"150000",
+    "switch_name": "vSwitch",
+    "output_directory": "output-centos77",
+    "output_vagrant": "./vbox/packer-centos-77-g2.box",
+    "vlan_id": "",
+    "vagrantfile_template": "./vagrant/hv_centos77_g2.template",
+    "ssh_password": "password",
+    "provision_script_options": ""
+  }

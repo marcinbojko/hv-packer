@@ -7,27 +7,31 @@ function whichWindows {
 $version=(Get-WMIObject win32_operatingsystem).name
     switch -Regex ($version) {
         '(Server 2016)' {
-            Write-Output "Server 2016 found"
             $global:os="2016"
+            printWindowsVersion
         }
         '(Server 2019)' {
-            Write-Output "Server 2019 found"
             $global:os="2019"
+            printWindowsVersion
         }
         '(Microsoft Windows Server Standard|Microsoft Windows Server Datacenter)'{
             $ws_version=(Get-WmiObject win32_operatingsystem).buildnumber
                 switch -Regex ($ws_version) {
                     '16299' {
-                        Write-Output "Windows Server 1709 found"
                         $global:os="1709"
+                        printWindowsVersion
                     }
                     '17134' {
-                        Write-Output "Windows Server 1803 found"
                         $global:os="1803"
+                        printWindowsVersion
                     }
                     '17763' {
-                        Write-Output "Windows Server 1809 found"
                         $global:os="1809"
+                        printWindowsVersion
+                    }
+                    '18362' {
+                        $global:os="1903"
+                        printWindowsVersion
                     }
                 }
         }
@@ -39,15 +43,23 @@ $version=(Get-WMIObject win32_operatingsystem).name
             {Write-Output "unknown"}
     }
 }
+function printWindowsVersion {
+    if ($global:os) {
+        Write-Output "Windows Server "$global:os" found."
+    }
+    else {
+        Write-Output "Unknown version of Windows Server found."
+    }
+}
 whichWindows
 # Phase 1 - Mandatory generic stuff
 Write-Output "Start of Phase-1"
 Import-Module ServerManager
-#2016/1709/1803/1809
+#2016/1709/1803/1903/1809
 if ($global:os -notlike '2019') {
    # Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools
 }
-# 1709/1803/1809/2019
+# 1709/1803/1809/1903/2019
 if ($global:os -notlike '2016') {
     Enable-NetFirewallRule -DisplayGroup "Windows Defender Firewall Remote Management" -Verbose
 }
@@ -71,6 +83,7 @@ try {
     Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" -Verbose
 }
 catch {
+    Write-Output "Phase 1 - setting firewall went wrong"
 }
 
 # Terminal services and sysprep registry entries
@@ -81,6 +94,7 @@ try {
     Set-ItemProperty -Path 'HKLM:\SYSTEM\Setup\Status\SysprepStatus'  -Name  'GeneralizationState' -Value 7 -Verbose -Force
 }
 catch {
+    Write-Output "Phase 1 - setting registry went wrong"
 }
 
 # remove Windows Defender
@@ -88,13 +102,14 @@ try {
     Remove-WindowsFeature -Name Windows-Defender-Features -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
 }
 catch {
+    Write-Output "Phase 1 - removing Windows Defender went wrong"
 }
 # Install chocolatey
 try {
-    Set-ExecutionPolicy Bypass; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 catch {
-    Write-Output "Phase 1 choco install problem, exiting"
+    Write-Output "Phase 1 - choco install problem, exiting"
     exit (-1)
 }
 
