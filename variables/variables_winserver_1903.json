@@ -1,0 +1,11 @@
+{
+  "iso_url": ".\\iso\\SW_DVD9_Win_Server_STD_CORE_1903_64Bit_English_DC_STD_MLF_X22-02952.ISO",
+  "iso_checksum_type": "sha256",
+  "iso_checksum": "10a61364246f94ef2888b47a00d02b2f9fec8a94f0c745685416f4ba331cb4be",
+  "switch_name": "vSwitch",
+  "vlan_id": "",
+  "vm_name": "packer-windows-1903-g2",
+  "disk_size": "70000",
+  "output_directory": "output-windows-1903-g2",
+  "secondary_iso_image": "./extra/files/gen2-1903/secondary1903.iso"
+}

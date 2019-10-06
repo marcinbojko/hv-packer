@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 1.1.0 2019-10-06
+
+* [BREAKING CHANGE] Windows Server machines (semi-annual editions) are supporting templates now
+* [BREAKING CHANGE] use `packer` in version not less then 1.4.4
+* [Windows] added `Windows Server 1903 Standard`
+* [Extra] reworked scripts.
+* obsolete files are now in `.archive` folder, will be removed when all files will switch to templates
+
 ## Version 1.0.9 2019-09-30
 
 * [BREAKING CHANGE] - CentOS Machines now support templating and previous version creation

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* packer <=`1.4.3`. Do not use packer below 1.4.0. For previous packer versions use previous releases from this repository
+* packer <=`1.4.4`. Do not use packer below 1.4.4. For previous packer versions use previous releases from this repository
 * Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2)
 * [OPTIONAL] Vagrant >= `2.2.5` - for `vagrant` version of scripts
 
@@ -11,7 +11,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.4.3
+choco install packer --version=1.4.4
 ```
 
 ### Add firewal exclusions for TCP ports 8000-9000 (default range)
@@ -30,7 +30,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 * proper checksum type (possible passing as variable `-var 'iso_checksum_type=sha256'` )
 * proper checksum  (possible passing as variable `-var 'iso_checksum=aaaabbbbbbbcccccccddddd'` )
 
-### Scripts
+## Scripts
 
 ### Windows Machines
 
@@ -57,7 +57,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   * Neofetch
 * latest System Center Virtual Machine Agent available (with versioning, so you always can go back)
 
-#### Info
+### Info
 
 * adjust `/files/provision.sh` to modify package's versions/servers.
 * change "provision_script_options" variable to:
@@ -71,7 +71,7 @@ Example:
 "provision_script_options": "-p false -u true -w true -h false"
 ```
 
-* `prepare_neofetch.sh`  default banner during after the login - change required fields you'd like to see in `provision.sh`
+* `prepare_neofetch.sh` -  default banner during after the login - change required fields you'd like to see in `provision.sh`
 
 ## Templates Windows 2016
 
@@ -145,37 +145,29 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-Run `hv_win2019_dc_g2.cmd` (Windows)
-
-### Hyper-V Generation 2 Windows Server 1803 Standard Image
-
-#### 1803 Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary1803.iso` with folder structure:
-
-* ./extra/files/gen2-1803/Autounattend.xml     => /Autounattend.xml
-* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_win2016_1803_g2.cmd` (Windows)
+Run `hv_win2019_dc_g2.cmd`
 
 ### Hyper-V Generation 2 Windows Server 1809 Standard Image
 
-#### 1809 Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary1809.iso` with folder structure:
+If you need changes For - prepare `secondary1809.iso` with folder structure:
 
 * ./extra/files/gen2-1809/Autounattend.xml     => /Autounattend.xml
 * ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
 
-Run `hv_win2016_1809_g2.cmd` (Windows)
+Run `hv_winserver_1809_g2.cmd`
+
+### Hyper-V Generation 2 Windows Server 1903 Standard Image
+
+If you need changes For - prepare `secondary1903.iso` with folder structure:
+
+* ./extra/files/gen2-1903/Autounattend.xml     => /Autounattend.xml
+* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+Run `hv_winserver_1903_g2.cmd`
 
 ## Templates CentOS 7.x
 
 ### Hyper-V Generation 2 CentOS 7.7 Image
-
-Run `hv_centos77_g2.cmd`
-
-### Hyper-V Generation 2 CentOS 7.6 Image
 
 Run `hv_centos77_g2.cmd`
 
@@ -192,15 +184,11 @@ Run `hv_centos77_g2.cmd`
 
 ### Vagrant support
 
-Experimental support for vagrant machines `hv_centos76_g2_vagrant.cmd`
+Experimental support for vagrant machines `hv_centos77_g2_vagrant.cmd`
 
 ### Hyper-V Generation 2 CentOS 7.7 Image with extra docker volume
 
 Run `hv_centos77_g2_docker.cmd`
-
-### Hyper-V Generation 2 CentOS 7.6 Image with extra docker volume
-
-Run `hv_centos76_g2_docker.cmd`
 
 ### Warnings - CentOS Docker
 
@@ -221,15 +209,16 @@ Run `hv_centos76_g2_docker.cmd`
 During the deployment secure keys are stored in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
 In manual setup you can run it as a part of your deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
 
-### On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react
+### ~~On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react~~
 
 [https://github.com/hashicorp/packer/issues/7278#issuecomment-468492880](https://github.com/hashicorp/packer/issues/7278#issuecomment-468492880)
 
-No fixes yes.
+Fixed in version 1.4.4.  Do not use lower versions
 
-### When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface
+### ~~When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface~~
 
-No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting these, end with timeout errors.
+Fixed in version 1.4.4. Do not use lower versions
+~~No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting these, end with timeout errors.**~~
 
 ### Packer version 1.3.0/1.3.1 have bug with `windows-restart` provisioner
 
