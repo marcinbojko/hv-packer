@@ -28,6 +28,7 @@ if [ -e $config ]; then
   sed -i -e 's/^[[:blank:]]*info "Icons" icons/#info "Icons" icons/g' $config
   sed -i -e 's/^[[:blank:]]*info "Terminal" term/#info "Terminal" term/g' $config
   sed -i -e 's/^[[:blank:]]*info "Terminal Font" term_font/#info "Terminal Font" term_font/g' $config
+  sed -i -e 's/^[[:blank:]]*info cols/#info cols/g' $config
   # uncomment
   sed -i -e 's/^[[:blank:]]*# info "Disk" disk/info "Disk" disk/g' $config
   sed -i -e 's/^[[:blank:]]*# info "Local IP" local_ip/info "Local IP" local_ip/g' $config

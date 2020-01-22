@@ -26,6 +26,7 @@
       "output_directory": "{{ user `output_directory`}}",
       "guest_additions_mode":"disable",
       "enable_secure_boot":false,
+      "skip_export": true,
       "secondary_iso_images": [
         "{{ user `secondary_iso_image`}}"
       ]
@@ -57,7 +58,7 @@
     {
       "type": "windows-restart",
       "restart_timeout": "2h",
-      "pause_before": "30s",
+      "pause_before": "60s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
@@ -69,7 +70,7 @@
     {
       "type": "windows-restart",
       "restart_timeout": "2h",
-      "pause_before": "60s",
+      "pause_before": "120s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
@@ -77,12 +78,12 @@
       "elevated_user": "Administrator",
       "elevated_password": "password",
       "script": "./extra/scripts/windows-updates.ps1",
-      "pause_before": "60s"
+      "pause_before": "120s"
     },
     {
       "type": "windows-restart",
       "restart_timeout": "2h",
-      "pause_before": "60s",
+      "pause_before": "120s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
@@ -90,12 +91,12 @@
       "elevated_user": "Administrator",
       "elevated_password": "password",
       "script": "./extra/scripts/windows-updates.ps1",
-      "pause_before": "60s"
+      "pause_before": "120s"
     },
     {
       "type": "windows-restart",
       "restart_timeout": "2h",
-      "pause_before": "60s",
+      "pause_before": "120s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
     },
     {
@@ -108,38 +109,33 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./extra/scripts/phase-5b.docker.ps1"
-    },
-    {
-      "type": "windows-restart",
-      "restart_timeout": "2h",
-      "pause_before": "30s",
-      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
-    },
-    {
-      "type": "powershell",
-      "elevated_user": "Administrator",
-      "elevated_password": "password",
       "script": "./extra/scripts/windows-compress.ps1"
+    },
+    {
+      "type": "file",
+        "source": "{{ user `sysprep_unattended` }}",
+        "destination": "C:\\Windows\\System32\\Sysprep\\unattend.xml"
     },
     {
       "type": "powershell",
       "inline": [
         "Write-Output Phase-5-Deprovisioning",
-        "if( Test-Path $Env:SystemRoot\\windows\\system32\\Sysprep\\unattend.xml ){ rm $Env:SystemRoot\\windows\\system32\\Sysprep\\unattend.xml -Force}",
-        "& $Env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /shutdown /quiet"
+        "if (!(Test-Path -Path $Env:SystemRoot\\system32\\Sysprep\\unattend.xml)){ Write-Output 'No file';exit (10)}",
+        "& $Env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /shutdown /quiet /unattend:C:\\Windows\\system32\\sysprep\\unattend.xml"
       ]
     }
   ],
   "variables": {
     "iso_url": "",
-    "iso_checksum_type": "none",
+    "iso_checksum_type": "",
     "iso_checksum": "",
     "switch_name": "",
     "vlan_id": "",
     "vm_name": "",
     "disk_size": "",
     "output_directory": "",
-    "secondary_iso_image": ""
+    "secondary_iso_image": "",
+    "sysprep_unattended": "",
+    "vagrant_sysprep_unattended": ""
   }
 }

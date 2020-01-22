@@ -36,7 +36,7 @@
                         </ModifyPartition>
                         <ModifyPartition wcm:action="add">
                             <Format>NTFS</Format>
-                            <Label>Windows 2019</Label>
+                            <Label>Windows 2016</Label>
                             <Letter>C</Letter>
                             <Order>2</Order>
                             <PartitionID>2</PartitionID>
@@ -50,8 +50,8 @@
                 <OSImage>
                     <InstallFrom>
                         <MetaData wcm:action="add">
-                            <Key>/IMAGE/NAME </Key>
-                            <Value>Windows Server 2019 SERVERSTANDARD</Value>
+                            <Key>/IMAGE/INDEX </Key>
+                            <Value>1</Value>
                         </MetaData>
                     </InstallFrom>
                     <InstallTo>
@@ -76,8 +76,8 @@
             <OEMInformation>
                 <HelpCustomized>false</HelpCustomized>
             </OEMInformation>
-            <ComputerName>vagrant-2019</ComputerName>
-            <TimeZone>Central European Standard Time</TimeZone>
+            <ComputerName>vagrant-1909</ComputerName>
+            <TimeZone>Pacific Standard Time</TimeZone>
             <RegisteredOwner />
         </component>
         <component name="Microsoft-Windows-ServerManager-SvrMgrNc" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -150,4 +150,5 @@
             <EnableLUA>false</EnableLUA>
         </component>
     </settings>
+    <cpi:offlineImage cpi:source="wim://vboxsrv/vagrant/iso%202016/sources/install.wim#Windows Server 2016 Technical Preview 5 SERVERSTANDARD" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>

@@ -28,10 +28,10 @@ while getopts :u:p:h:w:  option
         ;;
       esac
     done
-echo "INSTALL_UPDATES = "$INSTALL_UPDATES
-echo "INSTALL_WEBMIN  = "$INSTALL_WEBMIN
-echo "INSTALL_HYPERV  = "$INSTALL_HYPERV
-echo "INSTALL_PUPPET  = "$INSTALL_PUPPET
+echo "INSTALL_UPDATES = $INSTALL_UPDATES"
+echo "INSTALL_WEBMIN  = $INSTALL_WEBMIN"
+echo "INSTALL_HYPERV  = $INSTALL_HYPERV"
+echo "INSTALL_PUPPET  = $INSTALL_PUPPET"
 
 # generic - basic repositories and basic stuff
 echo "Provisioning phase 1 - Starting: EPEL, SELinux and basic packages"
@@ -43,7 +43,7 @@ yum -y makecache fast
 yum -y -e 0 install epel-release yum-plugin-priorities yum-utils yum-cron yum-plugin-versionlock mc wget curl
 yum-config-manager -y -q -e 0 --enable epel --setopt="epel.priority=60"|grep -i "enabled ="
 
-if [ $INSTALL_UPDATES == "true" ]; then
+if [ "$INSTALL_UPDATES" == "true" ]; then
     echo "Provisioning phase 1 - system updates"
     yum -y -e 0 -q update
     yum -y -e 0 -q clean all
@@ -60,7 +60,7 @@ echo "Provisioning phase 1 - all done"
 echo "Provisioning phase 2 - Starting: Webmin, Zabbix, Puppet"
 
 # webmin repository
-if [ $INSTALL_WEBMIN == "true" ]; then
+if [ "$INSTALL_WEBMIN" == "true" ]; then
     echo "Provisioning phase 2 - Webmin"
     if [ -f /tmp/webmin.repo ]; then
         mv /tmp/webmin.repo /etc/yum.repos.d/webmin.repo
@@ -83,7 +83,7 @@ yum -y -e 0 makecache fast
 yum -y -e 0 install zabbix-agent
 
 # puppet
-if [ $INSTALL_PUPPET == "true" ]; then
+if [ "$INSTALL_PUPPET" == "true" ]; then
 
     echo "Provisioning phase 2 - Puppet Agent"
     # puppet 5.x repository
@@ -115,7 +115,7 @@ yum -y groups mark install "X Window System"
 echo "Provisioning phase 3 - Nefoetch"
 curl -o /etc/yum.repos.d/konimex-neofetch.repo https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
 echo "Provisioning phase 3 - Extra Packages"
-yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu tmux
+yum -y install htop atop iftop iotop firewalld bmon nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd ntpdate ntp adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu tmux multitail
 
 echo "Provisioning phase 3 - MOTD"
 
@@ -124,7 +124,7 @@ if [ -f /tmp/motd.sh ]; then
     chmod +x /etc/profile.d/motd.sh
 fi
 
-if [ $INSTALL_HYPERV == "true" ]; then
+if [ "$INSTALL_HYPERV" == "true" ]; then
   echo "Provisioning phase 3 - Hyper-V/SCVMM Daemons"
   # Hyper-v daemons
   yum -y install hyperv-daemons
@@ -132,7 +132,7 @@ if [ $INSTALL_HYPERV == "true" ]; then
   systemctl enable hypervkvpd
   systemctl enable hypervvssd
   if [ -e /tmp/install ]; then
-    cd /tmp
+    cd /tmp||exit
     chmod +x /tmp/install
     /tmp/install /tmp/scvmmguestagent.1.0.3.1022.x64.tar
   fi
@@ -162,7 +162,7 @@ echo "Provisioning phase 3 - Services done"
 
 echo "Provisioning phase 4 - Final updates and cleaning up"
 
-if [ $INSTALL_UPDATES == "true" ]; then
+if [ "$INSTALL_UPDATES" == "true" ]; then
     echo "Provisioning phase 4 - system final updates"
     yum -y -e 0 -q update
     yum -y -e 0 -q clean all
@@ -188,6 +188,6 @@ if [ -e $STAMP_FILE ]; then
   rm -rfv $STAMP_FILE
   touch $STAMP_FILE
 fi
-echo "creationDate: "$(date +%Y-%m-%d_%H:%M) >>$STAMP_FILE
+echo "creationDate: $(date +%Y-%m-%d_%H:%M)" >>$STAMP_FILE
 echo "Provisioning phase 4 - Done"
 echo "Provisioning done - all phases"

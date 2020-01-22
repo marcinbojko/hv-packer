@@ -3,6 +3,10 @@
 
 # Variables
 $global:os=""
+$choco_install_success=$false
+$choco_install_count=1
+$choco_install_count_max=99
+
 function whichWindows {
 $version=(Get-WMIObject win32_operatingsystem).name
     switch -Regex ($version) {
@@ -31,6 +35,10 @@ $version=(Get-WMIObject win32_operatingsystem).name
                     }
                     '18362' {
                         $global:os="1903"
+                        printWindowsVersion
+                    }
+                    '18363' {
+                        $global:os="1909"
                         printWindowsVersion
                     }
                 }
@@ -68,8 +76,6 @@ if ($global:os -eq '2016') {
     Enable-NetFirewallRule -DisplayGroup "Windows Firewall Remote Management" -Verbose
 }
 
-
-
 # features and firewall rules common for all Windows Servers
 try {
     Install-WindowsFeature NET-Framework-45-Core,Telnet-Client,RSAT-Role-Tools -IncludeManagementTools
@@ -97,20 +103,48 @@ catch {
     Write-Output "Phase 1 - setting registry went wrong"
 }
 
-# remove Windows Defender
-try {
-    Remove-WindowsFeature -Name Windows-Defender-Features -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
+# remove Windows Defender (2016)
+
+if ($global:os -eq '2016') {
+  try {
+      Remove-WindowsFeature -Name Windows-Defender-Features -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
+  }
+  catch {
+      Write-Output "Phase 1 - removing Windows Defender went wrong, not critical"
+  }
 }
-catch {
-    Write-Output "Phase 1 - removing Windows Defender went wrong"
-}
+
+if ($global:os -eq '2019') {
+    try {
+        Remove-WindowsFeature -Name Windows-Defender -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
+    }
+    catch {
+        Write-Output "Phase 1 - removing Windows Defender went wrong, not critical"
+    }
+  }
 # Install chocolatey
-try {
-    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-}
-catch {
-    Write-Output "Phase 1 - choco install problem, exiting"
-    exit (-1)
+do {
+    try {
+        Write-Output "Phase 1 - installing Chocolatey, attempt $choco_install_count of $choco_install_count_max"
+        Get-ExecutionPolicy
+        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force -Verbose;
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) -ErrorAction Stop
+        Write-Output "Phase 1 - installing Chocolatey exit code is: $LASTEXITCODE"
+        if ($LASTEXITCODE -eq 0) {
+            $choco_install_success=$true
+            Write-Output "Phase 1 - Chocolatey install succesful"
+        }
+    }
+    catch {
+        Write-Output "Phase 1 - Chocolatey install problem, attempt $choco_install_count of $choco_install_count_max"
+    }
+    $choco_install_count++
+  }
+until ($choco_install_count -eq $choco_install_count_max -or $choco_install_success)
+
+if (-not $choco_install_success) {
+    Write-Output "Phase 1 - Chocolatey install problem, critical, exiting"
+    exit (1)
 }
 
 #Remove 260 Character Path Limit

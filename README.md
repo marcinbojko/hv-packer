@@ -2,8 +2,9 @@
 
 ## Requirements
 
-* packer <=`1.4.4`. Do not use packer below 1.4.4. For previous packer versions use previous releases from this repository
-* Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2)
+* packer <=`1.5.1`. Do not use packer below 1.5.1. For previous packer versions use previous releases from this repository
+* Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed
+* firewall exceptions for `packer` http server (look down below)
 * [OPTIONAL] Vagrant >= `2.2.5` - for `vagrant` version of scripts
 
 ## Usage
@@ -22,7 +23,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
 ```
 
-### To adjust to your Hyper-V, please check variables below
+### To adjust to your Hyper-V, please check variables below and/or in ./variables files
 
 * proper VLAN (possible passing as variable `-var 'vlan_id=0'` )
 * proper Hyper-V Virtual Switch name (access to Internet will be required) (possible passing as variable `-var 'switch_name=vSwitch'` )
@@ -40,7 +41,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   |Package|Version|
   |-------|-------|
-  |puppet-agent|5.5.16|
+  |puppet-agent|5.5.17|
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
@@ -53,7 +54,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   * EPEL 7
   * Zabbix 4.2
   * Puppet 5.x [can be switch off by -p false]
-  * Webmin/Usermin (can be switched off by setting )
+  * Webmin/Usermin (can be switched off by setting -w false)
   * Neofetch
 * latest System Center Virtual Machine Agent available (with versioning, so you always can go back)
 
@@ -77,7 +78,7 @@ Example:
 
 ### Hyper-V Generation 2 Windows Server 2016 Standard Image
 
-Run `hv_win2016_g2.cmd` (Windows)
+Run `hv_win2016_g2_std.ps1` (Windows)
 
 #### 2016 Standard Generation 2 Prerequisites
 
@@ -97,11 +98,9 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-Run `hv_win2016_g2.cmd` (Windows)
-
 ### Hyper-V Generation 2 Windows Server 2019 Standard Image
 
-Run `hv_win2019_std_g2.cmd` (Windows)
+Run `hv_win2019_std_g2.ps1` (Windows)
 
 #### 2019 Standard Generation 2 Prerequisites
 
@@ -121,11 +120,9 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-Run `hv_win2019_std_g2.cmd` (Windows)
-
 ### Hyper-V Generation 2 Windows Server 2019 Datacenter Image
 
-Run `hv_win2019_std_g2.cmd` (Windows)
+Run `hv_win2019_std_g2.ps1` (Windows)
 
 #### 2019 Datacenter Generation 2 Prerequisites
 
@@ -145,17 +142,6 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-Run `hv_win2019_dc_g2.cmd`
-
-### Hyper-V Generation 2 Windows Server 1809 Standard Image
-
-If you need changes For - prepare `secondary1809.iso` with folder structure:
-
-* ./extra/files/gen2-1809/Autounattend.xml     => /Autounattend.xml
-* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_winserver_1809_g2.cmd`
-
 ### Hyper-V Generation 2 Windows Server 1903 Standard Image
 
 If you need changes For - prepare `secondary1903.iso` with folder structure:
@@ -163,13 +149,22 @@ If you need changes For - prepare `secondary1903.iso` with folder structure:
 * ./extra/files/gen2-1903/Autounattend.xml     => /Autounattend.xml
 * ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
 
-Run `hv_winserver_1903_g2.cmd`
+Run `hv_winserver_1903_g2.ps1`
+
+### Hyper-V Generation 2 Windows Server 1909 Standard Image
+
+If you need changes For - prepare `secondary1909.iso` with folder structure:
+
+* ./extra/files/gen2-1909/Autounattend.xml     => /Autounattend.xml
+* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+Run `hv_winserver_1909_g2.ps1`
 
 ## Templates CentOS 7.x
 
 ### Hyper-V Generation 2 CentOS 7.7 Image
 
-Run `hv_centos77_g2.cmd`
+Run `hv_centos77_g2.ps1`
 
 ### Warnings - CentOS
 
@@ -184,11 +179,11 @@ Run `hv_centos77_g2.cmd`
 
 ### Vagrant support
 
-Experimental support for vagrant machines `hv_centos77_g2_vagrant.cmd`
+Experimental support for vagrant machines `hv_centos77_g2_vagrant.ps1`
 
 ### Hyper-V Generation 2 CentOS 7.7 Image with extra docker volume
 
-Run `hv_centos77_g2_docker.cmd`
+Run `hv_centos77_g2_docker.ps1`
 
 ### Warnings - CentOS Docker
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 1.2.0 2020-01-22
+
+* [BREAKING CHANGE] Windows Server 2019 Standard and Datacenter are supported as templates now
+* [BREAKING CHANGE] Switched from `cmd` into `powershell`
+* [Extra] reworked scripts (try/catch loops)
+* [Windows] added vagrant templates for Windows Server 2019 Std and Datacenter
+* [Windows] added `Windows Server 1909 Std`
+
 ## Version 1.1.0 2019-10-06
 
 * [BREAKING CHANGE] Windows Server machines (semi-annual editions) are supporting templates now
@@ -11,7 +19,7 @@
 ## Version 1.0.9 2019-09-30
 
 * [BREAKING CHANGE] - CentOS Machines now support templating and previous version creation
-  * all CentOS deploys now consists of main template file (./templates) and var_file (./variables). This will allow to have more than 'latest' version of release when needed.
+  * all CentOS deploys now consists of main template file (./templates) and var_file (./variables). This will allow to have more than 'latest' version of releases when needed.
 * [Extra] reworked scripts
 * [CentOS] Upgrade Zabbix repository (4.2)
 * [CentOS] Provision script now supports flags to install or not specific portion of packages.
