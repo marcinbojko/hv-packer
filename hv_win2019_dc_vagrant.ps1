@@ -18,7 +18,12 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   }
   try {
     $env:PACKER_LOG=$packer_log
+    packer --version
     packer build --force -var-file="$var_file" "$template_file"
+    if ($?) {
+      Write-Output "Calculating checksums"
+      Get-FileHash -Algorithm SHA256 -Path "./vbox/packer-windows-2019-dc-g2.box"|Out-File "./vbox/packer-windows-2019-dc-g2.box.sha256" -Verbose
+    }
   }
   catch {
     Write-Output "Packer build failed, exiting."

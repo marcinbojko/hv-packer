@@ -1,5 +1,9 @@
 # Build images
 
+# Get Start Time
+$startDTM = (Get-Date)
+
+# Variables
 $template_file="./templates/hv_win2019_g2_vagrant.json"
 $var_file="./variables/variables_win2019_std.json"
 $machine="Windows Server 2019 Standard Gen-2 Vagrant"
@@ -18,7 +22,12 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   }
   try {
     $env:PACKER_LOG=$packer_log
+    packer --version
     packer build --force -var-file="$var_file" "$template_file"
+    if ($?) {
+      Write-Output "Calculating checksums"
+      Get-FileHash -Algorithm SHA256 -Path "./vbox/packer-windows-2019-std-g2.box"|Out-File "./vbox/packer-windows-2019-std-g2.box.sha256" -Verbose
+    }
   }
   catch {
     Write-Output "Packer build failed, exiting."
@@ -30,3 +39,5 @@ else {
   exit (-1)
 }
 
+$endDTM = (Get-Date)
+Write-Host "[INFO]  - Elapsed Time: $(($endDTM-$startDTM).totalseconds) seconds" -ForegroundColor Yellow

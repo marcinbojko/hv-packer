@@ -74,12 +74,12 @@
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/scagent/1.0.3.1022/scvmmguestagent.1.0.3.1022.x64.tar",
-      "destination": "/tmp/scvmmguestagent.1.0.3.1022.x64.tar"
+      "source": "extra/files/gen2-centos/scagent/1.0.3.1026/scvmmguestagent.1.0.3.1026.x64.tar",
+      "destination": "/tmp/scvmmguestagent.1.0.3.1026.x64.tar"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/scagent/1.0.3.1022/install",
+      "source": "extra/files/gen2-centos/scagent/1.0.3.1026/install",
       "destination": "/tmp/install"
     },
     {

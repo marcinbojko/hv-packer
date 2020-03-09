@@ -1,5 +1,9 @@
 # Build images
 
+# Get Start Time
+$startDTM = (Get-Date)
+
+# Variables
 $template_file="./templates/hv_centos7_g2.json"
 $var_file="./variables/variables_centos77.json"
 $machine="CentOS 7.7"
@@ -18,6 +22,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   }
   try {
     $env:PACKER_LOG=$packer_log
+    packer --version
     packer build --force -var-file="$var_file" "$template_file"
   }
   catch {
@@ -30,3 +35,5 @@ else {
   exit (-1)
 }
 
+$endDTM = (Get-Date)
+Write-Host "[INFO]  - Elapsed Time: $(($endDTM-$startDTM).totalseconds) seconds" -ForegroundColor Yellow

@@ -1,8 +1,12 @@
 # Build images
 
+# Get Start Time
+$startDTM = (Get-Date)
+
+# Variables
 $template_file="./templates/hv_win2016_g2.json"
 $var_file="./variables/variables_win2016_std.json"
-$machine="Windows Server 2019 Standard Gen-2"
+$machine="Windows Server 2016 Standard Gen-2"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -18,6 +22,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   }
   try {
     $env:PACKER_LOG=$packer_log
+    packer --version
     packer build --force -var-file="$var_file" "$template_file"
   }
   catch {
@@ -30,3 +35,5 @@ else {
   exit (-1)
 }
 
+$endDTM = (Get-Date)
+Write-Host "[INFO]  - Elapsed Time: $(($endDTM-$startDTM).totalseconds) seconds" -ForegroundColor Yellow

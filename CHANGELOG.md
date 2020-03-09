@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.2.1 2020-03-09
+
+* [ALL] added checksum calculations to ps1 scripts
+* [Extra] added fix for TLS 1.2 being used in ps1 `extra` scripts
+* [Linux] upgrades SCVMM agent to version 1.0.3.1026
+* minor logic fixed in scripts, making them more verbose
+
 ## Version 1.2.0 2020-01-22
 
 * [BREAKING CHANGE] Windows Server 2019 Standard and Datacenter are supported as templates now
