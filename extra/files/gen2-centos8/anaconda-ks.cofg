@@ -1,0 +1,47 @@
+#version=RHEL8
+ignoredisk --only-use=sda
+autopart --type=lvm
+# Partition clearing information
+clearpart --none --initlabel
+# Use graphical install
+graphical
+# Use CDROM installation media
+cdrom
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_GB.UTF-8
+
+# Network information
+network  --bootproto=dhcp --device=enp0s3 --ipv6=auto --activate
+network  --hostname=localhost.localdomain
+repo --name="AppStream" --baseurl=file:///run/install/repo/AppStream
+# Root password
+rootpw --iscrypted $6$kivIgMEEjORaheG3$MTEQUVvZE0744qxUdXrSXfs/ePGYOVNGJv9aXVUyXRCiX3oizj69RF5Rw17npKPiltKgdepk0yO8/gzJQ2Se6/
+# X Window System configuration information
+xconfig  --startxonboot
+# Run the Setup Agent on first boot
+firstboot --enable
+# System services
+services --enabled="chronyd"
+# System timezone
+timezone Europe/Warsaw --isUtc --ntpservers=2.centos.pool.ntp.org,2.centos.pool.ntp.org,2.centos.pool.ntp.org,2.centos.pool.ntp.org
+
+%packages
+@^graphical-server-environment
+@guest-agents
+@headless-management
+@legacy-unix
+@system-tools
+
+%end
+
+%addon com_redhat_kdump --disable --reserve-mb='auto'
+
+%end
+
+%anaconda
+pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
+pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+%end

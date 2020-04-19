@@ -1,6 +1,6 @@
 Write-Output "Start Phase-5c - Cleaning/zeroing/compacting"
 Write-Output "Phase-5c.1: Cleaning updates.."
-
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # Clean WU downloads
 Stop-Service -Name wuauserv -Force
     if (Test-Path -Path c:\Windows\SoftwareDistribution\Download ) {

@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.2.2 2020-04-19
+
+* [Extra] added TLS 1.2 fixes for rest of Powershell scripts
+* [Extra] fixed problem with SCVMM agent not being installed (hardcoded name)
+* [Extra] added tune2fs 1% change for extra drives in `mkfs_device.sh`
+* [Extra] decreased priority for epel repository to 90 from 60
+* [Windows] Introduce new variable `update_timeout` to increase time between Windows Update cycles. Currently I couldn't find a stable way to check if previous update cycle completed before jumping into new one. Adding pauses causes less interference between phases.
+* improved documentation based on questions
+
 ## Version 1.2.1 2020-03-09
 
 * [ALL] added checksum calculations to ps1 scripts

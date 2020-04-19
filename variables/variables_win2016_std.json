@@ -11,5 +11,6 @@
   "output_vagrant": "./vbox/packer-windows-2016-std-g2.box",
   "vagrantfile_template": "./vagrant/hv_win2016_std.template",
   "sysprep_unattended": "./extra/files/gen2-2016/std/unattend.xml",
-  "vagrant_sysprep_unattended": "./extra/files/gen2-2016/std/unattend_vagrant.xml"
+  "vagrant_sysprep_unattended": "./extra/files/gen2-2016/std/unattend_vagrant.xml",
+  "upgrade_timeout": "240"
 }

@@ -1,4 +1,5 @@
 # Create Vagrant account
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # Disable UAC
 reg add HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /d 0 /t REG_DWORD /f /reg:64
 # Disable password complexity

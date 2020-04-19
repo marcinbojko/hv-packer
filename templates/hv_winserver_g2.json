@@ -76,14 +76,7 @@
       "type": "powershell",
       "elevated_user": "Administrator",
       "elevated_password": "password",
-      "script": "./extra/scripts/windows-updates.ps1",
-      "pause_before": "60s"
-    },
-    {
-      "type": "windows-restart",
-      "restart_timeout": "2h",
-      "pause_before": "60s",
-      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
+      "inline": ["Write-Host \"Pausing before next stage\";Start-Sleep -Seconds {{ user `upgrade_timeout` }}"]
     },
     {
       "type": "powershell",
@@ -97,6 +90,31 @@
       "restart_timeout": "2h",
       "pause_before": "60s",
       "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "Administrator",
+      "elevated_password": "password",
+      "inline": ["Write-Host \"Pausing before next stage\";Start-Sleep -Seconds {{ user `upgrade_timeout` }}"]
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "Administrator",
+      "elevated_password": "password",
+      "script": "./extra/scripts/windows-updates.ps1",
+      "pause_before": "60s"
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "2h",
+      "pause_before": "60s",
+      "restart_check_command": "powershell -command \"& {Write-Output 'restarted.'}\""
+    },
+    {
+      "type": "powershell",
+      "elevated_user": "Administrator",
+      "elevated_password": "password",
+      "inline": ["Write-Host \"Pausing before next stage\";Start-Sleep -Seconds {{ user `upgrade_timeout` }}"]
     },
     {
       "type": "powershell",
@@ -140,6 +158,7 @@
     "vm_name": "",
     "disk_size": "",
     "output_directory": "",
-    "secondary_iso_image": ""
+    "secondary_iso_image": "",
+    "upgrade_timeout": ""
   }
 }

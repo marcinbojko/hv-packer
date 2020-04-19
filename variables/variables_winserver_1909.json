@@ -7,5 +7,6 @@
   "vm_name": "packer-windows-1909-g2",
   "disk_size": "70000",
   "output_directory": "output-windows-1909-g2",
-  "secondary_iso_image": "./extra/files/gen2-1909/secondary1909.iso"
+  "secondary_iso_image": "./extra/files/gen2-1909/secondary1909.iso",
+  "upgrade_timeout": "240"
 }

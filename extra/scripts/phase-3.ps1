@@ -3,9 +3,10 @@
 
 # exit 0
 Write-Output "Start of Phase 3"
-    $puppet_version="5.5.18"
+    $puppet_version="5.5.19"
     # add your stuff here
     # add my myget source
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     try {
         choco source add -n=public -s"https://www.myget.org/F/public-choco" --priority=10
         # install puppet/stop/clean

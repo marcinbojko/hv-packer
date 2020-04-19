@@ -41,7 +41,7 @@ fi
 echo "Provisioning phase 1 - essential packages and EPEL"
 yum -y makecache fast
 yum -y -e 0 install epel-release yum-plugin-priorities yum-utils yum-cron yum-plugin-versionlock mc wget curl
-yum-config-manager -y -q -e 0 --enable epel --setopt="epel.priority=60"|grep -i "enabled ="
+yum-config-manager -y -q -e 0 --enable epel --setopt="epel.priority=90"|grep -i "enabled ="
 
 if [ "$INSTALL_UPDATES" == "true" ]; then
     echo "Provisioning phase 1 - system updates"
@@ -134,7 +134,7 @@ if [ "$INSTALL_HYPERV" == "true" ]; then
   if [ -e /tmp/install ]; then
     cd /tmp||exit
     chmod +x /tmp/install
-    /tmp/install /tmp/scvmmguestagent.1.0.3.1022.x64.tar
+    /tmp/install "$(ls /tmp/scvmm*.x64.tar)"
   fi
 else
   echo "Provisioning phase 3 - Skipping Hyper-V/SCVMM Daemons"
