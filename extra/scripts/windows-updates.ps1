@@ -3,6 +3,10 @@
 # For test run disable updates
 # exit
 Write-Output "Start Phase-4 - Updates"
+
+Write-Output "Enable TLS 1.2"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 try {
     Write-Output "Start Phase-4 - Installing Nuget"
     Get-PackageProvider -Name "Nuget" -ForceBootstrap -Verbose -ErrorAction Stop
