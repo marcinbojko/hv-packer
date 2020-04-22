@@ -73,13 +73,15 @@ Be aware, turning off latest System Center Virtual Machine Agent will cause Syst
 * adjust `/files/provision.sh` to modify package's versions/servers.
 * change `"provision_script_options"` variable to:
   * -p (true/false) - switch Install Puppet on/off
-  * -w (true/false) - switch Install Webmin on/off
+  * -w (true/false) - switch Install Webmin on/off (CentOS7 only)
   * -h (true/false) - switch Install Hyper-V integration services on/off
   * -u (true/false) - switch yum update all on/off (usable when creating previous than `latest` version of OS)
+  * -z (true/false) - switch Zabbix-agent installation
+  * -c (true/false) - switch Cockpit installation (CentOS8 only)
 Example:
 
 ```json
-"provision_script_options": "-p false -u true -w true -h false"
+"provision_script_options": "-p false -u true -w true -h false -z false"
 ```
 
 * `prepare_neofetch.sh` -  default banner during after the login - change required fields you'd like to see in `provision.sh`

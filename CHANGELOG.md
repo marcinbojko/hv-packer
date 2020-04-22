@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.3.1 2020-04-22
+
+* Updated `README.md`
+
 ## Version 1.3.0 2020-04-22
 
 * [Extra] added parameter for zabbix-agent installation (-z false)
