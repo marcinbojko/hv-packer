@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.3.0 2020-04-22
+
+* [Extra] added parameter for zabbix-agent installation (-z false)
+* [Extra] according to provision options firewalld rules are not added or not based on install packages decision. This means - if you no longer need zabbix-agent package, firewalld rules for this package won't be created
+* [Linux] added variable `boot_command` to be able to parametrize it via variables file
+* [CentOS] Added CentOS 8.1 support
+* [CentOS] Added CentOS 8.1 Vagrant support
+* [CentOS] Thinned CentOS 7 packages, X-Windows System is not installed by default. Default image size decreased from ~6 GB to ~3.5GB
+
 ## Version 1.2.2 2020-04-19
 
 * [Extra] added TLS 1.2 fixes for rest of Powershell scripts

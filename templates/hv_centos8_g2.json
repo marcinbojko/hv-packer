@@ -34,47 +34,42 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/webmin.repo",
-      "destination": "/tmp/webmin.repo"
-    },
-    {
-      "type": "file",
-      "source": "extra/files/gen2-centos/puppet.conf",
+      "source": "extra/files/gen2-centos8/puppet.conf",
       "destination": "/tmp/puppet.conf"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/motd.sh",
+      "source": "extra/files/gen2-centos8/motd.sh",
       "destination": "/tmp/motd.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/provision.sh",
+      "source": "extra/files/gen2-centos8/provision.sh",
       "destination": "/tmp/provision.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/prepare_neofetch.sh",
+      "source": "extra/files/gen2-centos8/prepare_neofetch.sh",
       "destination": "/tmp/prepare_neofetch.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/zeroing.sh",
+      "source": "extra/files/gen2-centos8/zeroing.sh",
       "destination": "/tmp/zeroing.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/uefi.sh",
+      "source": "extra/files/gen2-centos8/uefi.sh",
       "destination": "/usr/local/bin/uefi.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/scagent/1.0.3.1026/scvmmguestagent.1.0.3.1026.x64.tar",
+      "source": "extra/files/gen2-centos8/scagent/1.0.3.1026/scvmmguestagent.1.0.3.1026.x64.tar",
       "destination": "/tmp/scvmmguestagent.1.0.3.1026.x64.tar"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/scagent/1.0.3.1026/install",
+      "source": "extra/files/gen2-centos8/scagent/1.0.3.1026/install",
       "destination": "/tmp/install"
     },
     {
@@ -96,10 +91,6 @@
       "chmod +x /tmp/prepare_neofetch.sh",
       "/tmp/prepare_neofetch.sh",
       "systemctl set-default multi-user.target",
-      "systemctl disable initial-setup-text",
-      "systemctl disable initial-setup-graphical",
-      "systemctl stop initial-setup-text",
-      "systemctl stop initial-setup-graphical",
       "/bin/rm -f /etc/ssh/*key*",
       "chmod +x /tmp/zeroing.sh",
       "/tmp/zeroing.sh",

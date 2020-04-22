@@ -56,9 +56,10 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   |Repository|Package|switch|
   |----------|------------|---|
   |Epel 7    |            |no|
-  |Zabbix 4.2|zabbix-agent|no|
-  |Puppet 5  |puppet-agent|can be switch off by `-p false`|
-  |Webmin    |webmin|can be switched off by setting `-w false`|
+  |Zabbix 4.2|zabbix-agent|can be switched off by `-z false`|
+  |Puppet 5  |puppet-agent|can be switched off by `-p false`|
+  |Webmin (CentOS7)|webmin|can be switched off by setting `-w false`|
+  |Cockpit (CentOS8) |Cockpit|can be switched off by setting `-c false`|
   |-         |scvmmagent| can be switched off by setting `-h false`|
   |neofetch  |neofetch|no|
 
@@ -169,13 +170,13 @@ If you need changes For - prepare `secondary1909.iso` with folder structure:
 
 Run `hv_winserver_1909.ps1`
 
-## Templates CentOS 7.x
+## Templates CentOS 8.x
 
-### Hyper-V Generation 2 CentOS 7.7 Image
+### Hyper-V Generation 2 CentOS 8.1 Image
 
-Run `hv_centos77.ps1`
+Run `hv_centos81.ps1`
 
-### Warnings - CentOS
+### Warnings - CentOS 8
 
 * if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
 * if needed - change `iso_url` variable to a proper iso name
@@ -185,7 +186,23 @@ Run `hv_centos77.ps1`
 * for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 * for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Vagrant support
+### Vagrant support - CentOS 8
+
+Experimental support for vagrant machines `hv_centos81_vagrant.ps1`
+
+## Templates CentOS 7.x
+
+### Warnings - CentOS 7
+
+* if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+* if needed - change `iso_url` variable to a proper iso name
+* packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+* credentials for Windows machines: Administrator/password (removed after sysprep)
+* credentials for Linux machines: root/password
+* for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+* for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+
+### Vagrant support - CentOS 7
 
 Experimental support for vagrant machines `hv_centos77_vagrant.ps1`
 
