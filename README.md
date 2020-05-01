@@ -86,29 +86,7 @@ Example:
 
 * `prepare_neofetch.sh` -  default banner during after the login - change required fields you'd like to see in `provision.sh`
 
-## Templates Windows 2016
-
-### Hyper-V Generation 2 Windows Server 2016 Standard Image
-
-Run `hv_win2016_std.ps1` (Windows)
-
-#### 2016 Standard Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary.iso` with folder structure:
-
-* ./extra/files/gen2-2016/Autounattend.xml     => /Autounattend.xml
-* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
-
-```xml
-<InstallFrom>
-    <MetaData wcm:action="add">
-        <Key>/IMAGE/NAME </Key>
-        <Value>Windows Server 2016 SERVERSTANDARD</Value>
-    </MetaData>
-</InstallFrom>
-```
+## Templates Windows 2019
 
 ### Hyper-V Generation 2 Windows Server 2019 Standard Image
 
@@ -154,6 +132,32 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
+## Templates Windows 2016
+
+### Hyper-V Generation 2 Windows Server 2016 Standard Image
+
+Run `hv_win2016_std.ps1` (Windows)
+
+#### 2016 Standard Generation 2 Prerequisites
+
+For Generation 2 prepare `secondary.iso` with folder structure:
+
+* ./extra/files/gen2-2016/Autounattend.xml     => /Autounattend.xml
+* ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
+
+```xml
+<InstallFrom>
+    <MetaData wcm:action="add">
+        <Key>/IMAGE/NAME </Key>
+        <Value>Windows Server 2016 SERVERSTANDARD</Value>
+    </MetaData>
+</InstallFrom>
+```
+
+## Windows Server Images
+
 ### Hyper-V Generation 2 Windows Server 1903 Standard Image
 
 If you need changes For - prepare `secondary1903.iso` with folder structure:
@@ -194,24 +198,6 @@ Experimental support for vagrant machines `hv_centos81_vagrant.ps1`
 
 ## Templates CentOS 7.x
 
-### Warnings - CentOS 7
-
-* if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-* if needed - change `iso_url` variable to a proper iso name
-* packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-* credentials for Windows machines: Administrator/password (removed after sysprep)
-* credentials for Linux machines: root/password
-* for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-* for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-
-### Vagrant support - CentOS 7
-
-Experimental support for vagrant machines `hv_centos77_vagrant.ps1`
-
-### Hyper-V Generation 2 CentOS 7.7 Image with extra docker volume
-
-Run `hv_centos77_docker.ps1`
-
 ### Warnings - CentOS Docker
 
 * if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
@@ -222,6 +208,29 @@ Run `hv_centos77_docker.ps1`
 * for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 * for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 * no `docker` repo will be added  and no `docker-related` packages will be installed - this build creates and mount separated volume (size specified by variable) for docker
+
+### Hyper-V Generation 2 CentOS 7.8
+
+Run `hv_centos78_docker.ps1`
+
+### Hyper-V Generation 2 CentOS 7.8 Image with extra docker volume
+
+Run `hv_centos78_docker.ps1`
+
+### Hyper-V Generation 2 CentOS 7.7
+
+Run `hv_centos77_docker.ps1`
+
+### Hyper-V Generation 2 CentOS 7.7 Image with extra docker volume
+
+Run `hv_centos77_docker.ps1`
+
+### Vagrant support - CentOS 7.x
+
+Experimental support for vagrant machines `hv_centos78_vagrant.ps1` for CentOS 7.8
+Experimental support for vagrant machines `hv_centos77_vagrant.ps1` for CentOS 7.7
+
+
 
 ## Known issues
 

@@ -130,7 +130,9 @@ echo "Provisioning phase 3 - Starting: Extra packages, timezones, neofetch, fire
 echo "Provisioning phase 3 - Timezone"
 timedatectl set-timezone Europe/Copenhagen --no-ask-password
 echo "Provisioning phase 3 - Extra Packages or groups"
-dnf -y install chrony htop atop iftop iotop firewalld nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu tmux multitail neofetch
+dnf -y install chrony htop atop iftop iotop firewalld nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu tmux multitail neofetch rkhunter
+echo "Provisioning phase 3 - RK hunter"
+rkhunter --propupd
 # chronyd
 systemctl start chronyd
 systemctl enable chronyd

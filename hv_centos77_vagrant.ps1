@@ -6,7 +6,7 @@ $startDTM = (Get-Date)
 # Variables
 $template_file="./templates/hv_centos7_g2_vagrant.json"
 $var_file="./variables/variables_centos77.json"
-$machine="CentOS 7.7 Vagrant"
+$machine="CentOS 7.7 1908 Vagrant"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {

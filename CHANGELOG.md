@@ -1,7 +1,10 @@
 # Changelog
 
-## Version 1.3.1 2020-04-22
+## Version 1.4.0 2020-05-01
 
+* [Extra] added `rkhunter` package to `provision.sh` script
+* [CentOS] Added CentOS 7.8 2003 support
+* [CentOS] Disabled updates `-u false` in CentOS 7.7 template
 * Updated `README.md`
 
 ## Version 1.3.0 2020-04-22
