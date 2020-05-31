@@ -6,10 +6,10 @@ param (
   [string] $configDockerLocation = "C:\ProgramData\Docker\config"
 )
 
-Write-Output "Start Phase 5b-Docker"
-Write-Output "Required Version of docker is: $requiredVersion"
-Write-Output "Install compose is set to: $installCompose"
-Write-Output "Docker location is set to: $dockerLocation"
+Write-Output "Phase 5 [START] - Start Phase 5b-Docker"
+Write-Output "Phase 5 [INFO] - Required Version of docker is: $requiredVersion"
+Write-Output "Phase 5 [INFO] - Install compose is set to: $installCompose"
+Write-Output "Phase 5 [INFO] - Docker location is set to: $dockerLocation"
 
 try {
   Write-Output "Phase 5b-docker - Install Dockermsftprovider"
@@ -34,7 +34,7 @@ catch {
 
 if ($installCompose) {
   try {
-    choco install docker-compose -y
+    choco install docker-compose -y --no-progress --limit-output
   }
   catch {
     Write "Phase 5b-docker failed - Install docker-compose problem"

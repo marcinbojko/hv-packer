@@ -9,6 +9,7 @@ $choco_install_count_max=99
 
 function whichWindows {
 $version=(Get-WMIObject win32_operatingsystem).name
+ if ($version) {
     switch -Regex ($version) {
         '(Server 2016)' {
             $global:os="2016"
@@ -44,25 +45,32 @@ $version=(Get-WMIObject win32_operatingsystem).name
                 }
         }
         '(Windows 10)' {
-            Write-Output 'Windows 10 found'
+            Write-Output 'Phase 1 [INFO] - Windows 10 found'
             $global:os="10"
         }
         default
             {Write-Output "unknown"}
     }
+ }
+ else {
+     throw "Buildnumber empty, cannot continue"
+ }
 }
 function printWindowsVersion {
     if ($global:os) {
-        Write-Output "Windows Server "$global:os" found."
+        Write-Output "Phase 1 [INFO] - Windows Server "$global:os" found."
     }
     else {
-        Write-Output "Unknown version of Windows Server found."
+        Write-Output "Phase 1 [INFO] - Unknown version of Windows Server found."
     }
 }
-whichWindows
+
 # Phase 1 - Mandatory generic stuff
-Write-Output "Start of Phase-1"
+Write-Output "Phase 1 [START] - Start of Phase 1"
 Import-Module ServerManager
+# let's check which windows
+whichWindows
+
 #2016/1709/1803/1903/1809
 if ($global:os -notlike '2019') {
    # Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools
@@ -89,7 +97,7 @@ try {
     Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)" -Verbose
 }
 catch {
-    Write-Output "Phase 1 - setting firewall went wrong"
+    Write-Output "Phase 1 [ERROR] - setting firewall went wrong"
 }
 
 # Terminal services and sysprep registry entries
@@ -100,7 +108,7 @@ try {
     Set-ItemProperty -Path 'HKLM:\SYSTEM\Setup\Status\SysprepStatus'  -Name  'GeneralizationState' -Value 7 -Verbose -Force
 }
 catch {
-    Write-Output "Phase 1 - setting registry went wrong"
+    Write-Output "Phase 1 [ERROR] - setting registry went wrong"
 }
 
 # remove Windows Defender (2016)
@@ -110,7 +118,7 @@ if ($global:os -eq '2016') {
       Remove-WindowsFeature -Name Windows-Defender-Features -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
   }
   catch {
-      Write-Output "Phase 1 - removing Windows Defender went wrong, not critical"
+      Write-Output "Phase 1 [INFO] - removing Windows Defender went wrong, not critical"
   }
 }
 
@@ -119,32 +127,32 @@ if ($global:os -eq '2019') {
         Remove-WindowsFeature -Name Windows-Defender -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
     }
     catch {
-        Write-Output "Phase 1 - removing Windows Defender went wrong, not critical"
+        Write-Output "Phase 1 [WARN] - removing Windows Defender went wrong, not critical"
     }
   }
 # Install chocolatey
 do {
     try {
-        Write-Output "Phase 1 - installing Chocolatey, attempt $choco_install_count of $choco_install_count_max"
+        Write-Output "Phase 1 [INFO] - installing Chocolatey, attempt $choco_install_count of $choco_install_count_max"
         Get-ExecutionPolicy
         Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force -Verbose;
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) -ErrorAction Stop
-        Write-Output "Phase 1 - installing Chocolatey exit code is: $LASTEXITCODE"
+        Write-Output "Phase 1 [INFO] - installing Chocolatey exit code is: $LASTEXITCODE"
         if ($LASTEXITCODE -eq 0) {
             $choco_install_success=$true
-            Write-Output "Phase 1 - Chocolatey install succesful"
+            Write-Output "Phase 1 [INFO] - Chocolatey install succesful"
         }
     }
     catch {
-        Write-Output "Phase 1 - Chocolatey install problem, attempt $choco_install_count of $choco_install_count_max"
+        Write-Output "Phase 1 [WARN]- Chocolatey install problem, attempt $choco_install_count of $choco_install_count_max"
     }
     $choco_install_count++
   }
 until ($choco_install_count -eq $choco_install_count_max -or $choco_install_success)
 
 if (-not $choco_install_success) {
-    Write-Output "Phase 1 - Chocolatey install problem, critical, exiting"
+    Write-Output "Phase 1 [ERROR] - Chocolatey install problem, critical, exiting"
     exit (1)
 }
 
@@ -153,5 +161,5 @@ if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem') {
     Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem'-name "LongPathsEnabled" -Value 1 -Verbose -Force
 }
 
-Write-Output "End of Phase 1"
+Write-Output "Phase 1 [END] - End of Phase 1"
 exit 0

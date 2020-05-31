@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.4.1 2020-05-31
+
+* [Extra] added parameters to `phase3.ps1` script
+* [Extra] unified verbosity in phases output
+
 ## Version 1.4.0 2020-05-01
 
 * [Extra] added `rkhunter` package to `provision.sh` script

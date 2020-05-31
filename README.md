@@ -42,12 +42,31 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   |Package|Version|
   |-------|-------|
-  |puppet-agent|5.5.19|
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
+
 * latest Nuget poweshell module
-* puppet agent settings will be customized (`server=foreman.spcph.local`). Please adjust it (`/extra/scripts/phase-3.ps1`) to suit your needs. Puppet is set to be cleared and stopped after generalize phase
+* `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
+  * `Version` - puppet chocolatey version, for example "5.5.20"
+  * `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
+  * `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
+
+  Example of usage:
+
+  `.\phase3.ps1 -Version 5.5.20 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
+
+  Puppet is set to clear any temp SSL keys and to be stopped after generalize phase
+
+* `phase5b-docker.ps1` - Docker settings can be customised
+  * `requiredVersion` - which version of docker module to install - defaults to 19.03.1
+  * `installCompose` ($true/$false) - install docker-compose from chocolatey packages
+  * `dockerLocation` - of set, will default docker images and settings there. On empty, docker location is not being set.
+  * `configDockerLocation` - default place for docker's config file
+
+  Example of usage
+
+  `.\phase5b-docker.ps1 -requiredVersion "19.03.1" -installCompose $true -dockerLocation "d:\docker" -configDockerLocation "C:\ProgramData\Docker\config"`
 
 ### Linux Machines
 
@@ -66,9 +85,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 * [Optional] Linux machine with separated disk for docker
 * [Optional] Linux machine for vagrant
 
-Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
-
-### Info
+  Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
 
 * adjust `/files/provision.sh` to modify package's versions/servers.
 * change `"provision_script_options"` variable to:
@@ -78,11 +95,12 @@ Be aware, turning off latest System Center Virtual Machine Agent will cause Syst
   * -u (true/false) - switch yum update all on/off (usable when creating previous than `latest` version of OS)
   * -z (true/false) - switch Zabbix-agent installation
   * -c (true/false) - switch Cockpit installation (CentOS8 only)
-Example:
 
-```json
-"provision_script_options": "-p false -u true -w true -h false -z false"
-```
+  Example:
+
+  ```json
+  "provision_script_options": "-p false -u true -w true -h false -z false"
+   ```
 
 * `prepare_neofetch.sh` -  default banner during after the login - change required fields you'd like to see in `provision.sh`
 
@@ -156,7 +174,7 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-## Windows Server Images
+## Templates Windows Server
 
 ### Hyper-V Generation 2 Windows Server 1903 Standard Image
 
