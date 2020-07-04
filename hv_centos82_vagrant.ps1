@@ -4,9 +4,9 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_centos7_g2_docker.json"
-$var_file="./variables/variables_centos78.json"
-$machine="CentOS 7.8 2003 Docker"
+$template_file="./templates/hv_centos8_g2_vagrant.json"
+$var_file="./variables/variables_centos82.json"
+$machine="CentOS 8.2 Vagrant"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -24,6 +24,10 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
     $env:PACKER_LOG=$packer_log
     packer version
     packer build --force -var-file="$var_file" "$template_file"
+    if ($?) {
+      Write-Output "Calculating checksums"
+      Get-FileHash -Algorithm SHA256 -Path "./vbox/packer-centos-82-g2.box"|Out-File "./vbox/packer-centos-82-g2.box.sha256" -Verbose
+    }
   }
   catch {
     Write-Output "Packer build failed, exiting."

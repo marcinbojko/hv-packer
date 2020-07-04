@@ -1,12 +1,8 @@
 # Build images
 
-# Get Start Time
-$startDTM = (Get-Date)
-
-# Variables
-$template_file="./templates/hv_centos7_g2_docker.json"
-$var_file="./variables/variables_centos78.json"
-$machine="CentOS 7.8 2003 Docker"
+$template_file="./templates/hv_winserver_g2.json"
+$var_file="./variables/variables_winserver_2004.json"
+$machine="Windows Server 2004 Standard Gen-2"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -35,5 +31,3 @@ else {
   exit (-1)
 }
 
-$endDTM = (Get-Date)
-Write-Host "[INFO]  - Elapsed Time: $(($endDTM-$startDTM).totalseconds) seconds" -ForegroundColor Yellow

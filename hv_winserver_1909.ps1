@@ -18,7 +18,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   }
   try {
     $env:PACKER_LOG=$packer_log
-    packer --version
+    packer version
     packer build --force -var-file="$var_file" "$template_file"
   }
   catch {

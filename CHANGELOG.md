@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.4.2 2020-07-04
+
+* [BREAKING CHANGE] added support for packer >= 1.6.0. This also means previous versions of packer are not supported anymore.
+* [Windows] added `Windows Server 2004 Std` support
+* [CentOS] added `CentOS 8.2` support
+* [CentOS] added `CentOS 8.2 Vagrant` support
+* [Extra] smaller scripts improvements
+* [Extra] bumped `docker`  version to 19.03.05 - Windows
+* [Extra] bumped `puppet-agent` version to 5.5.20 - Windows
+
 ## Version 1.4.1 2020-05-31
 
 * [Extra] added parameters to `phase3.ps1` script
@@ -8,7 +18,7 @@
 ## Version 1.4.0 2020-05-01
 
 * [Extra] added `rkhunter` package to `provision.sh` script
-* [CentOS] Added CentOS 7.8 2003 support
+* [CentOS] Added `CentOS 7.8 2003` support
 * [CentOS] Disabled updates `-u false` in CentOS 7.7 template
 * Updated `README.md`
 
@@ -17,8 +27,8 @@
 * [Extra] added parameter for zabbix-agent installation (-z false)
 * [Extra] according to provision options firewalld rules are not added or not based on install packages decision. This means - if you no longer need zabbix-agent package, firewalld rules for this package won't be created
 * [Linux] added variable `boot_command` to be able to parametrize it via variables file
-* [CentOS] Added CentOS 8.1 support
-* [CentOS] Added CentOS 8.1 Vagrant support
+* [CentOS] Added `CentOS 8.1` support
+* [CentOS] Added `CentOS 8.1 Vagrant` support
 * [CentOS] Thinned CentOS 7 packages, X-Windows System is not installed by default. Default image size decreased from ~6 GB to ~3.5GB
 
 ## Version 1.2.2 2020-04-19

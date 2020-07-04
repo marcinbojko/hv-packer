@@ -1,0 +1,16 @@
+{
+    "iso_url": "http://ftp.man.poznan.pl/pub/centos/8.2.2004/isos/x86_64/CentOS-8.2.2004-x86_64-dvd1.iso",
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "c87a2d81d67bbaeaf646aea5bedd70990078ec252fc52f5a7d65ff609871e255",
+    "vm_name": "packer-centos82-g2",
+    "disk_size": "70000",
+    "disk_additional_size":"150000",
+    "switch_name": "vSwitch",
+    "output_directory": "output-centos82",
+    "output_vagrant": "./vbox/packer-centos-82-g2.box",
+    "vlan_id": "",
+    "vagrantfile_template": "./vagrant/hv_centos82_g2.template",
+    "ssh_password": "password",
+    "provision_script_options": "",
+    "boot_command": "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS-8-2-2004-x86_64-dvd inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-centos8/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>"
+  }

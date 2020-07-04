@@ -1,0 +1,280 @@
+variables:
+  packer_version: "1.6.0"
+  dind: 19.03-dind
+stages:
+  - get-packer
+  - centos7-packer-validate
+  - centos8-packer-validate
+  - windows2016-packer-validate
+  - windows2019-packer-validate
+  - windowsserver-packer-validate
+get-packer:
+  stage: get-packer
+  image: alpine
+  services:
+    - docker:$dind
+  artifacts:
+    expire_in: 1d
+    paths:
+      - packer
+  script:
+    - echo "Fetching packer"
+    - wget https://releases.hashicorp.com/packer/"$packer_version"/packer_"$packer_version"_linux_amd64.zip
+    - unzip packer_"$packer_version"_linux_amd64.zip
+    - chmod +x packer
+    - rm -rf packer_"$packer_version"_linux_amd64.zip
+  tags:
+    - docker
+    - shared
+centos77:
+  stage: centos7-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos7_g2.json"
+    - export var_file="./variables/variables_centos77.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos77-docker:
+  stage: centos7-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos7_g2_docker.json"
+    - export var_file="./variables/variables_centos77.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos77-vagrant:
+  stage: centos7-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos7_g2_vagrant.json"
+    - export var_file="./variables/variables_centos77.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos78:
+  stage: centos7-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos7_g2.json"
+    - export var_file="./variables/variables_centos78.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos78-docker:
+  stage: centos7-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos7_g2_docker.json"
+    - export var_file="./variables/variables_centos78.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos78-vagrant:
+  stage: centos7-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos7_g2_vagrant.json"
+    - export var_file="./variables/variables_centos78.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos81:
+  stage: centos8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos8_g2.json"
+    - export var_file="./variables/variables_centos81.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos81-vagrant:
+  stage: centos8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos8_g2_vagrant.json"
+    - export var_file="./variables/variables_centos81.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos82:
+  stage: centos8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos8_g2.json"
+    - export var_file="./variables/variables_centos82.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+centos82-vagrant:
+  stage: centos8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_centos8_g2_vagrant.json"
+    - export var_file="./variables/variables_centos82.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windows2016-std:
+  stage: windows2016-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2016_g2.json"
+    - export var_file="./variables/variables_win2016_std.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windows2019-std:
+  stage: windows2019-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2019_g2.json"
+    - export var_file="./variables/variables_win2019_std.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windows2019-std-vagrant:
+  stage: windows2019-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2019_g2_vagrant.json"
+    - export var_file="./variables/variables_win2019_std.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windows2019-dc:
+  stage: windows2019-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2019_g2.json"
+    - export var_file="./variables/variables_win2019_dc.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windows2019-dc-vagrant:
+  stage: windows2019-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2019_g2_vagrant.json"
+    - export var_file="./variables/variables_win2019_dc.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windowsserver1903:
+  stage: windowsserver-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_winserver_g2.json"
+    - export var_file="./variables/variables_winserver_1903.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windowsserver1909:
+  stage: windowsserver-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_winserver_g2.json"
+    - export var_file="./variables/variables_winserver_1909.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+windowsserver2004:
+  stage: windowsserver-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_winserver_g2.json"
+    - export var_file="./variables/variables_winserver_2004.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared

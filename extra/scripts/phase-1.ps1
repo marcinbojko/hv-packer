@@ -42,14 +42,21 @@ $version=(Get-WMIObject win32_operatingsystem).name
                         $global:os="1909"
                         printWindowsVersion
                     }
+                    '19041' {
+                        $global:os="2004"
+                        printWindowsVersion
+                    }
                 }
         }
         '(Windows 10)' {
             Write-Output 'Phase 1 [INFO] - Windows 10 found'
             $global:os="10"
+            printWindowsVersion
         }
-        default
-            {Write-Output "unknown"}
+        default {
+            Write-Output "unknown"
+            printWindowsVersion
+        }
     }
  }
  else {
@@ -67,14 +74,15 @@ function printWindowsVersion {
 
 # Phase 1 - Mandatory generic stuff
 Write-Output "Phase 1 [START] - Start of Phase 1"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Import-Module ServerManager
 # let's check which windows
 whichWindows
 
-#2016/1709/1803/1903/1809
-if ($global:os -notlike '2019') {
-   # Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools
-}
+#2016/1709/1803/1903/1909/2004
+# if ($global:os -notlike '2019') {
+#    # Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools
+# }
 # 1709/1803/1809/1903/2019
 if ($global:os -notlike '2016') {
     Enable-NetFirewallRule -DisplayGroup "Windows Defender Firewall Remote Management" -Verbose

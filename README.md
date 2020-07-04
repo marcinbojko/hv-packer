@@ -1,11 +1,11 @@
-# Set of packer scripts to create Hyper-V VMs
+# Set of packer templates to create Microft Hyper-V virtual machines
 
 ## Requirements
 
-* packer <=`1.5.4`. Do not use packer below 1.5.1. For previous packer versions use previous releases from this repository
+* packer <=`1.6.0`. Do not use packer below 1.6.0. For previous packer versions use previous releases from this repository
 * Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 * firewall exceptions for `packer` http server (look down below)
-* [OPTIONAL] Vagrant >= `2.2.5` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
+* [OPTIONAL] Vagrant >= `2.2.9` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 * be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 
 ## Usage
@@ -13,7 +13,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.5.5 -y
+choco install packer --version=1.6.0 -y
 ```
 
 ### Add firewal exclusions for TCP ports 8000-9000 (default range)
@@ -248,8 +248,6 @@ Run `hv_centos77_docker.ps1`
 Experimental support for vagrant machines `hv_centos78_vagrant.ps1` for CentOS 7.8
 Experimental support for vagrant machines `hv_centos77_vagrant.ps1` for CentOS 7.7
 
-
-
 ## Known issues
 
 ### I have general problem not covered here
@@ -262,7 +260,7 @@ Sure. If I can ask - create your PR in smaller sizes, this is repo used for my w
 
 ### Infamous UEFI/Secure boot WIndows implementation
 
-During the deployment secure keys are stored in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
+During the deployment secure keys are stored in `*.vmcx` file and are separated from `*.vhdx` file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
 In manual setup you can run it as a part of your deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
 
 ### ~~On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react~~
