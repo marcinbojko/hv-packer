@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.4.3 2020-09-25
+
+* [CentOS] bump SystemCenter Agent to 1.0.3.1028
+* [CentOS] bump Zabbix repository version to 4.4
+* [CentOS] fixes in `provision.sh` script for CentOS7/CentOS8
+* [Windows] upgrade `puppet-agent` package to version 5.5.21
+
 ## Version 1.4.2 2020-07-04
 
 * [BREAKING CHANGE] added support for packer >= 1.6.0. This also means previous versions of packer are not supported anymore.

@@ -4,7 +4,7 @@
 param(
     [Parameter()]
     [ValidateNotNullOrEmpty()]
-    [string]$Version="5.5.20",
+    [string]$Version="5.5.21",
     [Parameter()]
     [ValidateNotNullOrEmpty()]
     [ValidateSet('true','false','$true','$false','0','1')]

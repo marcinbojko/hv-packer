@@ -154,6 +154,7 @@ do {
     }
     catch {
         Write-Output "Phase 1 [WARN]- Chocolatey install problem, attempt $choco_install_count of $choco_install_count_max"
+        Sleep 1
     }
     $choco_install_count++
   }
@@ -166,7 +167,7 @@ if (-not $choco_install_success) {
 
 #Remove 260 Character Path Limit
 if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem') {
-    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem'-name "LongPathsEnabled" -Value 1 -Verbose -Force
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -name "LongPathsEnabled" -Value 1 -Verbose -Force
 }
 
 Write-Output "Phase 1 [END] - End of Phase 1"

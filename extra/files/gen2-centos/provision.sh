@@ -1,4 +1,5 @@
 #!/bin/bash
+
 INSTALL_UPDATES=true
 INSTALL_PUPPET=true
 INSTALL_HYPERV=true
@@ -6,9 +7,9 @@ INSTALL_WEBMIN=true
 INSTALL_ZABBIX=true
 STAMP_FILE="/etc/packerinfo"
 
-usage() { echo "Usage: $0 [-u <true|false> INSTALL_UPDATES ] [-p <true|false> INSTALL_PUPPET] [-w <true|false> INSTALL_WEBMIN] [-h <true|false> INSTALL_HYPERV] " 1>&2; }
+usage() { echo "Usage: $0 [-u <true|false> INSTALL_UPDATES ] [-p <true|false> INSTALL_PUPPET] [-w <true|false> INSTALL_WEBMIN] [-h <true|false> INSTALL_HYPERV] [-z <true|false> INSTALL_ZABBIX]" 1>&2; }
 
-while getopts :u:p:h:w:  option
+while getopts :u:p:h:w:z:  option
     do
       case "${option}"
       in
@@ -81,13 +82,17 @@ fi
 # zabbix
 if [ "$INSTALL_ZABBIX" == true ]; then
   echo "Provisioning phase 2 - Zabbix agent"
-  # zabbix 4.2 repository
-  yum -y -e 0 install https://repo.zabbix.com/zabbix/4.2/rhel/7/x86_64/zabbix-release-4.2-2.el7.noarch.rpm
+  # zabbix 4.4 repository
+  yum -y -e 0 install https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
   yum-config-manager -y -q --disable zabbix-non-supported|grep -i "enabled ="
   yum-config-manager -y -q --enable zabbix --setopt="zabbix.priority=20"|grep -i "enabled ="
   yum -y -e 0 makecache fast
   yum -y -e 0 install zabbix-agent
   systemctl enable zabbix-agent
+  mkdir -p /etc/systemd/system/zabbix-agent.service.d
+  touch /etc/systemd/system/zabbix-agent.service.d/override.conf
+  printf "[Service]\nUser=root\nGroup=root\n" >/etc/systemd/system/zabbix-agent.service.d/override.conf
+  systemctl daemon-reload
 else
   echo "Provisioning phase 2 - skipping Zabbix agent"
 fi

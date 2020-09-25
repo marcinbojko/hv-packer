@@ -8,7 +8,7 @@ STAMP_FILE="/etc/packerinfo"
 
 usage() { echo "Usage: $0 [-u <true|false> INSTALL_UPDATES ] [-p <true|false> INSTALL_PUPPET] [-w <true|false> INSTALL_COCKPIT] [-h <true|false> INSTALL_HYPERV]  [-z <true|false> INSTALL_ZABBIX]" 1>&2; }
 
-while getopts :u:p:h:w:  option
+while getopts :u:p:h:w:z:  option
     do
       case "${option}"
       in
@@ -90,8 +90,8 @@ fi
 # zabbix
 if [ "$INSTALL_ZABBIX" == true ]; then
   echo "Provisioning phase 2 - Zabbix"
-# zabbix 4.2 repository
-  dnf -y -e 0 install https://repo.zabbix.com/zabbix/4.2/rhel/8/x86_64/zabbix-release-4.2-2.el8.noarch.rpm
+# zabbix 4.4 repository
+  dnf -y -e 0 install https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
   dnf config-manager -y -q --set-disabled zabbix-non-supported
   dnf config-manager -y -q --set-enabled zabbix
   dnf -y -e 0 makecache
