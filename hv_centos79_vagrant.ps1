@@ -5,8 +5,8 @@ $startDTM = (Get-Date)
 
 # Variables
 $template_file="./templates/hv_centos7_g2_vagrant.json"
-$var_file="./variables/variables_centos77.json"
-$machine="CentOS 7.7 1908 Vagrant"
+$var_file="./variables/variables_centos79.json"
+$machine="CentOS 7.9 2009 Vagrant"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -26,7 +26,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
     packer build --force -var-file="$var_file" "$template_file"
     if ($?) {
       Write-Output "Calculating checksums"
-      Get-FileHash -Algorithm SHA256 -Path "./vbox/packer-centos-77-g2.box"|Out-File "./vbox/packer-centos-77-g2.box.sha256" -Verbose
+      Get-FileHash -Algorithm SHA256 -Path "./vbox/packer-centos-79-g2.box"|Out-File "./vbox/packer-centos-79-g2.box.sha256" -Verbose
     }
   }
   catch {

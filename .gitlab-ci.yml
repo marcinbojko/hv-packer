@@ -1,5 +1,5 @@
 variables:
-  packer_version: "1.6.0"
+  packer_version: "1.6.5"
   dind: 19.03-dind
 stages:
   - get-packer
@@ -26,42 +26,42 @@ get-packer:
   tags:
     - docker
     - shared
-centos77:
+centos79:
   stage: centos7-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_centos7_g2.json"
-    - export var_file="./variables/variables_centos77.json"
+    - export var_file="./variables/variables_centos79.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
     - shared
-centos77-docker:
+centos79-docker:
   stage: centos7-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_centos7_g2_docker.json"
-    - export var_file="./variables/variables_centos77.json"
+    - export var_file="./variables/variables_centos79.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
     - shared
-centos77-vagrant:
+centos79-vagrant:
   stage: centos7-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_centos7_g2_vagrant.json"
-    - export var_file="./variables/variables_centos77.json"
+    - export var_file="./variables/variables_centos79.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"

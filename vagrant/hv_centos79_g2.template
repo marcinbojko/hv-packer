@@ -4,8 +4,8 @@
 Vagrant.require_version ">= 1.6.2"
 
 Vagrant.configure("2") do |config|
-    config.vm.define "vagrant-centos77"
-    config.vm.box = "centos77"
+    config.vm.define "vagrant-centos79"
+    config.vm.box = "centos79"
     config.vm.communicator = "ssh"
     config.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: "true"
 

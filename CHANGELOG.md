@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.4.4 2020-11-17
+
+* [CentOS] added added `CentOS 7.9` support
+* [CentOS] added added `CentOS 7.9 Docker` support
+* [CentOS] added added `CentOS 7.9 Vagrant` support
+* [CentOS] `CentOS 7.8` doesn't update OS by default anymore
+* [Windows]  upgrade `puppet-agent` package to version 5.5.22
+* [Extra] smaller adjusts in `extra`
+
 ## Version 1.4.3 2020-09-25
 
 * [CentOS] bump SystemCenter Agent to 1.0.3.1028

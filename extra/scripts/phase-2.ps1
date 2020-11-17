@@ -27,6 +27,7 @@ Write-Output "Phase 2 [START] - Start of Phase 2"
     $goterror=1
   }
   choco feature enable -n allowEmptyChecksums
+  choco feature enable -name=usePackageExitCodes
   Write-Output "Phase 2 [INFO] - Chocolatey packagess installing, $packages_count to go"
   #safely install packages
   foreach ($package in $packages) {
