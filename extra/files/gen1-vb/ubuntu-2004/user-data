@@ -5,6 +5,10 @@ autoinstall:
     - name: root
       lock-passwd: false
       password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
+    - name: vagrant
+      lock-passwd: false
+      password: $6$Z9YavBPu5g$tRcPkCKQ4NZbz0h6yj6JsJaF.WZdGjLVzok8GTmK8gxVHEZ8MfzTbol6PSdW9f.Fe4V0xuN7hMud4v27DzPEX/
+      sudo: true
 #  chpasswd:
 #    list: |
 #      root: $6$5EpnCRkBp9wi$bURvIWJorTrMasyS1NCsIPywrfqCC/DlWf833HXQW9azr.nBtr9n0Fu.6PjHuYgkzI8nLR3IOr/fK/pLO9kuH1
@@ -35,10 +39,6 @@ autoinstall:
     - tar
     - bzip2
     - build-essential
-    - linux-image-virtual
-    - linux-tools-virtual
-    - linux-cloud-tools-virtual
-    - net-tools
   locale: en_US.UTF-8
   timezone: Europe/Copenhagen
   ssh:
@@ -50,7 +50,8 @@ autoinstall:
     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
     username: root
   late-commands:
-    #- echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - echo 'vagrant ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
     - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0 elevator=noop"/' /target/etc/default/grub
     - curtin in-target --target /target update-grub2
 storage:

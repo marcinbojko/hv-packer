@@ -1,0 +1,134 @@
+{
+  "builders": [
+    {
+      "type": "hyperv-iso",
+      "vm_name": "{{ user `vm_name` }}",
+      "temp_path": ".",
+      "iso_url": "{{ user `iso_url` }}",
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_block_size": "1",
+      "communicator": "ssh",
+      "ssh_username": "ubuntu",
+      "ssh_password": "{{ user `ssh_password` }}",
+      "ssh_timeout" : "4h",
+      "shutdown_timeout": "30m",
+      "shutdown_command": "echo 'password' | sudo -S shutdown -P now",
+      "memory": 4096,
+      "enable_dynamic_memory": "true",
+      "cpus": 4,
+      "generation": 2,
+      "switch_name": "{{user `switch_name`}}",
+      "vlan_id": "{{user `vlan_id`}}",
+      "http_directory": "./extra/files/gen2-ubuntu2004",
+      "boot_wait": "1s",
+      "boot_command": [
+        "<esc><wait3>",
+        "linux /casper/vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ <enter>",
+        "initrd /casper/initrd <enter>",
+        "boot <enter>"
+      ],
+      "guest_additions_mode":"disable",
+      "enable_secure_boot": false,
+      "output_directory": "{{ user `output_directory` }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "extra/files/gen2-ubuntu2004/uefi.sh",
+      "destination": "/tmp/uefi.sh"
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-ubuntu2004/provision.sh",
+      "destination": "/tmp/provision.sh"
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-ubuntu2004/scagent/1.0.3.1028/scvmmguestagent.1.0.3.1028.x64.tar",
+      "destination": "/tmp/scvmmguestagent.1.0.3.1028.x64.tar"
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-ubuntu2004/scagent/1.0.3.1028/install",
+      "destination": "/tmp/install"
+    },
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "chmod +x /tmp/provision.sh",
+      "chmod +x /tmp/uefi.sh",
+      "mv /tmp/uefi.sh /usr/local/bin/uefi.sh",
+      "/tmp/provision.sh {{ user `provision_script_options` }}",
+      "sync;sync;reboot"
+      ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell",
+    "expect_disconnect": true
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-ubuntu2004/common-password",
+      "destination": "/tmp/common-password"
+     },
+     {
+       "type": "file",
+       "source": "extra/files/gen2-ubuntu2004/puppet.conf",
+       "destination": "/tmp/puppet.conf"
+     },
+     {
+       "type": "file",
+       "source": "extra/files/gen2-ubuntu2004/motd.sh",
+       "destination": "/tmp/motd.sh"
+     },
+     {
+       "type": "file",
+       "source": "extra/files/gen2-ubuntu2004/vagrant.sh",
+       "destination": "/tmp/vagrant.sh"
+     },
+     {
+       "type": "file",
+       "source": "extra/files/gen2-ubuntu2004/prepare_neofetch.sh",
+       "destination": "/tmp/prepare_neofetch.sh"
+     },
+     {
+       "type": "file",
+       "source": "extra/files/gen2-ubuntu2004/zeroing.sh",
+       "destination": "/tmp/zeroing.sh"
+     },
+     {
+       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+       "inline": [
+       "echo Last Phase",
+       "chmod +x /tmp/prepare_neofetch.sh",
+       "chmod +x /usr/local/bin/uefi.sh",
+       "chmod +x /tmp/zeroing.sh",
+       "mv -fv /tmp/common-password /etc/pam.d/common-password",
+       "chmod 644 /etc/pam.d/common-password",
+       "chown root:root /etc/pam.d/common-password",
+       "/tmp/prepare_neofetch.sh",
+       "/tmp/zeroing.sh",
+       "/bin/rm -rfv /tmp/*",
+       "/bin/rm -f /etc/ssh/*key*",
+       "/usr/bin/ssh-keygen -A",
+       "echo 'packerVersion: {{ packer_version }}' >>/etc/packerinfo"
+     ],
+     "inline_shebang": "/bin/sh -x",
+     "type": "shell"
+     }
+  ],
+  "variables": {
+    "iso_url":  "",
+    "iso_checksum_type": "none",
+    "iso_checksum": "",
+    "switch_name": "",
+    "vm_name": "",
+    "disk_size": "70000",
+    "vlan_id": "",
+    "output_directory": "",
+    "ssh_password": "",
+    "provision_script_options": "",
+    "boot_command": ""
+  }
+}

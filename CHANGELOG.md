@@ -1,10 +1,16 @@
 # Changelog
 
+## Version 1.5.0 2021-01-21
+
+* [Ubuntu] added Ubuntu (in experimental mode)
+* [Ubuntu] added `Ubuntu 20.04` support
+* [BREAKING_CHANGE] Stop support for CentOS 8.x due to premature project termination. Future revisions will remove CentOS 8 completely in favour of it's replacement
+
 ## Version 1.4.4 2020-11-17
 
-* [CentOS] added added `CentOS 7.9` support
-* [CentOS] added added `CentOS 7.9 Docker` support
-* [CentOS] added added `CentOS 7.9 Vagrant` support
+* [CentOS] added `CentOS 7.9` support
+* [CentOS] added `CentOS 7.9 Docker` support
+* [CentOS] added `CentOS 7.9 Vagrant` support
 * [CentOS] `CentOS 7.8` doesn't update OS by default anymore
 * [Windows]  upgrade `puppet-agent` package to version 5.5.22
 * [Extra] smaller adjusts in `extra`

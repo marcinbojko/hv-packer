@@ -1,10 +1,11 @@
 variables:
-  packer_version: "1.6.5"
-  dind: 19.03-dind
+  packer_version: "1.6.6"
+  dind: 20.10-dind
 stages:
   - get-packer
   - centos7-packer-validate
   - centos8-packer-validate
+  - ubuntu20-packer-validate
   - windows2016-packer-validate
   - windows2019-packer-validate
   - windowsserver-packer-validate
@@ -160,6 +161,20 @@ centos82-vagrant:
   before_script:
     - export template_file="./templates/hv_centos8_g2_vagrant.json"
     - export var_file="./variables/variables_centos82.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+ubuntu2004:
+  stage: ubuntu20-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_ubuntu2004_g2.json"
+    - export var_file="./variables/variables_ubuntu2004.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"

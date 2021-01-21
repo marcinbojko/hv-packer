@@ -5,6 +5,8 @@
   - [Requirements](#requirements)
   - [Usage](#usage)
     - [Install packer from Chocolatey](#install-packer-from-chocolatey)
+    - [Install vagrant from Chocolatey](#install-vagrant-from-chocolatey)
+    - [Use account with Administrator privileges](#use-account-with-administrator-privileges)
     - [Add firewal exclusions for TCP ports 8000-9000 default range](#add-firewal-exclusions-for-tcp-ports-8000-9000-default-range)
     - [To adjust to your Hyper-V, please check variables below and/or in ./variables files - for](#to-adjust-to-your-hyper-v-please-check-variables-below-andor-in-variables-files---for)
   - [Scripts](#scripts)
@@ -21,9 +23,14 @@
   - [Templates Windows Server](#templates-windows-server)
     - [Hyper-V Generation 2 Windows Server 1903 Standard Image](#hyper-v-generation-2-windows-server-1903-standard-image)
     - [Hyper-V Generation 2 Windows Server 1909 Standard Image](#hyper-v-generation-2-windows-server-1909-standard-image)
+    - [Hyper-V Generation 2 Windows Server 2004 Standard Image](#hyper-v-generation-2-windows-server-2004-standard-image)
+  - [Templates Ubuntu](#templates-ubuntu)
+    - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
+    - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
   - [Templates CentOS 8.x](#templates-centos-8x)
-    - [Hyper-V Generation 2 CentOS 8.1 Image](#hyper-v-generation-2-centos-81-image)
     - [Warnings - CentOS 8](#warnings---centos-8)
+    - [Hyper-V Generation 2 CentOS 8.1 Image](#hyper-v-generation-2-centos-81-image)
+    - [Hyper-V Generation 2 CentOS 8.2 Image](#hyper-v-generation-2-centos-82-image)
     - [Vagrant support - CentOS 8](#vagrant-support---centos-8)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
@@ -48,10 +55,10 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.6.0`. Do not use packer below 1.6.0. For previous packer versions use previous releases from this repository
+- packer <=`1.6.5`. Do not use packer below 1.6.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
-- [OPTIONAL] Vagrant >= `2.2.9` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
+- [OPTIONAL] Vagrant >= `2.2.12` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 - be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 
 ## Usage
@@ -59,8 +66,16 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.6.0 -y
+choco install packer --version=1.6.5 -y
 ```
+
+### Install vagrant from Chocolatey
+
+```cmd
+choco install vagrant --version=2.2.13 -y
+```
+
+### Use account with Administrator privileges for Hyper-V
 
 ### Add firewal exclusions for TCP ports 8000-9000 (default range)
 
@@ -240,11 +255,32 @@ If you need changes For - prepare `secondary1909.iso` with folder structure:
 
 Run `hv_winserver_1909.ps1`
 
+### Hyper-V Generation 2 Windows Server 2004 Standard Image
+
+If you need changes For - prepare `secondary2004.iso` with folder structure:
+
+- ./extra/files/gen2-2004/Autounattend.xml     => /Autounattend.xml
+- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+Run `hv_winserver_2004.ps1`
+
+## Templates Ubuntu
+
+### Warnings - Ubuntu 20.x
+
+- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+- if needed - change `iso_url` variable to a proper iso name
+- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+- credentials for Windows machines: Administrator/password (removed after sysprep)
+- credentials for Linux machines: root/password
+- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+- for Linux based machines adjust your settings in ./files/gen2-{{os}}/provision.sh and ./files/gen2-{{os}}/puppet.conf
+
+### Hyper-V Generation 2 Ubuntu 20.04 Image
+
+Run `hv_ubuntu2004.ps1`
+
 ## Templates CentOS 8.x
-
-### Hyper-V Generation 2 CentOS 8.1 Image
-
-Run `hv_centos81.ps1`
 
 ### Warnings - CentOS 8
 
@@ -256,9 +292,18 @@ Run `hv_centos81.ps1`
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
+### Hyper-V Generation 2 CentOS 8.1 Image
+
+Run `hv_centos81.ps1`
+
+### Hyper-V Generation 2 CentOS 8.2 Image
+
+Run `hv_centos82.ps1`
+
 ### Vagrant support - CentOS 8
 
-Experimental support for vagrant machines `hv_centos81_vagrant.ps1`
+Experimental support for vagrant machines `hv_centos81_vagrant.ps1` for CentOS 8.1
+Experimental support for vagrant machines `hv_centos82_vagrant.ps1` for CentOS 8.2
 
 ## Templates CentOS 7.x
 
