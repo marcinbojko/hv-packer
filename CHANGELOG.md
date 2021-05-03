@@ -1,10 +1,23 @@
 # Changelog
 
+## Version 1.6.0 2021-05-03
+
+* [BREAKING_CHANGE] removal of CentOS 8.x support
+* [BREAKING_CHANGE] removal of 2 last supported releases, since 1.6.0 only latest release will be supported.
+* [BREAKING_CHANGE] removal of Windows 1903 support
+* [AlmaLinux] added AlmaLinux in experimental mode
+* [AlmaLinux] added `AlmaLinux 8.3` support
+* [AlmaLinux] added `AlmaLinux 8.3 Vagrant` support
+* [Extra] changed Zabbix to 5.2 and set to do not install by default, variable: `provision_script_options`
+* [Extra] added support for AlmaLinux
+* [Extra] bumped version of Docker for Windows to `20.10.4`
+* [Extra] consolidated paths for redundand System Center Linux Agent installation
+
 ## Version 1.5.0 2021-01-21
 
+* [BREAKING_CHANGE] Stop support for CentOS 8.x due to premature project termination. Future revisions will remove CentOS 8 completely in favour of its replacement
 * [Ubuntu] added Ubuntu (in experimental mode)
 * [Ubuntu] added `Ubuntu 20.04` support
-* [BREAKING_CHANGE] Stop support for CentOS 8.x due to premature project termination. Future revisions will remove CentOS 8 completely in favour of it's replacement
 
 ## Version 1.4.4 2020-11-17
 

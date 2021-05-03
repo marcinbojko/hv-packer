@@ -1,6 +1,6 @@
 # Enable docker
 param (
-  [string] $requiredVersion = "19.03.5",
+  [string] $requiredVersion = "20.10.4",
   [boolean] $installCompose = $True,
   [string] $composeVersion = "",
   [string] $dockerLocation = "",

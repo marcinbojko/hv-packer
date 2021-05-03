@@ -4,9 +4,9 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_centos7_g2_docker.json"
-$var_file="./variables/variables_centos78.json"
-$machine="CentOS 7.8 2003 Docker"
+$template_file="./templates/hv_almalinux8_g2_vagrant.json"
+$var_file="./variables/variables_almalinux83.json"
+$machine="AlmaLinux 8.3"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {

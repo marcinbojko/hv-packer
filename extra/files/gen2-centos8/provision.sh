@@ -91,7 +91,7 @@ fi
 if [ "$INSTALL_ZABBIX" == true ]; then
   echo "Provisioning phase 2 - Zabbix"
 # zabbix 4.4 repository
-  dnf -y -e 0 install https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm
+  dnf -y -e 0 install https://repo.zabbix.com/zabbix/5.2/rhel/8/x86_64/zabbix-release-5.2-1.el8.noarch.rpm
   dnf config-manager -y -q --set-disabled zabbix-non-supported
   dnf config-manager -y -q --set-enabled zabbix
   dnf -y -e 0 makecache
@@ -130,7 +130,8 @@ echo "Provisioning phase 3 - Starting: Extra packages, timezones, neofetch, fire
 echo "Provisioning phase 3 - Timezone"
 timedatectl set-timezone Europe/Copenhagen --no-ask-password
 echo "Provisioning phase 3 - Extra Packages or groups"
-dnf -y install chrony htop atop iftop iotop firewalld nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd adcli krb5-workstation sssd-libwbclient jq firefox gparted pv neofetch screen telnet ncdu tmux multitail neofetch rkhunter
+dnf -y install chrony htop atop iftop iotop firewalld nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd adcli krb5-workstation sssd-libwbclient jq firefox gparted pv \
+neofetch screen telnet ncdu tmux multitail neofetch rkhunter smartmontools zsh
 echo "Provisioning phase 3 - RK hunter"
 rkhunter --propupd
 # chronyd
@@ -148,6 +149,8 @@ if [ "$INSTALL_HYPERV" == "true" ]; then
   echo "Provisioning phase 3 - Hyper-V/SCVMM Daemons"
   # Hyper-v daemons
   dnf -y install hyperv-daemons
+  echo "Provisioning phase 3 - Hyper-V/SCVMM Daemons - adding Hot Add Mem support"
+  echo 'SUBSYSTEM=="memory", ACTION=="add", ATTR{state}="online"' >/etc/udev/rules.d/100-balloon.rules
   systemctl enable hypervfcopyd
   systemctl enable hypervkvpd
   systemctl enable hypervvssd

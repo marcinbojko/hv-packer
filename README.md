@@ -6,7 +6,7 @@
   - [Usage](#usage)
     - [Install packer from Chocolatey](#install-packer-from-chocolatey)
     - [Install vagrant from Chocolatey](#install-vagrant-from-chocolatey)
-    - [Use account with Administrator privileges](#use-account-with-administrator-privileges)
+    - [Use account with Administrator privileges for Hyper-V](#use-account-with-administrator-privileges-for-hyper-v)
     - [Add firewal exclusions for TCP ports 8000-9000 default range](#add-firewal-exclusions-for-tcp-ports-8000-9000-default-range)
     - [To adjust to your Hyper-V, please check variables below and/or in ./variables files - for](#to-adjust-to-your-hyper-v-please-check-variables-below-andor-in-variables-files---for)
   - [Scripts](#scripts)
@@ -21,21 +21,17 @@
     - [Hyper-V Generation 2 Windows Server 2016 Standard Image](#hyper-v-generation-2-windows-server-2016-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
   - [Templates Windows Server](#templates-windows-server)
-    - [Hyper-V Generation 2 Windows Server 1903 Standard Image](#hyper-v-generation-2-windows-server-1903-standard-image)
     - [Hyper-V Generation 2 Windows Server 1909 Standard Image](#hyper-v-generation-2-windows-server-1909-standard-image)
     - [Hyper-V Generation 2 Windows Server 2004 Standard Image](#hyper-v-generation-2-windows-server-2004-standard-image)
   - [Templates Ubuntu](#templates-ubuntu)
     - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
-  - [Templates CentOS 8.x](#templates-centos-8x)
-    - [Warnings - CentOS 8](#warnings---centos-8)
-    - [Hyper-V Generation 2 CentOS 8.1 Image](#hyper-v-generation-2-centos-81-image)
-    - [Hyper-V Generation 2 CentOS 8.2 Image](#hyper-v-generation-2-centos-82-image)
-    - [Vagrant support - CentOS 8](#vagrant-support---centos-8)
+  - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
+    - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
+    - [Hyper-V Generation 2 AlmaLinux 8.3 Image](#hyper-v-generation-2-almalinux-83-image)
+    - [Vagrant support - AlmaLinux 8](#vagrant-support---almalinux-8)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
-    - [Hyper-V Generation 2 CentOS 7.8](#hyper-v-generation-2-centos-78)
-    - [Hyper-V Generation 2 CentOS 7.8 Image with extra docker volume](#hyper-v-generation-2-centos-78-image-with-extra-docker-volume)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
     - [Hyper-V Generation 2 CentOS 7.9 Image with extra docker volume](#hyper-v-generation-2-centos-79-image-with-extra-docker-volume)
     - [Vagrant support - CentOS 7.x](#vagrant-support---centos-7x)
@@ -55,7 +51,7 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.6.5`. Do not use packer below 1.6.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.7.0`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.12` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
@@ -66,13 +62,13 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.6.5 -y
+choco install packer --version=1.7.2 -y
 ```
 
 ### Install vagrant from Chocolatey
 
 ```cmd
-choco install vagrant --version=2.2.13 -y
+choco install vagrant --version=2.2.14 -y
 ```
 
 ### Use account with Administrator privileges for Hyper-V
@@ -109,7 +105,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
 - latest Nuget poweshell module
 - `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
-  - `Version` - puppet chocolatey version, for example "5.5.20"
+  - `Version` - puppet chocolatey version, for example "5.5.21"
   - `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
   - `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
 
@@ -135,13 +131,14 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   |Repository|Package|switch|
   |----------|------------|---|
-  |Epel 7    |            |no|
-  |Zabbix 4.4|zabbix-agent|can be switched off by `-z false`|
+  |Epel 7/8|epel-release|no|
+  |Zabbix 5.2|zabbix-agent|can be switched off by `-z false`|
   |Puppet 5  |puppet-agent|can be switched off by `-p false`|
-  |Webmin (CentOS7)|webmin|can be switched off by setting `-w false`|
-  |Cockpit (CentOS8) |Cockpit|can be switched off by setting `-c false`|
-  |-         |scvmmagent| can be switched off by setting `-h false`|
+  |Webmin (CentOS 7)|webmin|can be switched off by setting `-w false`|
+  |Cockpit (CentOS 8) |cockpit|can be switched off by setting `-c false`|
+  |System Center Linux Agent |scvmmagent| can be switched off by setting `-h false`|
   |neofetch  |neofetch|no|
+  ||||
 
 - [Optional] Linux machine with separated disk for docker
 - [Optional] Linux machine for vagrant
@@ -237,15 +234,6 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 
 ## Templates Windows Server
 
-### Hyper-V Generation 2 Windows Server 1903 Standard Image
-
-If you need changes For - prepare `secondary1903.iso` with folder structure:
-
-- ./extra/files/gen2-1903/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_winserver_1903.ps1`
-
 ### Hyper-V Generation 2 Windows Server 1909 Standard Image
 
 If you need changes For - prepare `secondary1909.iso` with folder structure:
@@ -280,9 +268,9 @@ Run `hv_winserver_2004.ps1`
 
 Run `hv_ubuntu2004.ps1`
 
-## Templates CentOS 8.x
+## Templates AlmaLinux 8.x
 
-### Warnings - CentOS 8
+### Warnings - AlmaLinux 8
 
 - if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
 - if needed - change `iso_url` variable to a proper iso name
@@ -292,18 +280,13 @@ Run `hv_ubuntu2004.ps1`
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 CentOS 8.1 Image
+### Hyper-V Generation 2 AlmaLinux 8.3 Image
 
-Run `hv_centos81.ps1`
+Run `hv_almalinux83.ps1`
 
-### Hyper-V Generation 2 CentOS 8.2 Image
+### Vagrant support - AlmaLinux 8
 
-Run `hv_centos82.ps1`
-
-### Vagrant support - CentOS 8
-
-Experimental support for vagrant machines `hv_centos81_vagrant.ps1` for CentOS 8.1
-Experimental support for vagrant machines `hv_centos82_vagrant.ps1` for CentOS 8.2
+Experimental support for vagrant machines `hv_almalinux83_vagrant.ps1` for AlmaLinux 8.1
 
 ## Templates CentOS 7.x
 
@@ -318,14 +301,6 @@ Experimental support for vagrant machines `hv_centos82_vagrant.ps1` for CentOS 8
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 - no `docker` repo will be added  and no `docker-related` packages will be installed - this build creates and mount separated volume (size specified by variable) for docker
 
-### Hyper-V Generation 2 CentOS 7.8
-
-Run `hv_centos78_docker.ps1`
-
-### Hyper-V Generation 2 CentOS 7.8 Image with extra docker volume
-
-Run `hv_centos78_docker.ps1`
-
 ### Hyper-V Generation 2 CentOS 7.9
 
 Run `hv_centos79_docker.ps1`
@@ -336,7 +311,6 @@ Run `hv_centos79_docker.ps1`
 
 ### Vagrant support - CentOS 7.x
 
-Experimental support for vagrant machines `hv_centos78_vagrant.ps1` for CentOS 7.8
 Experimental support for vagrant machines `hv_centos79_vagrant.ps1` for CentOS 7.9
 
 ## Known issues

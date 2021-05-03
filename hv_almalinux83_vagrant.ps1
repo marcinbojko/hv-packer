@@ -4,9 +4,9 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_centos8_g2_vagrant.json"
-$var_file="./variables/variables_centos81.json"
-$machine="CentOS 8.1 Vagrant"
+$template_file="./templates/hv_almalinux8_g2.json"
+$var_file="./variables/variables_almalinux83.json"
+$machine="AlmaLinux 8.3"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -24,10 +24,6 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
     $env:PACKER_LOG=$packer_log
     packer version
     packer build --force -var-file="$var_file" "$template_file"
-    if ($?) {
-      Write-Output "Calculating checksums"
-      Get-FileHash -Algorithm SHA256 -Path "./vbox/packer-centos-81-g2.box"|Out-File "./vbox/packer-centos-81-g2.box.sha256" -Verbose
-    }
   }
   catch {
     Write-Output "Packer build failed, exiting."

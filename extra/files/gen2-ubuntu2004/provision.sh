@@ -41,30 +41,37 @@ echo "INSTALL_ZABBIX  = $INSTALL_ZABBIX"
 
 echo "Provisioning phase 1 - Starting: Mirror, SELinux and basic packages"
 export DEBIAN_FRONTEND=noninteractive
-apt clean all -y
-apt install pv perl mc net-tools -y
+apt-get clean all -y
+apt-get update -y
+apt-get install pv perl mc net-tools -y
 # set locale
 sudo update-locale LANG=en_US.UTF-8
 
 if [ "$INSTALL_UPDATES" == "true" ]; then
     echo "Provisioning phase 1 - system updates"
-    apt -y -q upgrade
-    apt -y -q clean all
+    apt-get -y -q upgrade
+    apt-get -y -q clean all
 else
     echo "Provisioning phase 1 - skipping system updates"
 fi
 
 # disable selinux
 echo "Provisioning phase 1 - disabling SELinux"
-sed -i /etc/sysconfig/selinux -r -e 's/^SELINUX=.*/SELINUX=disabled/g'||true
-sed -i /etc/selinux/config -r -e 's/^SELINUX=.*/SELINUX=disabled/g'||true
+if [ -f /etc/sysconfig/selinux ]; then
+  sed -i /etc/sysconfig/selinux -r -e 's/^SELINUX=.*/SELINUX=disabled/g'||true
+fi
+
+if [ -f /etc/selinux/config ]; then
+  sed -i /etc/selinux/config -r -e 's/^SELINUX=.*/SELINUX=disabled/g'||true
+fi
+
 echo "Provisioning phase 1 - all done"
 
 echo "Provisioning phase 2 - Starting: Cockpit, Zabbix, Puppet"
 # cockpit repository
 if [ "$INSTALL_COCKPIT" == "true" ]; then
   echo "Provisioning phase 2 - Cockpit"
-  apt install cockpit -y -q
+  apt-get install cockpit -y -q
   systemctl start cockpit.socket
   systemctl enable --now cockpit.socket
   systemctl status cockpit.socket
@@ -75,12 +82,12 @@ fi
 # zabbix
 if [ "$INSTALL_ZABBIX" == true ]; then
   echo "Provisioning phase 2 - Zabbix"
-# zabbix 4.4 repository
-  wget https://repo.zabbix.com/zabbix/4.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.4-1%2Bfocal_all.deb
-  dpkg -i zabbix-release_4.4-1+focal_all.deb
-  rm -rfv zabbix-release_4.4-1+focal_all.deb
-  apt update -y
-  apt install zabbix-agent -y
+# zabbix 5.2 repository
+  wget https://repo.zabbix.com/zabbix/5.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.2-1+ubuntu20.04_all.deb
+  dpkg -i zabbix-release_5.2-1+ubuntu20.04_all.deb
+  rm -rfv zabbix-release_5.2-1+ubuntu20.04_all.deb
+  apt-get update -y
+  apt-get install zabbix-agent -y
   systemctl enable zabbix-agent
 else
   echo "Provisioning phase 2 - skipping Zabbix agent"
@@ -94,9 +101,9 @@ if [ "$INSTALL_PUPPET" == "true" ]; then
     wget https://apt.puppetlabs.com/puppet5-release-bionic.deb
     dpkg -i puppet5-release-bionic.deb
     rm -rfv puppet5-release-bionic.deb
-    apt update
+    apt-get update -y
 
-    apt -y install puppet-agent
+    apt-get -y install puppet-agent
     echo "Provisioning phase 2 - Puppet Agent cleaning"
     systemctl stop puppet
     systemctl disable puppet
@@ -117,7 +124,7 @@ echo "Provisioning phase 3 - Starting: Extra packages, timezones, neofetch, fire
 echo "Provisioning phase 3 - Timezone"
 timedatectl set-timezone Europe/Copenhagen --no-ask-password
 echo "Provisioning phase 3 - Extra Packages or groups"
-apt -y install htop atop iftop iotop firewalld nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd adcli libkrb5-dev libkrb5-3 libwbclient-sssd jq firefox gparted pv neofetch screen telnet ncdu tmux multitail neofetch rkhunter
+apt-get -y install htop atop iftop iotop firewalld nmap realmd samba nmon samba-common oddjob oddjob-mkhomedir sssd adcli libkrb5-dev libkrb5-3 libwbclient-sssd jq firefox gparted pv neofetch screen telnet ncdu tmux multitail rkhunter smartmontools zsh httpie
 # we don't need sssd
 systemctl disable sssd.service||true
 systemctl stop sssd.service||true
@@ -134,7 +141,7 @@ fi
 if [ "$INSTALL_HYPERV" == "true" ]; then
   echo "Provisioning phase 3 - Hyper-V/SCVMM Daemons"
   # Hyper-v daemons
-   apt -y install linux-image-virtual linux-tools-virtual linux-cloud-tools-virtual
+   apt-get -y install linux-image-virtual linux-tools-virtual linux-cloud-tools-virtual
    systemctl enable hv-fcopy-daemon
    systemctl enable hv-kvp-daemon
    systemctl enable hv-vss-daemon
@@ -149,7 +156,7 @@ fi
 
 echo "Provisioning phase 3 - Firewalld"
 # Firewalld basic configuration.
-apt install ufw -y
+apt-get install ufw -y
 ufw default deny incoming
 ufw default allow outgoing
 ufw default allow routed
@@ -172,8 +179,8 @@ echo "Provisioning phase 4 - Final updates and cleaning up"
 
 if [ "$INSTALL_UPDATES" == "true" ]; then
     echo "Provisioning phase 4 - system final updates"
-    apt -y -q upgrade
-    apt -y -q clean all
+    apt-get -y -q upgrade
+    apt-get -y -q clean all
 else
     echo "Provisioning phase 4 - skipping system final updates"
 fi

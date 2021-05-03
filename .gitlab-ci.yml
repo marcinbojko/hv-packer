@@ -1,10 +1,10 @@
 variables:
-  packer_version: "1.6.6"
+  packer_version: "1.7.2"
   dind: 20.10-dind
 stages:
   - get-packer
   - centos7-packer-validate
-  - centos8-packer-validate
+  - almalinux8-packer-validate
   - ubuntu20-packer-validate
   - windows2016-packer-validate
   - windows2019-packer-validate
@@ -69,98 +69,28 @@ centos79-vagrant:
   tags:
     - docker
     - shared
-centos78:
-  stage: centos7-packer-validate
+almalinux83:
+  stage: almalinux8-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_centos7_g2.json"
-    - export var_file="./variables/variables_centos78.json"
+    - export template_file="./templates/hv_almalinux8_g2.json"
+    - export var_file="./variables/variables_almalinux83.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
     - shared
-centos78-docker:
-  stage: centos7-packer-validate
+almalinux83-vagrant:
+  stage: almalinux8-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_centos7_g2_docker.json"
-    - export var_file="./variables/variables_centos78.json"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-centos78-vagrant:
-  stage: centos7-packer-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_centos7_g2_vagrant.json"
-    - export var_file="./variables/variables_centos78.json"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-centos81:
-  stage: centos8-packer-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_centos8_g2.json"
-    - export var_file="./variables/variables_centos81.json"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-centos81-vagrant:
-  stage: centos8-packer-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_centos8_g2_vagrant.json"
-    - export var_file="./variables/variables_centos81.json"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-centos82:
-  stage: centos8-packer-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_centos8_g2.json"
-    - export var_file="./variables/variables_centos82.json"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-centos82-vagrant:
-  stage: centos8-packer-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_centos8_g2_vagrant.json"
-    - export var_file="./variables/variables_centos82.json"
+    - export template_file="./templates/hv_almalinux8_g2_vagrant.json"
+    - export var_file="./variables/variables_almalinux83.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -245,20 +175,6 @@ windows2019-dc-vagrant:
   before_script:
     - export template_file="./templates/hv_win2019_g2_vagrant.json"
     - export var_file="./variables/variables_win2019_dc.json"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-windowsserver1903:
-  stage: windowsserver-packer-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_winserver_g2.json"
-    - export var_file="./variables/variables_winserver_1903.json"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"

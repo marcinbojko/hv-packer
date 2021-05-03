@@ -46,12 +46,12 @@
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-ubuntu2004/scagent/1.0.3.1028/scvmmguestagent.1.0.3.1028.x64.tar",
+      "source": "extra/files/scagent/1.0.3.1028/scvmmguestagent.1.0.3.1028.x64.tar",
       "destination": "/tmp/scvmmguestagent.1.0.3.1028.x64.tar"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-ubuntu2004/scagent/1.0.3.1028/install",
+      "source": "extra/files/scagent/1.0.3.1028/install",
       "destination": "/tmp/install"
     },
     {

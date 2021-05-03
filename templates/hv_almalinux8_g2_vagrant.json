@@ -33,47 +33,47 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/puppet.conf",
+      "source": "extra/files/gen2-almalinux8/puppet.conf",
       "destination": "/tmp/puppet.conf"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/motd.sh",
+      "source": "extra/files/gen2-almalinux8/motd.sh",
       "destination": "/tmp/motd.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/provision.sh",
+      "source": "extra/files/gen2-almalinux8/provision.sh",
       "destination": "/tmp/provision.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/prepare_neofetch.sh",
+      "source": "extra/files/gen2-almalinux8/prepare_neofetch.sh",
       "destination": "/tmp/prepare_neofetch.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/zeroing.sh",
+      "source": "extra/files/gen2-almalinux8/zeroing.sh",
       "destination": "/tmp/zeroing.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/uefi.sh",
+      "source": "extra/files/gen2-almalinux8/uefi.sh",
       "destination": "/usr/local/bin/uefi.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/vagrant.sh",
+      "source": "extra/files/gen2-almalinux8/vagrant.sh",
       "destination": "/tmp/vagrant.sh"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/scagent/1.0.3.1028/scvmmguestagent.1.0.3.1028.x64.tar",
+      "source": "extra/files/scagent/1.0.3.1028/scvmmguestagent.1.0.3.1028.x64.tar",
       "destination": "/tmp/scvmmguestagent.1.0.3.1028.x64.tar"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos8/scagent/1.0.3.1028/install",
+      "source": "extra/files/scagent/1.0.3.1028/install",
       "destination": "/tmp/install"
     },
     {
@@ -121,8 +121,8 @@
     "iso_checksum_type": "none",
     "iso_checksum": "",
     "switch_name": "",
-    "output_vagrant": "./vbox/packer-centos-81-g2.box",
-    "vagrantfile_template": "./vagrant/hv_centos81_g2.template",
+    "output_vagrant": "",
+    "vagrantfile_template": "",
     "vm_name": "",
     "disk_size": "70000",
     "vlan_id": "",
