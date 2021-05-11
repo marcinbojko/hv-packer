@@ -30,8 +30,8 @@
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
     - [Hyper-V Generation 2 AlmaLinux 8.3 Image](#hyper-v-generation-2-almalinux-83-image)
-    - [Vagrant support - AlmaLinux 8](#vagrant-support---almalinux-8)
-    - [Hyper-V Generation 2 AlmaLinux 8 image with extra docker volume](#hyper-v-generation-2-almalinux-8-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 AlmaLinux 8.3 Vagrant support](#hyper-v-generation-2-almalinux-83-vagrant-support)
+    - [Hyper-V Generation 2 AlmaLinux 8.3 image with extra docker volume](#hyper-v-generation-2-almalinux-83-image-with-extra-docker-volume)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
@@ -152,7 +152,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 #### Ansible Playbooks
 
 During deployment ansible-base and ansible are installed in operating system. After deployment ends, these packages are removed.
-Playbooks are held in `/playbooks` folder, with proper OS variables.
+Playbooks are held in `/extra/playbooks` folder, with proper OS variables.
 
 - adjust `./variables/*.yaml` files to achieve override for ansible
 

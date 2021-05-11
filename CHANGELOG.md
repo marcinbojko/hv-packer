@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.7.1 2021-05-11
+
+* [BREAKING_CHANGE] switch Puppet repository to version 6
+* Fixed `prepare_neofetch.sh` not being run in playbook
+
 ## Version 1.7.0 2021-05-11
 
 * [BREAKING_CHANGE] CentOS 7 and AlmaLinux slowly switching to ansible instead of scripts

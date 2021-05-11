@@ -272,12 +272,6 @@
             state: directory
             mode: '0755'
           when: install_zabbix_as_root is defined and install_zabbix_as_root
-#        - name: zabbix_agent_tweaks_file
-#          ansible.builtin.file:
-#            path: /etc/systemd/system/zabbix-agent.service.d/override.conf
-#            state: touch
-#            mode: '0755'
-#          when: install_zabbix_as_root is defined and install_zabbix_as_root
         - name: zabbix_agent_tweaks_content
           ansible.builtin.copy:
             dest: /etc/systemd/system/zabbix-agent.service.d/override.conf
@@ -472,7 +466,7 @@
           when: (r_check_for_prepare_neofetch is defined) and (not r_check_for_prepare_neofetch.stat.exists)
         # run neofetch script - to be replaced
         - name: run_prepare_neofetch
-          ansible.builtin.shell: chmod +x /tmp/prepare_neofetch.sh;chmod +x /tmp/prepare_neofetch.sh
+          ansible.builtin.shell: chmod +x /tmp/prepare_neofetch.sh; sh /tmp/prepare_neofetch.sh
           args:
             warn: false
           when: install_neofetch and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
