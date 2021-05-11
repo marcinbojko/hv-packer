@@ -20,11 +20,6 @@ wevtutil el | Foreach-Object {wevtutil cl "$_"}
 dism /online /cleanup-image /StartComponentCleanup /ResetBase
 dism /online /cleanup-Image /SPSuperseded
 
-# Remove leftovers from deploy
-if (Test-Path -Path c:\Windows\Temp ) {
-    Remove-Item c:\Windows\Temp\* -Recurse -Force
-}
-
 # optimize disk
 Write-Output "Phase-5c.2: Defragging.."
 if (Get-Command Optimize-Volume -ErrorAction SilentlyContinue) {
