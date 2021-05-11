@@ -33,34 +33,48 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/webmin.repo",
-      "destination": "/tmp/webmin.repo"
+      "source": "extra/files/gen2-linux/ansible.sh",
+      "destination": "/tmp/ansible.sh"
+    },
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "chmod +x /tmp/ansible.sh",
+      "/tmp/ansible.sh -i true"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/puppet.conf",
-      "destination": "/tmp/puppet.conf"
+      "source": "extra/playbooks/provision_centos7_variables.yml",
+      "destination": "/tmp/variables.yml"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/motd.sh",
-      "destination": "/tmp/motd.sh"
+      "source": "{{user `ansible_override`}}",
+      "destination": "/tmp/override.yml"
     },
     {
       "type": "file",
-      "source": "extra/files/gen2-centos/provision.sh",
-      "destination": "/tmp/provision.sh"
-    },
-    {
-      "type": "file",
-      "source": "extra/files/gen2-centos/prepare_neofetch.sh",
+      "source": "extra/files/gen2-linux/prepare_neofetch.sh",
       "destination": "/tmp/prepare_neofetch.sh"
     },
     {
-      "type": "file",
-      "source": "extra/files/gen2-centos/zeroing.sh",
-      "destination": "/tmp/zeroing.sh"
+      "type": "ansible-local",
+      "playbook_file": "extra/playbooks/provision_centos.yaml",
+      "extra_arguments": ["-e","@/tmp/variables.yml","-e","@/tmp/override.yml"]
     },
+    {
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+      "chmod +x /tmp/ansible.sh",
+      "/tmp/ansible.sh -i false"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell"
+    },
+
     {
       "type": "file",
       "source": "extra/files/gen2-centos/uefi.sh",
@@ -79,8 +93,8 @@
     {
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
-      "chmod +x /tmp/provision.sh",
-      "/tmp/provision.sh {{ user `provision_script_options` }}",
+      "chmod +x /tmp/install",
+      "sh /tmp/install \"$(ls /tmp/scvmm*.x64.tar)\"",
       "reboot"
       ],
     "inline_shebang": "/bin/sh -x",
@@ -88,26 +102,24 @@
     "expect_disconnect": true
     },
     {
+      "type": "file",
+      "source": "extra/files/gen2-linux/zeroing.sh",
+      "destination": "/tmp/zeroing.sh"
+    },
+    {
      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
       "inline": [
       "echo Last Phase",
       "chmod +x /usr/local/bin/uefi.sh",
-      "chmod +x /tmp/prepare_neofetch.sh",
-      "/tmp/prepare_neofetch.sh",
       "systemctl set-default multi-user.target",
-      "systemctl disable initial-setup-text",
-      "systemctl disable initial-setup-graphical",
-      "systemctl stop initial-setup-text",
-      "systemctl stop initial-setup-graphical",
       "/bin/rm -f /etc/ssh/*key*",
       "chmod +x /tmp/zeroing.sh",
       "/tmp/zeroing.sh",
-      "/bin/rm -rfv /tmp/*",
-      "echo 'packerVersion: {{ packer_version }}' >>/etc/packerinfo"
+      "/bin/rm -rfv /tmp/*"
     ],
     "inline_shebang": "/bin/sh -x",
     "type": "shell",
-    "pause_before": "60s"
+    "pause_before": "30s"
     }
   ],
   "variables": {
@@ -120,7 +132,7 @@
     "vlan_id": "",
     "output_directory": "",
     "ssh_password": "",
-    "provision_script_options": "",
-    "boot_command": ""
+    "boot_command": "",
+    "ansible_override": ""
   }
 }

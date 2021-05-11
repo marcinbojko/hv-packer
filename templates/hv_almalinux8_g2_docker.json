@@ -2,11 +2,12 @@
   "builders": [
     {
       "type": "hyperv-iso",
-      "vm_name": "{{ user `vm_name` }}-vgr",
+      "vm_name": "{{ user `vm_name` }}-dck",
       "temp_path": ".",
       "iso_url": "{{ user `iso_url` }}",
       "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
       "disk_size": "{{user `disk_size`}}",
+      "disk_additional_size": "{{user `disk_additional_size`}}",
       "disk_block_size": "1",
       "communicator": "ssh",
       "ssh_username": "root",
@@ -27,7 +28,7 @@
       ],
       "guest_additions_mode":"disable",
       "enable_secure_boot": false,
-      "output_directory": "{{ user `output_directory` }}-vgr"
+      "output_directory": "{{ user `output_directory` }}-dck"
     }
   ],
   "provisioners": [
@@ -64,10 +65,6 @@
       "type": "ansible-local",
       "playbook_file": "extra/playbooks/provision_centos.yaml",
       "extra_arguments": ["-e","@/tmp/variables.yml","-e","@/tmp/override.yml"]
-    },
-    {
-      "type": "ansible-local",
-      "playbook_file": "extra/playbooks/provision_vagrant.yaml"
     },
     {
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
@@ -125,17 +122,9 @@
     "pause_before": "30s"
     }
   ],
-  "post-processors": [
-    {
-      "type": "vagrant",
-      "keep_input_artifact": true,
-      "output": "{{ user `output_vagrant` }}",
-      "vagrantfile_template": "{{ user `vagrantfile_template` }}"
-    }
-  ],
   "variables": {
     "iso_url":  "",
-    "iso_checksum_type": "",
+    "iso_checksum_type": "none",
     "iso_checksum": "",
     "switch_name": "",
     "vm_name": "",
@@ -143,8 +132,7 @@
     "vlan_id": "",
     "output_directory": "",
     "ssh_password": "",
-    "output_vagrant": "",
-    "vagrantfile_template": "",
+    "provision_script_options": "",
     "boot_command": "",
     "ansible_override": ""
   }

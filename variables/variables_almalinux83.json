@@ -12,5 +12,6 @@
     "vagrantfile_template": "./vagrant/hv_almalinux83_g2.template",
     "ssh_password": "password",
     "provision_script_options": "-z false",
-    "boot_command": "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-8-3-x86_64-dvd inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-almalinux8/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>"
+    "boot_command": "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=AlmaLinux-8-3-x86_64-dvd inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-almalinux8/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>",
+    "ansible_override": "variables/almalinux8.yml"
   }

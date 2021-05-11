@@ -1,0 +1,7 @@
+skip_list:
+  - package-latest
+  - command-instead-of-shell
+  - no-handler
+  - risky-file-permissions
+  - risky-shell-pipe
+  - no-relative-paths

@@ -97,6 +97,20 @@ almalinux83-vagrant:
   tags:
     - docker
     - shared
+almalinux83-docker:
+  stage: almalinux8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_almalinux8_g2_docker.json"
+    - export var_file="./variables/variables_almalinux83.json"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
 ubuntu2004:
   stage: ubuntu20-packer-validate
   image: alpine

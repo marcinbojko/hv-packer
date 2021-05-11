@@ -1,0 +1,152 @@
+initial_packages:
+  - curl
+  - mc
+  - wget
+  - tar
+  - bzip2
+  - kernel-devel
+  - kernel-headers
+  - perl
+  - gcc
+  - make
+  - elfutils-libelf-devel
+  - langpacks-en
+  - glibc-all-langpacks
+yum_extra_groups:
+  - "@base"
+  - "@core"
+yum_extra_packages:
+  - adcli
+  - firefox
+  - gcc
+  - hdparm
+  - iotop
+  - krb5-workstation
+  - make
+  - nmap
+  - chrony
+  - oddjob
+  - oddjob-mkhomedir
+  - parted
+  - patch
+  - realmd
+  - samba
+  - samba-common
+  - screen
+  - smartmontools
+  - sssd
+  - sssd-libwbclient
+  - telnet
+  - tmux
+  - xauth
+  - zsh
+yum_extra_epel_packages:
+  - atop
+  - bmon
+  - gparted
+  - htop
+  - iftop
+  - jq
+  - multitail
+  - ncdu
+  - nmon
+  - pv
+  - rkhunter
+epel:
+  priority: 60
+selinux:
+  state: disabled
+webmin:
+  - file: webmin
+    gpgkey: http://www.webmin.com/jcameron-key.asc
+    name: Webmin Distribution Neutral
+    timeout: 120
+    mirrorlist: http://download.webmin.com/download/yum/mirrorlist
+    enabled: 1
+zabbix:
+  repository:
+    - url: https://repo.zabbix.com/zabbix/5.2/rhel/8/x86_64/zabbix-release-5.2-1.el8.noarch.rpm
+      name: zabbix-agent
+      file: /etc/yum.repos.d/zabbix.repo
+      gpgkey: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
+  priorities:
+    - name: zabbix
+      priority: 20
+      path: /etc/yum.repos.d/zabbix.repo
+puppet:
+  repository:
+    - url: https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
+      gpgkey: https://yum.puppet.com/RPM-GPG-KEY-puppet-20250406
+  service:
+    - name: puppet
+      state: stopped
+      enabled: no
+  priorities:
+    - name: puppet6
+      priority: 20
+      path: /etc/yum.repos.d/puppet6.repo
+  package:
+    name: puppet-agent
+  config:
+    location: /etc/puppetlabs/puppet/puppet.conf
+    mode: "0644"
+    agent:
+      - key: runinterval
+        value:  1800
+      - key: server
+        value: foreman.spcph.local
+neofetch:
+  repository:
+    - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-8/konimex-neofetch-epel-8.repo
+      dest: /etc/yum.repos.d/konimex-neofetch.repo
+  package:
+    name: neofetch
+  options:
+    - option: (\s*[^#]info "Packages" packages).*
+      line: '    #info "Packages" packages'
+timezone: "Europe/Copenhagen"
+remote_files:
+  - url: https://raw.githubusercontent.com/marcinbojko/hv-packer/master/extra/files/gen2-centos/prepare_neofetch.sh
+    dest: /tmp/prepare_neofetch.sh
+    mode: "0755"
+firewalld:
+  default_zone: work
+  rich_rules:
+    - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="22" protocol="tcp" accept'
+  zabbix_rich_rules:
+    - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="10050-10051" protocol="tcp" accept'
+  webmin_rich_rules:
+    - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="10000" protocol="tcp" accept'
+  cockpit_rich_rules:
+    - rule: 'rule family="ipv4" source address="0.0.0.0/0" port port="9090" protocol="tcp" accept'
+  services_remove:
+    - ssh
+services:
+  - name: firewalld
+    state: started
+    enabled: true
+  - name: chronyd
+    state: started
+    enabled: true
+  - name: sshd
+    state: started
+    enabled: true
+sysctl:
+  - key: net.ipv4.ip_forward
+    value: 1
+    state: present
+tuned_profile: throughput-performance
+locale:
+  language: en_US.utf8
+  keymap: us
+hyperv:
+  - name: hypervfcopyd
+  - name: hypervkvpd
+  - name: hypervvssd
+motd: |
+  #!/bin/bash
+  neofetch --config /etc/neofetch/config.conf
+  if [ -f ~/.Xauthority ]; then
+    xauth merge ~/.Xauthority
+  fi
+  export XAUTHORITY=$HOME/.Xauthority

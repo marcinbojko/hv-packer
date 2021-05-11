@@ -12,6 +12,7 @@
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
+      - [Ansible Playbooks](#ansible-playbooks)
   - [Templates Windows 2019](#templates-windows-2019)
     - [Hyper-V Generation 2 Windows Server 2019 Standard Image](#hyper-v-generation-2-windows-server-2019-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
@@ -30,11 +31,12 @@
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
     - [Hyper-V Generation 2 AlmaLinux 8.3 Image](#hyper-v-generation-2-almalinux-83-image)
     - [Vagrant support - AlmaLinux 8](#vagrant-support---almalinux-8)
+    - [Hyper-V Generation 2 AlmaLinux 8 image with extra docker volume](#hyper-v-generation-2-almalinux-8-image-with-extra-docker-volume)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
     - [Hyper-V Generation 2 CentOS 7.9 Image with extra docker volume](#hyper-v-generation-2-centos-79-image-with-extra-docker-volume)
-    - [Vagrant support - CentOS 7.x](#vagrant-support---centos-7x)
+    - [Hyper-V Generation 2 CentOS 7.9 Vagrant support](#hyper-v-generation-2-centos-79-vagrant-support)
   - [Known issues](#known-issues)
     - [I have general problem not covered here](#i-have-general-problem-not-covered-here)
     - [I'd like to contribute](#id-like-to-contribute)
@@ -56,6 +58,7 @@
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.12` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 - be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
+- properly constructed virtual switch in Hyper-v allowing virtual machine to get IP from DHCP and contact Hyper-V server on mentioned packer ports. This is a must, if kickstart is reachable over the network.
 
 ## Usage
 
@@ -102,16 +105,17 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
+  |puppet|6.22.1|
 
 - latest Nuget poweshell module
 - `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
-  - `Version` - puppet chocolatey version, for example "5.5.21"
+  - `Version` - puppet chocolatey version, for example "6.22.1"
   - `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
   - `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
 
   Example of usage:
 
-  `.\phase3.ps1 -Version 5.5.20 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
+  `.\phase3.ps1 -Version 6.22.1 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
 
   Puppet is set to clear any temp SSL keys and to be stopped after generalize phase
 
@@ -131,13 +135,13 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   |Repository|Package|switch|
   |----------|------------|---|
-  |Epel 7/8|epel-release|no|
-  |Zabbix 5.2|zabbix-agent|can be switched off by `-z false`|
-  |Puppet 5  |puppet-agent|can be switched off by `-p false`|
-  |Webmin (CentOS 7)|webmin|can be switched off by setting `-w false`|
-  |Cockpit (CentOS 8) |cockpit|can be switched off by setting `-c false`|
-  |System Center Linux Agent |scvmmagent| can be switched off by setting `-h false`|
-  |neofetch  |neofetch|no|
+  |Epel 7/8|epel-release|can be switched off by setting "install_epel" to `false`|
+  |Zabbix 5.2|zabbix-agent|can be switched on by setting "install_zabbix" to `true`|
+  |Puppet 6  |puppet-agent|can be switched off by setting "install_puppet" to false|
+  |Webmin |webmin|can be switched on by setting "install_webmin" to `false`|
+  |Cockpit |cockpit|can be switched on by setting "install_zabbix" to `true`|
+  |Hyper-V |SCVMM Agent|can be switched off by setting "install_hyperv" to `false`|
+  |Neofetch  |neofetch|can be switched off by setting "install_neofetch" to `false`|
   ||||
 
 - [Optional] Linux machine with separated disk for docker
@@ -145,22 +149,31 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
 
-- adjust `/files/provision.sh` to modify package's versions/servers.
-- change `"provision_script_options"` variable to:
-  - -p (true/false) - switch Install Puppet on/off
-  - -w (true/false) - switch Install Webmin on/off (CentOS7 only)
-  - -h (true/false) - switch Install Hyper-V integration services on/off
-  - -u (true/false) - switch yum update all on/off (usable when creating previous than `latest` version of OS)
-  - -z (true/false) - switch Zabbix-agent installation
-  - -c (true/false) - switch Cockpit installation (CentOS8 only)
+#### Ansible Playbooks
 
-  Example:
+During deployment ansible-base and ansible are installed in operating system. After deployment ends, these packages are removed.
+Playbooks are held in `/playbooks` folder, with proper OS variables.
 
-  ```json
-  "provision_script_options": "-p false -u true -w true -h false -z false"
-   ```
+- adjust `./variables/*.yaml` files to achieve override for ansible
 
-- `prepare_neofetch.sh` -  default banner during after the login - change required fields you'd like to see in `provision.sh`
+```yaml
+install_epel:                  true  # install Epel
+install_webmin:                true  # install Webmin
+install_hyperv:                true  # install Hyper-v and scvmm agent
+install_zabbix:                false # install Zabbix-agent
+install_zabbix_as_root:        false # install Zabbix-agent as root
+install_cockpit:               false # install Cockpit
+install_puppet:                true  # Install Puppet
+install_docker_workaround:     true  # add `fsck.repair=yes` to grub
+install_kubernetes_workaround: false # add `cgroup.memory=nokmem` to grub
+remove_puppet_ssl_keys:        false # remove any ssl keys after puppet installation
+install_neofetch:              true  # install neofetch
+install_updates:               true  # install updates
+install_extra_groups:          true  # install extra groups
+docker_prepare:                false # prepare extra volumen for docker
+extra_device:                  ""    # prepare mkfs and mount extra block device for docker
+install_motd:                  true  # install motd (neofetch run)
+```
 
 ## Templates Windows 2019
 
@@ -284,9 +297,13 @@ Run `hv_ubuntu2004.ps1`
 
 Run `hv_almalinux83.ps1`
 
-### Vagrant support - AlmaLinux 8
+### Hyper-V Generation 2 AlmaLinux 8.3 Vagrant support
 
-Experimental support for vagrant machines `hv_almalinux83_vagrant.ps1` for AlmaLinux 8.1
+Run `hv_almalinux83_vagrant.ps1` for AlmaLinux 8.3
+
+### Hyper-V Generation 2 AlmaLinux 8.3 image with extra docker volume
+
+Run `hv_almalinux83_docker.ps1` for AlmaLinux 8.3
 
 ## Templates CentOS 7.x
 
@@ -298,20 +315,20 @@ Experimental support for vagrant machines `hv_almalinux83_vagrant.ps1` for AlmaL
 - credentials for Windows machines: Administrator/password (removed after sysprep)
 - credentials for Linux machines: root/password
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-- no `docker` repo will be added  and no `docker-related` packages will be installed - this build creates and mount separated volume (size specified by variable) for docker
+- for Linux based machines adjust your settings in ./values/centos7.yml or ./values/centos7_docker.yml
+- no `docker` repo will be added  and no `docker-related` packages will be installed - this build only creates and mounts separated volume (size specified by variable) for docker
 
 ### Hyper-V Generation 2 CentOS 7.9
 
-Run `hv_centos79_docker.ps1`
+Run `hv_centos79.ps1`
 
 ### Hyper-V Generation 2 CentOS 7.9 Image with extra docker volume
 
 Run `hv_centos79_docker.ps1`
 
-### Vagrant support - CentOS 7.x
+### Hyper-V Generation 2 CentOS 7.9 Vagrant support
 
-Experimental support for vagrant machines `hv_centos79_vagrant.ps1` for CentOS 7.9
+Run `hv_centos79_vagrant.ps1`
 
 ## Known issues
 

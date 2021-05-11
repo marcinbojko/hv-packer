@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 1.7.0 2021-05-11
+
+* [BREAKING_CHANGE] CentOS 7 and AlmaLinux slowly switching to ansible instead of scripts
+* [BREAKING_CHANGE] switch Zabbix repository to version 5.2. Zabbix repository and zabbix-agent are not added by default. In future revisions choice between `zabbix-agent` and `zabbix-agent2` will be maintained
+* [AlmaLinux] added `Alma Linux 8.3 Docker` support
+* [Extra] thinning and removing obsolete revisions
+* [Extra] unifying Linux scripts under one folder
+
 ## Version 1.6.0 2021-05-03
 
 * [BREAKING_CHANGE] removal of CentOS 8.x support

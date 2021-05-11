@@ -1,0 +1,98 @@
+- name: prepare_vagrant_settings
+  hosts: all
+  vars:
+    vagrant_username: vagrant
+    vagrant_password: vagrant
+    vagrant_home: /home/vagrant
+    vagrant_ssh_pub: https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub
+    delay_time: 5
+    retries_count: 2
+    reboot_server: false
+  become: true
+  gather_facts: false
+  pre_tasks:
+    - name: verify_ansible_meets_version_requirements
+      assert:
+        that: "ansible_version.full is version_compare('2.10', '>=')"
+        msg: >
+          "You must update Ansible to at least 2.10 to use this version of playbook"
+      tags:
+        - assert
+    - name: run_initial_setup_instead_of_gather_facts
+      ansible.builtin.setup:
+        gather_timeout: 60
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: setup_status
+      until: setup_status is success
+      changed_when: false
+      tags:
+        - assert
+  tasks:
+    - name: display_initial_values
+      debug:
+        msg:
+          - "Ansible package manager :{{ ansible_pkg_mgr }}"
+          - "vagrant username        :{{ vagrant_username }}"
+          - "vagrant password        :{{ vagrant_password }}"
+          - "vagrant home            :{{ vagrant_home }}"
+    - name: create_vagrant_group
+      ansible.builtin.group:
+        name: "{{ vagrant_username }}"
+        state: present
+      register: r_create_vagrant_group
+      until: r_create_vagrant_group is success
+    - name: create_vagrant_user
+      ansible.builtin.user:
+        name: "{{ vagrant_username }}"
+        shell: /bin/bash
+        groups: wheel, root
+        group: "{{ vagrant_username }}"
+        password: "{{ vagrant_password |password_hash('sha512')}}"
+        home: "{{ vagrant_home }}"
+        update_password: on_create
+      register: r_create_vagrant_user
+      until: r_create_vagrant_user is success
+      when: (vagrant_home is defined and vagrant_username is defined and vagrant_password is defined) and (r_create_vagrant_group is success and r_create_vagrant_group is defined)
+    - name: create_ssh_folder
+      ansible.builtin.file:
+        state: directory
+        mode: 0700
+        owner: "{{ vagrant_username }}"
+        group: "{{ vagrant_username }}"
+        path: "{{ vagrant_home }}/.ssh"
+      register: r_create_ssh_folder
+      until: r_create_ssh_folder
+      when: (vagrant_home is defined and vagrant_username is defined and vagrant_password is defined) and (r_create_vagrant_user is success and r_create_vagrant_user is defined)
+    - name: download_ssh_pub
+      ansible.builtin.get_url:
+        url: "{{ vagrant_ssh_pub }}"
+        dest: "{{ vagrant_home }}/.ssh/authorized_keys"
+        mode: 0600
+        owner: "{{ vagrant_username }}"
+        group: "{{ vagrant_username }}"
+      register: r_download_ssh_pub
+      until: r_download_ssh_pub is success
+      when: r_create_ssh_folder is defined and r_create_ssh_folder is success
+    - name: vagrant_sudoers_file
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/vagrant
+        mode: 0440
+        content: |
+            {{ vagrant_username }}        ALL=(ALL)       NOPASSWD: ALL
+            Defaults:{{ vagrant_username }} !requiretty
+        validate: /usr/sbin/visudo -csf %s
+      register: r_vagrant_sudoers_file
+      until: r_vagrant_sudoers_file is success
+      when: r_create_vagrant_user is defined and r_create_vagrant_user is success
+    - name: disable_requiretty
+      ansible.builtin.lineinfile:
+        dest: /etc/sudoers
+        regexp: '^(Defaults\s+requiretty)$'
+        line: '#Defaults requiretty'
+        insertafter: EOF
+        state: present
+      register: r_disable_requiretty
+      until: r_disable_requiretty is success
+      when:  (r_create_vagrant_user is defined and r_create_vagrant_user is success) and (r_vagrant_sudoers_file is success and r_vagrant_sudoers_file is defined)
+

@@ -11,6 +11,6 @@
     "vlan_id": "",
     "vagrantfile_template": "./vagrant/hv_centos79_g2.template",
     "ssh_password": "password",
-    "provision_script_options": "-z false",
-    "boot_command": "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\\x207\\x20x\\86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-centos/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>"
+    "boot_command": "c  setparams 'kickstart' <enter> linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\\x207\\x20x\\86_64 inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/gen2-centos/ks.cfg<enter> initrdefi /images/pxeboot/initrd.img<enter> boot<enter>",
+    "ansible_override": "variables/centos7.yml"
   }
