@@ -1,9 +1,15 @@
 # Changelog
 
+## Version 1.7.2 2021-05-19
+
+* [Extra] fixed cleaning temp script for Windows, to skip current packer scripts.
+* [Extra] Package `zabbix-agent` was replaced by `zabbix-agent2` in default settings, same for service
+* [Extra] `ansible.sh` prepared to run on multiple ditributions
+
 ## Version 1.7.1 2021-05-11
 
 * [BREAKING_CHANGE] switch Puppet repository to version 6
-* Fixed `prepare_neofetch.sh` not being run in playbook
+* [CentOS] Fixed `prepare_neofetch.sh` not being run in playbook
 
 ## Version 1.7.0 2021-05-11
 

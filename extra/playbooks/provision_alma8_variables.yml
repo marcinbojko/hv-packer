@@ -106,7 +106,7 @@ neofetch:
       line: '    #info "Packages" packages'
 timezone: "Europe/Copenhagen"
 remote_files:
-  - url: https://raw.githubusercontent.com/marcinbojko/hv-packer/master/extra/files/gen2-centos/prepare_neofetch.sh
+  - url: https://raw.githubusercontent.com/marcinbojko/hv-packer/master/extra/files/gen2-linux/prepare_neofetch.sh
     dest: /tmp/prepare_neofetch.sh
     mode: "0755"
 firewalld:

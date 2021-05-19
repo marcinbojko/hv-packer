@@ -154,7 +154,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 During deployment ansible-base and ansible are installed in operating system. After deployment ends, these packages are removed.
 Playbooks are held in `/extra/playbooks` folder, with proper OS variables.
 
-- adjust `./variables/*.yaml` files to achieve override for ansible
+- adjust `./variables/*.yml` files to achieve override for ansible
 
 ```yaml
 install_epel:                  true  # install Epel

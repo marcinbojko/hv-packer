@@ -515,6 +515,7 @@
             dev: "/dev/{{ extra_device }}1"
             state: present
             resizefs: true
+            opts: -L docker
           register: r_create_docker_filesystem
           when: (r_partition_docker_volume is defined and r_partition_docker_volume is success) and (r_check_for_extra_device.stat.exists and r_check_for_extra_device is defined)
         - name: rerun_setup

@@ -21,8 +21,9 @@ dism /online /cleanup-image /StartComponentCleanup /ResetBase
 dism /online /cleanup-Image /SPSuperseded
 
 # Remove leftovers from deploy
-if (Test-Path -Path c:\Windows\Temp ) {
-    Remove-Item c:\Windows\Temp\* -Recurse -Force
+if ((Test-Path -Path $env:systemroot\Temp) -and ($env:systemroot)) {
+    Write-Host "Cleaning :" $env:systemroot\Temp
+    Remove-Item $env:systemroot\Temp\* -Exclude "packer-*","script-*" -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 # optimize disk
