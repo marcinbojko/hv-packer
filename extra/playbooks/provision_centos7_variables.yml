@@ -75,6 +75,8 @@ zabbix:
     - name: zabbix
       priority: 20
       path: /etc/yum.repos.d/zabbix.repo
+  package:
+      service: zabbix-agent2
 puppet:
   repository:
     - url: https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
@@ -158,3 +160,4 @@ motd: |
     xauth merge ~/.Xauthority
   fi
   export XAUTHORITY=$HOME/.Xauthority
+  export PATH="/usr/local/bin:$PATH"

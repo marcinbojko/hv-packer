@@ -69,42 +69,42 @@ centos79-vagrant:
   tags:
     - docker
     - shared
-almalinux83:
+almalinux84:
   stage: almalinux8-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_almalinux8_g2.json"
-    - export var_file="./variables/variables_almalinux83.json"
+    - export template_file="./templates/hv_almalinux8_g2.pkr.hcl"
+    - export var_file="./variables/variables_almalinux84.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
     - shared
-almalinux83-vagrant:
+almalinux84-vagrant:
   stage: almalinux8-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_almalinux8_g2_vagrant.json"
-    - export var_file="./variables/variables_almalinux83.json"
+    - export template_file="./templates/hv_almalinux8_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_almalinux84.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
     - shared
-almalinux83-docker:
+almalinux84-docker:
   stage: almalinux8-packer-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_almalinux8_g2_docker.json"
-    - export var_file="./variables/variables_almalinux83.json"
+    - export template_file="./templates/hv_almalinux8_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_almalinux84.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"

@@ -12,7 +12,7 @@
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
-      - [Ansible Playbooks](#ansible-playbooks)
+      - [Ansible Playbooks CentOS/AlmaLinux](#ansible-playbooks-centosalmalinux)
   - [Templates Windows 2019](#templates-windows-2019)
     - [Hyper-V Generation 2 Windows Server 2019 Standard Image](#hyper-v-generation-2-windows-server-2019-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
@@ -29,9 +29,9 @@
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
-    - [Hyper-V Generation 2 AlmaLinux 8.3 Image](#hyper-v-generation-2-almalinux-83-image)
-    - [Hyper-V Generation 2 AlmaLinux 8.3 Vagrant support](#hyper-v-generation-2-almalinux-83-vagrant-support)
-    - [Hyper-V Generation 2 AlmaLinux 8.3 image with extra docker volume](#hyper-v-generation-2-almalinux-83-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 AlmaLinux 8.4 Image](#hyper-v-generation-2-almalinux-84-image)
+    - [Hyper-V Generation 2 AlmaLinux 8.4 Vagrant support](#hyper-v-generation-2-almalinux-84-vagrant-support)
+    - [Hyper-V Generation 2 AlmaLinux 8.4 image with extra docker volume](#hyper-v-generation-2-almalinux-84-image-with-extra-docker-volume)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
@@ -53,7 +53,7 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.7.0`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.7.2`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.12` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
@@ -71,7 +71,7 @@ choco install packer --version=1.7.2 -y
 ### Install vagrant from Chocolatey
 
 ```cmd
-choco install vagrant --version=2.2.14 -y
+choco install vagrant --version=2.2.16 -y
 ```
 
 ### Use account with Administrator privileges for Hyper-V
@@ -149,7 +149,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
 
-#### Ansible Playbooks
+#### Ansible Playbooks (CentOS/AlmaLinux)
 
 During deployment ansible-base and ansible are installed in operating system. After deployment ends, these packages are removed.
 Playbooks are held in `/extra/playbooks` folder, with proper OS variables.
@@ -293,17 +293,17 @@ Run `hv_ubuntu2004.ps1`
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 AlmaLinux 8.3 Image
+### Hyper-V Generation 2 AlmaLinux 8.4 Image
 
-Run `hv_almalinux83.ps1`
+Run `hv_almalinux84.ps1`
 
-### Hyper-V Generation 2 AlmaLinux 8.3 Vagrant support
+### Hyper-V Generation 2 AlmaLinux 8.4 Vagrant support
 
-Run `hv_almalinux83_vagrant.ps1` for AlmaLinux 8.3
+Run `hv_almalinux84_vagrant.ps1` for AlmaLinux 8.4
 
-### Hyper-V Generation 2 AlmaLinux 8.3 image with extra docker volume
+### Hyper-V Generation 2 AlmaLinux 8.4 image with extra docker volume
 
-Run `hv_almalinux83_docker.ps1` for AlmaLinux 8.3
+Run `hv_almalinux84_docker.ps1` for AlmaLinux 8.4
 
 ## Templates CentOS 7.x
 

@@ -268,13 +268,13 @@
           until: r_zabbix_package is success
         - name: zabbix_agent_tweaks_folder
           ansible.builtin.file:
-            path: /etc/systemd/system/zabbix-agent.service.d
+            path: "/etc/systemd/system/{{ zabbix.package.service }}.service.d"
             state: directory
             mode: '0755'
           when: install_zabbix_as_root is defined and install_zabbix_as_root
         - name: zabbix_agent_tweaks_content
           ansible.builtin.copy:
-            dest: /etc/systemd/system/zabbix-agent.service.d/override.conf
+            dest: "/etc/systemd/system/{{ zabbix.package.service }}.service.d/override.conf"
             content: |
               [Service]
               User=root
@@ -282,7 +282,7 @@
           when: install_zabbix_as_root is defined and install_zabbix_as_root
         - name: start_zabbix
           ansible.builtin.systemd:
-            name: zabbix-agent
+            name: "{{ zabbix.package.service }}"
             state: restarted
             enabled: true
             daemon_reload: true

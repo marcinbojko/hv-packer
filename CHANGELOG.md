@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.8.0 2021-06-05
+
+* [BREAKING_CHANGE] switch `AlmaLinux` templates to new Packer's HCL2 syntax
+* [AlmaLinux] added several variables (memory, cpu)
+
 ## Version 1.7.2 2021-05-19
 
 * [Extra] fixed cleaning temp script for Windows, to skip current packer scripts.

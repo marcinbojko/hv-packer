@@ -8,7 +8,7 @@ else
     if [ -b "$1" ];then
     echo "$1 exists"
     device=$1
-    if [ -z "$(/usr/sbin/sfdisk -d $device 2>&1)" ]; then
+    if [ -z "$(/usr/sbin/sfdisk -d "$device" 2>&1)" ]; then
       echo "$device doesn't have partitions"
       /usr/sbin/parted --script "$device" \
       mklabel gpt \

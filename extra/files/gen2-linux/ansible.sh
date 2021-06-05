@@ -44,7 +44,8 @@ if [ "$INSTALL" == "true" ] && [[ "$OS" =~ rhel|centos|fodora ]];then
   yum clean all -y
   yum makecache -y
   yum remove ansible ansible-base -y||true
-  yum install python3 python3-devel python3-pip python3-wheel cowsay krb5-devel krb5-workstation -y
+  yum install python3 python3-devel python3-pip python3-wheel krb5-devel krb5-workstation -y
+  yum install cowsay -y
   yum install python3-setuptools python3-psutil -y
   /usr/bin/python3 -m pip install --upgrade setuptools-rust
   install_ansible
@@ -54,7 +55,7 @@ if [ "$INSTALL" == "false" ] && [[ "$OS" =~ rhel|centos|fedora ]];then
   echo "Removing ansible on RHEL/related"
   yum clean all -y
   yum makecache -y
-  /usr/bin/python3 -m pip uninstall  jmespath jsonlint yamllint ansible-base ansible setuptools-rust pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp -y
+  /usr/bin/python3 -m pip uninstall jmespath jsonlint yamllint ansible-base ansible setuptools-rust pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp -y
   rm -rfv /root/.ansible||true
   rm -rfv /root/.cache||true
   rm -rfv /home/vagrant/.ansible||true
@@ -67,7 +68,8 @@ if [ "$INSTALL" == "true" ] && [[ "$OS" =~ debian|ubuntu ]];then
   apt-get clean all -y
   apt-get update -y
   apt-get purge ansible ansible-base -y||true
-  apt-get install python3 python3-dev python3-pip python3-wheel cowsay libkrb5-dev -y
+  apt-get install python3 python3-dev python3-pip python3-wheel libkrb5-dev -y
+  apt-get install cowsay -y
   install_ansible
 fi
 
@@ -82,5 +84,4 @@ if [ "$INSTALL" == "false" ] && [[ "$OS" =~ debian|ubuntu ]];then
   rm -rfv /home/vagrant/.cache||true
 fi
 
-exit
 
