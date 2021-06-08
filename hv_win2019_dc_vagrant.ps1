@@ -1,7 +1,7 @@
 # Build images
 
-$template_file="./templates/hv_win2019_g2_vagrant.json"
-$var_file="./variables/variables_win2019_dc.json"
+$template_file="./templates/hv_win2019_g2_vagrant.pkr.hcl"
+$var_file="./variables/variables_win2019_dc.pkvars.hcl"
 $machine="Windows Server 2019 Datacenter Gen-2 Vagrant"
 $packer_log=0
 

@@ -10,3 +10,4 @@ extra/.snippets/*
 extra/.snippets*
 vbox/*
 *.box
+.scripts/*

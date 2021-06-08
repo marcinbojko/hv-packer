@@ -48,6 +48,7 @@ variable "output_directory" {
   type    = string
   default = ""
 }
+
 variable "provision_script_options" {
   type    = string
   default = ""
@@ -56,11 +57,12 @@ variable "output_vagrant" {
   type    = string
   default = ""
 }
+
 variable "ssh_password" {
   type    = string
   default = ""
   sensitive = true
-}
+  }
 
 variable "switch_name" {
   type    = string
@@ -97,7 +99,7 @@ source "hyperv-iso" "vm" {
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
   iso_url               = "${var.iso_url}"
   memory                = "${var.memory}"
-  output_directory      = "${var.output_directory}"
+  output_directory      = "${var.output_directory}-vgr"
   shutdown_command      = "echo 'password' | sudo -S shutdown -P now"
   shutdown_timeout      = "30m"
   ssh_password          = "${var.ssh_password}"
@@ -106,7 +108,7 @@ source "hyperv-iso" "vm" {
   switch_name           = "${var.switch_name}"
   temp_path             = "."
   vlan_id               = "${var.vlan_id}"
-  vm_name               = "${var.vm_name}"
+  vm_name               = "${var.vm_name}-vgr"
 }
 
 build {
@@ -125,7 +127,7 @@ build {
 
   provisioner "file" {
     destination = "/tmp/variables.yml"
-    source      = "extra/playbooks/provision_alma8_variables.yml"
+    source      = "extra/playbooks/provision_centos7_variables.yml"
   }
 
   provisioner "file" {
@@ -143,6 +145,10 @@ build {
     playbook_file   = "extra/playbooks/provision_centos.yaml"
   }
 
+  provisioner "ansible-local" {
+    playbook_file = "extra/playbooks/provision_vagrant.yaml"
+  }
+
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
     inline          = ["chmod +x /tmp/ansible.sh", "/tmp/ansible.sh -i false"]
@@ -151,7 +157,7 @@ build {
 
   provisioner "file" {
     destination = "/usr/local/bin/uefi.sh"
-    source      = "extra/files/gen2-almalinux8/uefi.sh"
+    source      = "extra/files/gen2-centos/uefi.sh"
   }
 
   provisioner "file" {
@@ -183,4 +189,9 @@ build {
     pause_before    = "30s"
   }
 
+  post-processor "vagrant" {
+    keep_input_artifact  = true
+    output               = "${var.output_vagrant}"
+    vagrantfile_template = "${var.vagrantfile_template}"
+  }
 }

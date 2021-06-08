@@ -33,8 +33,8 @@ centos79:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_centos7_g2.json"
-    - export var_file="./variables/variables_centos79.json"
+    - export template_file="./templates/hv_centos7_g2.pkr.hcl"
+    - export var_file="./variables/variables_centos79.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -47,8 +47,8 @@ centos79-docker:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_centos7_g2_docker.json"
-    - export var_file="./variables/variables_centos79.json"
+    - export template_file="./templates/hv_centos7_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_centos79.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -61,8 +61,8 @@ centos79-vagrant:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_centos7_g2_vagrant.json"
-    - export var_file="./variables/variables_centos79.json"
+    - export template_file="./templates/hv_centos7_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_centos79.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -117,8 +117,8 @@ ubuntu2004:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_ubuntu2004_g2.json"
-    - export var_file="./variables/variables_ubuntu2004.json"
+    - export template_file="./templates/hv_ubuntu2004_g2.pkr.hcl"
+    - export var_file="./variables/variables_ubuntu2004.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -131,8 +131,8 @@ windows2016-std:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_win2016_g2.json"
-    - export var_file="./variables/variables_win2016_std.json"
+    - export template_file="./templates/hv_win2016_g2.pkr.hcl"
+    - export var_file="./variables/variables_win2016_std.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -145,8 +145,8 @@ windows2019-std:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_win2019_g2.json"
-    - export var_file="./variables/variables_win2019_std.json"
+    - export template_file="./templates/hv_win2019_g2.pkr.hcl"
+    - export var_file="./variables/variables_win2019_std.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -159,8 +159,8 @@ windows2019-std-vagrant:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_win2019_g2_vagrant.json"
-    - export var_file="./variables/variables_win2019_std.json"
+    - export template_file="./templates/hv_win2019_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_win2019_std.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -173,8 +173,8 @@ windows2019-dc:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_win2019_g2.json"
-    - export var_file="./variables/variables_win2019_dc.json"
+    - export template_file="./templates/hv_win2019_g2.pkr.hcl"
+    - export var_file="./variables/variables_win2019_dc.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -187,8 +187,8 @@ windows2019-dc-vagrant:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_win2019_g2_vagrant.json"
-    - export var_file="./variables/variables_win2019_dc.json"
+    - export template_file="./templates/hv_win2019_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_win2019_dc.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -201,8 +201,8 @@ windowsserver1909:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_winserver_g2.json"
-    - export var_file="./variables/variables_winserver_1909.json"
+    - export template_file="./templates/hv_winserver_g2.pkr.hcl"
+    - export var_file="./variables/variables_winserver_1909.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -215,8 +215,8 @@ windowsserver2004:
   services:
     - docker:$dind
   before_script:
-    - export template_file="./templates/hv_winserver_g2.json"
-    - export var_file="./variables/variables_winserver_2004.json"
+    - export template_file="./templates/hv_winserver_g2.pkr.hcl"
+    - export var_file="./variables/variables_winserver_2004.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"

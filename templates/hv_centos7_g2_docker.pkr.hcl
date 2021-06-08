@@ -48,6 +48,7 @@ variable "output_directory" {
   type    = string
   default = ""
 }
+
 variable "provision_script_options" {
   type    = string
   default = ""
@@ -56,6 +57,7 @@ variable "output_vagrant" {
   type    = string
   default = ""
 }
+
 variable "ssh_password" {
   type    = string
   default = ""
@@ -87,6 +89,7 @@ source "hyperv-iso" "vm" {
   boot_wait             = "5s"
   communicator          = "ssh"
   cpus                  = "${var.cpus}"
+  disk_additional_size  = "${var.disk_additional_size}"
   disk_block_size       = "1"
   disk_size             = "${var.disk_size}"
   enable_dynamic_memory = "true"
@@ -97,7 +100,7 @@ source "hyperv-iso" "vm" {
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
   iso_url               = "${var.iso_url}"
   memory                = "${var.memory}"
-  output_directory      = "${var.output_directory}"
+  output_directory      = "${var.output_directory}-dck"
   shutdown_command      = "echo 'password' | sudo -S shutdown -P now"
   shutdown_timeout      = "30m"
   ssh_password          = "${var.ssh_password}"
@@ -106,7 +109,7 @@ source "hyperv-iso" "vm" {
   switch_name           = "${var.switch_name}"
   temp_path             = "."
   vlan_id               = "${var.vlan_id}"
-  vm_name               = "${var.vm_name}"
+  vm_name               = "${var.vm_name}-dck"
 }
 
 build {
@@ -125,7 +128,7 @@ build {
 
   provisioner "file" {
     destination = "/tmp/variables.yml"
-    source      = "extra/playbooks/provision_alma8_variables.yml"
+    source      = "extra/playbooks/provision_centos7_variables.yml"
   }
 
   provisioner "file" {
@@ -151,7 +154,7 @@ build {
 
   provisioner "file" {
     destination = "/usr/local/bin/uefi.sh"
-    source      = "extra/files/gen2-almalinux8/uefi.sh"
+    source      = "extra/files/gen2-centos/uefi.sh"
   }
 
   provisioner "file" {

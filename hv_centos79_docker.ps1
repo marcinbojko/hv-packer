@@ -4,8 +4,8 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_centos7_g2_docker.json"
-$var_file="./variables/variables_centos79.json"
+$template_file="./templates/hv_centos7_g2_docker.pkr.hcl"
+$var_file="./variables/variables_centos79.pkvars.hcl"
 $override="./variables/centos7_docker.yml"
 $machine="CentOS 7.9 2009 Docker"
 $packer_log=0

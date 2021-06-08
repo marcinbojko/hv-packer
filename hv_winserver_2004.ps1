@@ -1,7 +1,7 @@
 # Build images
 
-$template_file="./templates/hv_winserver_g2.json"
-$var_file="./variables/variables_winserver_2004.json"
+$template_file="./templates/hv_winserver_g2.pkr.hcl"
+$var_file="./variables/variables_winserver_2004.pkvars.hcl"
 $machine="Windows Server 2004 Standard Gen-2"
 $packer_log=0
 

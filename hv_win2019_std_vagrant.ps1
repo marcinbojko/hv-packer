@@ -4,8 +4,8 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_win2019_g2_vagrant.json"
-$var_file="./variables/variables_win2019_std.json"
+$template_file="./templates/hv_win2019_g2_vagrant.pkr.hcl"
+$var_file="./variables/variables_win2019_std.pkvars.hcl"
 $machine="Windows Server 2019 Standard Gen-2 Vagrant"
 $packer_log=0
 

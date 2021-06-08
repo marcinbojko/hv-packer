@@ -4,8 +4,8 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_ubuntu2004_g2.json"
-$var_file="./variables/variables_ubuntu2004.json"
+$template_file="./templates/hv_ubuntu2004_g2.pkr.hcl"
+$var_file="./variables/variables_ubuntu2004.pkvars.hcl"
 $machine="Ubuntu 20.04"
 $packer_log=0
 

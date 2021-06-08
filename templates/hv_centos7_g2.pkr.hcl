@@ -48,6 +48,7 @@ variable "output_directory" {
   type    = string
   default = ""
 }
+
 variable "provision_script_options" {
   type    = string
   default = ""
@@ -56,6 +57,7 @@ variable "output_vagrant" {
   type    = string
   default = ""
 }
+
 variable "ssh_password" {
   type    = string
   default = ""
@@ -125,7 +127,7 @@ build {
 
   provisioner "file" {
     destination = "/tmp/variables.yml"
-    source      = "extra/playbooks/provision_alma8_variables.yml"
+    source      = "extra/playbooks/provision_centos7_variables.yml"
   }
 
   provisioner "file" {
@@ -151,7 +153,7 @@ build {
 
   provisioner "file" {
     destination = "/usr/local/bin/uefi.sh"
-    source      = "extra/files/gen2-almalinux8/uefi.sh"
+    source      = "extra/files/gen2-centos/uefi.sh"
   }
 
   provisioner "file" {

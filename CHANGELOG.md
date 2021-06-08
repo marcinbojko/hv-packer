@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.8.1 2021-06-08
+
+* [BREAKING_CHANGE] switch `CentOS 7` templates to new Packer's HCL2 syntax
+* [BREAKING_CHANGE] switch `Ubuntu 20.04` templates to new Packer's HCL2 syntax
+* [BREAKING_CHANGE] switch `Windows Server 1909 Standard` templates to new Packer's HCL2 syntax
+* [BREAKING_CHANGE] switch `Windows Server 2004 Standard` templates to new Packer's HCL2 syntax
+* [BREAKING_CHANGE] switch `Windows Server 2016 Standard` templates to new Packer's HCL2 syntax
+* [BREAKING_CHANGE] switch `Windows Server 2019 Standard` templates to new Packer's HCL2 syntax
+* [BREAKING_CHANGE] switch `Windows Server 2019 Datacenter` templates to new Packer's HCL2 syntax
+
 ## Version 1.8.0 2021-06-05
 
 * [BREAKING_CHANGE] switch `AlmaLinux` templates to new Packer's HCL2 syntax

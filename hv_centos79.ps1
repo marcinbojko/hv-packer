@@ -4,8 +4,8 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_centos7_g2.json"
-$var_file="./variables/variables_centos79.json"
+$template_file="./templates/hv_centos7_g2.pkr.hcl"
+$var_file="./variables/variables_centos79.pkvars.hcl"
 $machine="CentOS 7.9 2009"
 $packer_log=0
 
