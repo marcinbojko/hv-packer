@@ -46,6 +46,10 @@ $version=(Get-WMIObject win32_operatingsystem).name
                         $global:os="2004"
                         printWindowsVersion
                     }
+                    '19042' {
+                        $global:os="20H2"
+                        printWindowsVersion
+                    }
                 }
         }
         '(Windows 10)' {
@@ -113,7 +117,7 @@ try {
     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0 -Verbose -Force
     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 0 -Verbose -Force
     Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'HideFileExt' -Value 0 -Verbose -Force
-    Set-ItemProperty -Path 'HKLM:\SYSTEM\Setup\Status\SysprepStatus'  -Name  'GeneralizationState' -Value 7 -Verbose -Force
+    Set-ItemProperty -Path 'HKLM:\SYSTEM\Setup\Status\SysprepStatus' -Name 'GeneralizationState' -Value 7 -Verbose -Force
 }
 catch {
     Write-Output "Phase 1 [ERROR] - setting registry went wrong"
@@ -123,19 +127,27 @@ catch {
 
 if ($global:os -eq '2016') {
   try {
-      Remove-WindowsFeature -Name Windows-Defender-Features -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
   }
   catch {
-      Write-Output "Phase 1 [INFO] - removing Windows Defender went wrong, not critical"
   }
 }
 
 if ($global:os -eq '2019') {
     try {
-        Remove-WindowsFeature -Name Windows-Defender -IncludeManagementTools -ErrorAction SilentlyContinue -Verbose
+    # workaround for SYSTEM account adding keys to RSA folder
+    $keyFolder="$Env:ALLUSERSPROFILE\Microsoft\Crypto\RSA\MachineKeys"
+    $keyUsers=@("SYSTEM")
+    foreach ($keyUser in $keyUsers) {
+        $acl = Get-Acl "$keyFolder"
+        $argument = New-Object System.Security.AccessControl.FileSystemAccessRule("$keyuser", "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+        $acl.SetAccessRule($argument)
+        Set-Acl "$keyFolder" $Acl
+        }
+    Write-Output "Phase 1 [INFO] - workaround for PrivateKeys permission completed succesfully"
     }
+
     catch {
-        Write-Output "Phase 1 [WARN] - removing Windows Defender went wrong, not critical"
+        Write-Output "Phase 1 [WARN] - workaround for PrivateKeys permission failed"
     }
   }
 # Install chocolatey
@@ -164,6 +176,8 @@ if (-not $choco_install_success) {
     Write-Output "Phase 1 [ERROR] - Chocolatey install problem, critical, exiting"
     exit (1)
 }
+
+
 
 #Remove 260 Character Path Limit
 if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem') {

@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.8.2 2021-08-14
+
+* [Extra] Bump `puppet-agent` to `6.24.0` for Windows
+* [Extra] Removed `conemu` from Windows mandatory packages
+* [Extra] added `terminus` aka `tabby` to `phase-5a.software`
+* [Extra] minor script changes (unified output and naming)
+* tested with packer 1.7.3 and 1.7.4
+* [Windows] tested with Windows 2019 image from 2021-07
+* [Extra] switch `ansible` to 2.11 branch
+
 ## Version 1.8.1 2021-06-08
 
 * [BREAKING_CHANGE] switch `CentOS 7` templates to new Packer's HCL2 syntax

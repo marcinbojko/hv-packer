@@ -529,6 +529,11 @@
           register: setup_status
           until: setup_status is success
           changed_when: false
+#        - name: get_extra_volume_uid
+#          ansible.builtin.stat:
+#            path: "{{ extra_device }}1"
+#          register: r_check_for_extra_device_uuid
+#          when: r_create_docker_filesystem is defined and r_create_docker_filesystem is success
         - name: prepare_docker_folder
           ansible.builtin.file:
             name: /var/lib/docker

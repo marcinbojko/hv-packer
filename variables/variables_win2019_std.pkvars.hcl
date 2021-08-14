@@ -1,6 +1,6 @@
-iso_url=".\\iso\\SW_DVD9_Win_Server_STD_CORE_2019_1809.15_64Bit_English_DC_STD_MLF_X22-64557.ISO"
+iso_url="./iso/SW_DVD9_Win_Server_STD_CORE_2019_1809.17_64Bit_English_DC_STD_MLF_X22-69933.ISO"
 iso_checksum_type="sha256"
-iso_checksum="0825442e5e47677fe4aa5e5ee994e5e896f9b3e27accbf116afa56c671282c67"
+iso_checksum="d894b01db8a856bfbcf9e18d9202a6e98c1d4bba147dc7be9763f28ca68aefdb"
 switch_name="vSwitch"
 vlan_id=""
 vm_name="packer-windows2019-g2"

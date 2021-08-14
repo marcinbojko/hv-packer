@@ -1,15 +1,24 @@
-Write-Output "Start Phase-5c - Cleaning/zeroing/compacting"
-Write-Output "Phase-5c.1: Cleaning updates.."
+Write-Output "Phase-5d [START] - Cleaning/zeroing/compacting"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 # Clean WU downloads
-Stop-Service -Name wuauserv -Force
-    if (Test-Path -Path c:\Windows\SoftwareDistribution\Download ) {
-        Remove-Item c:\Windows\SoftwareDistribution\Download\* -Recurse -Force
+try {
+    Stop-Service -Name wuauserv -Force -Verbose -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 10
+    Stop-Service -Name cryptsvc -Force -Verbose -ErrorAction SilentlyContinue
+    Start-Sleep -Seconds 10
+    if (Test-Path -Path "$env:systemroot\SoftwareDistribution\Download" ) {
+        Write-Output "Phase-5d [INFO]: Cleaning updates.."
+        Remove-Item "$env:systemroot\SoftwareDistribution\Download\*" -Recurse -Force -Verbose -ErrorAction SilentlyContinue
     }
-    if (Test-Path -Path c:\Windows\Prefetch) {
-        Remove-Item c:\Windows\Prefetch\*.* -Recurse -Force
+    if (Test-Path -Path "$env:systemroot\Prefetch") {
+        Write-Output "Phase-5d [INFO]: Cleaning prefetch.."
+        Remove-Item "$env:systemroot\Prefetch\*.*" -Recurse -Force -Verbose -ErrorAction SilentlyContinue
     }
-Start-Service -Name wuauserv
+}
+catch {
+    Write-Output "Phase-5d [WARN]: Cleaning failed.."
+}
 
 # Disable Windows Error Reporting
 Disable-WindowsErrorReporting -ErrorAction SilentlyContinue
@@ -21,20 +30,20 @@ dism /online /cleanup-image /StartComponentCleanup /ResetBase
 dism /online /cleanup-Image /SPSuperseded
 
 # Remove leftovers from deploy
-if ((Test-Path -Path $env:systemroot\Temp) -and ($env:systemroot)) {
-    Write-Host "Cleaning :" $env:systemroot\Temp
+if ((Test-Path -Path "$env:systemroot\Temp") -and ("$env:systemroot")) {
+    Write-Output "Phase-5d [INFO]: Cleaning TEMP"
     Remove-Item $env:systemroot\Temp\* -Exclude "packer-*","script-*" -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 # optimize disk
-Write-Output "Phase-5c.2: Defragging.."
+Write-Output "Phase-5d [INFO] Defragging.."
 if (Get-Command Optimize-Volume -ErrorAction SilentlyContinue) {
     Optimize-Volume -DriveLetter C -Defrag -verbose
     } else {
     Defrag.exe c: /H
 }
 
-Write-Output "Phase-5c.3: Zeroing out empty space..."
+Write-Output "Phase-5d [INFO] Zeroing out empty space..."
  $startDTM = (Get-Date)
  $FilePath="c:\zero.tmp"
  $Volume = Get-WmiObject win32_logicaldisk -filter "DeviceID='C:'"
@@ -56,9 +65,9 @@ Write-Output "Phase-5c.3: Zeroing out empty space..."
          $Stream.Close()
      }
  }
- Remove-Item $FilePath -Recurse -Force
+ Remove-Item $FilePath -Recurse -Force -ErrorAction SilentlyContinue
  $endDTM = (Get-Date)
- "Zeroing took: $(($endDTM-$startDTM).totalseconds) seconds"
+ Write-Output "Phase 5d [INFO] Zeroing took: $(($endDTM-$startDTM).totalseconds) seconds"
 
-Write-Output "End of Phase-5c"
+Write-Output "Phase-5d [END]"
 exit 0

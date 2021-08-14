@@ -1,11 +1,11 @@
 # Phase 2 - generic and essential stuff
 $goterror=0
-$packages=@("conemu","sysinternals","dotnetfx")
+$packages=@("sysinternals","dotnetfx")
 $packages_count=$packages.Count
 $packages_attempt=1
 $packages_success=$false
 $packages_success_count=0
-$packages_attempt_max=4
+$packages_attempt_max=10
 $packages_exit_codes=@(0,1605,1614,1641,3010)
 
 

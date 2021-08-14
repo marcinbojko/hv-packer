@@ -1,5 +1,5 @@
 variables:
-  packer_version: "1.7.2"
+  packer_version: "1.7.4"
   dind: 20.10-dind
 stages:
   - get-packer

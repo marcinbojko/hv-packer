@@ -129,7 +129,7 @@ build {
   provisioner "powershell" {
     elevated_password = "password"
     elevated_user     = "Administrator"
-    script            = "./extra/scripts/windows-updates.ps1"
+    script            = "./extra/scripts/phase-4.windows-updates.ps1"
   }
 
   provisioner "windows-restart" {
@@ -148,7 +148,7 @@ build {
     elevated_password = "password"
     elevated_user     = "Administrator"
     pause_before      = "30s"
-    script            = "./extra/scripts/windows-updates.ps1"
+    script            = "./extra/scripts/phase-4.windows-updates.ps1"
   }
 
   provisioner "windows-restart" {
@@ -167,7 +167,7 @@ build {
     elevated_password = "password"
     elevated_user     = "Administrator"
     pause_before      = "30s"
-    script            = "./extra/scripts/windows-updates.ps1"
+    script            = "./extra/scripts/phase-4.windows-updates.ps1"
   }
 
   provisioner "windows-restart" {
@@ -185,13 +185,13 @@ build {
   provisioner "powershell" {
     elevated_password = "password"
     elevated_user     = "Administrator"
-    script            = "./extra/scripts/phase-5.ps1"
+    script            = "./extra/scripts/phase-5a.software.ps1"
   }
 
   provisioner "powershell" {
     elevated_password = "password"
     elevated_user     = "Administrator"
-    script            = "./extra/scripts/windows-compress.ps1"
+    script            = "./extra/scripts/phase-5d.windows-compress.ps1"
   }
 
   provisioner "powershell" {

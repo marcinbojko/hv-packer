@@ -1,3 +1,4 @@
+Write-Output "Phase 5c [START] - Vagrant"
 # Create Vagrant account
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 # Disable UAC
@@ -11,4 +12,4 @@ Remove-Item C:\secpol.cfg -Force
 $Password = ConvertTo-SecureString "vagrant" -AsPlainText -Force -Verbose
 New-LocalUser "vagrant" -Password $Password -FullName "vagrant" -Description "Vagrant user"
 Add-LocalGroupMember -Group "Administrators" -Member "vagrant"
-
+Write-Output "Phase 5c [END] - Vagrant"
