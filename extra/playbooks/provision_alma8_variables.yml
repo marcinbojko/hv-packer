@@ -74,7 +74,7 @@ zabbix:
       priority: 20
       path: /etc/yum.repos.d/zabbix.repo
   package:
-      service: zabbix-agent2
+    service: zabbix-agent2
 puppet:
   repository:
     - url: https://yum.puppet.com/puppet6-release-el-8.noarch.rpm

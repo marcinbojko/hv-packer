@@ -575,7 +575,7 @@
         - name: create_motd
           ansible.builtin.copy:
             dest: /etc/profile.d/motd.sh
-            mode: 755
+            mode: 0755
             content: "{{ motd }}"
             force: no
           when: install_motd and (r_install_neofetch_package is success and r_install_neofetch_package is defined)

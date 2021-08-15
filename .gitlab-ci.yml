@@ -5,10 +5,12 @@ stages:
   - get-packer
   - centos7-packer-validate
   - almalinux8-packer-validate
+  - rockylinux8-packer-validate
   - ubuntu20-packer-validate
   - windows2016-packer-validate
   - windows2019-packer-validate
   - windowsserver-packer-validate
+  - ansible-lint
 get-packer:
   stage: get-packer
   image: alpine
@@ -111,6 +113,51 @@ almalinux84-docker:
   tags:
     - docker
     - shared
+# Rocky
+rockylinux84:
+  stage: rockylinux8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_rockylinux8_g2.pkr.hcl"
+    - export var_file="./variables/variables_rockylinux84.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+rockylinux84-vagrant:
+  stage: rockylinux8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_rockylinux8_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_rockylinux84.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+rockylinux84-docker:
+  stage: rockylinux8-packer-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_rockylinux84.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+
+
 ubuntu2004:
   stage: ubuntu20-packer-validate
   image: alpine
@@ -220,6 +267,23 @@ windowsserver2004:
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+ansible-lint:
+  stage: ansible-lint
+  image: python:3-slim
+  services:
+    - docker:$dind
+  before_script:
+  - /usr/local/bin/python -m pip install --upgrade pip
+  - pip install --upgrade ansible-lint yamllint ansible
+  - yamllint --version
+  - ansible-lint --version
+  script:
+    - yamllint -c ./.yamllint ./extra/playbooks/*.yaml
+    - yamllint -c ./.yamllint ./extra/playbooks/*.yml
+    - ansible-lint ./extra/playbooks/*.yaml
   tags:
     - docker
     - shared

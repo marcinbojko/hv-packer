@@ -5,3 +5,4 @@ skip_list:
   - risky-file-permissions
   - risky-shell-pipe
   - no-relative-paths
+  - experimental

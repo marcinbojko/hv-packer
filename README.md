@@ -1,7 +1,7 @@
-# Set of packer templates to create Microft Hyper-V virtual machines
+# Set of Hashicorp's `Packer` templates to create Microsoft Hyper-V virtual machines
 <!-- TOC -->
 
-- [Set of packer templates to create Microft Hyper-V virtual machines](#set-of-packer-templates-to-create-microft-hyper-v-virtual-machines)
+- [Set of Hashicorp's Packer templates to create Microsoft Hyper-V virtual machines](#set-of-hashicorps-packer-templates-to-create-microsoft-hyper-v-virtual-machines)
   - [Requirements](#requirements)
   - [Usage](#usage)
     - [Install packer from Chocolatey](#install-packer-from-chocolatey)
@@ -12,7 +12,7 @@
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
-      - [Ansible Playbooks CentOS/AlmaLinux](#ansible-playbooks-centosalmalinux)
+      - [Ansible Playbooks CentOS/AlmaLinux/RockyLinux](#ansible-playbooks-centosalmalinuxrockylinux)
   - [Templates Windows 2019](#templates-windows-2019)
     - [Hyper-V Generation 2 Windows Server 2019 Standard Image](#hyper-v-generation-2-windows-server-2019-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
@@ -27,6 +27,11 @@
   - [Templates Ubuntu](#templates-ubuntu)
     - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
+  - [Templates RockyLinux 8.x](#templates-rockylinux-8x)
+    - [Warnings - RockyLinux 8](#warnings---rockylinux-8)
+    - [Hyper-V Generation 2 RockyLinux 8.4 Image](#hyper-v-generation-2-rockylinux-84-image)
+    - [Hyper-V Generation 2 RockyLinux 8.4 Vagrant support](#hyper-v-generation-2-rockylinux-84-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 8.4 image with extra docker volume](#hyper-v-generation-2-rockylinux-84-image-with-extra-docker-volume)
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
     - [Hyper-V Generation 2 AlmaLinux 8.4 Image](#hyper-v-generation-2-almalinux-84-image)
@@ -43,7 +48,7 @@
     - [Infamous UEFI/Secure boot WIndows implementation](#infamous-uefisecure-boot-windows-implementation)
     - [~~On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react~~](#on-windows-server-2019windows-10-1809-image-boots-to-fast-for-packer-to-react)
     - [~~When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface~~](#when-hyper-v-host-has-more-than-one-interface-packer-sets--httpip--variable-to-inproper-interface)
-    - [Packer version 1.3.0/1.3.1 have bug with windows-restart provisioner](#packer-version-130131-have-bug-with-windows-restart-provisioner)
+    - [~~Packer version 1.3.0/1.3.1 have bug with windows-restart provisioner~~](#packer-version-130131-have-bug-with-windows-restart-provisioner)
     - [Packer won't run until VirtualSwitch is created as shared](#packer-wont-run-until-virtualswitch-is-created-as-shared)
     - [I have problem how to find a proper WIM  name in Windows ISO to pick proper version](#i-have-problem-how-to-find-a-proper-wim--name-in-windows-iso-to-pick-proper-version)
     - [On Windows machines, build break during updates phase, when update cycles are interfering with each other](#on-windows-machines-build-break-during-updates-phase-when-update-cycles-are-interfering-with-each-other)
@@ -149,7 +154,7 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
 
-#### Ansible Playbooks (CentOS/AlmaLinux)
+#### Ansible Playbooks (CentOS/AlmaLinux/RockyLinux)
 
 During deployment ansible-base and ansible are installed in operating system. After deployment ends, these packages are removed.
 Playbooks are held in `/extra/playbooks` folder, with proper OS variables.
@@ -281,6 +286,30 @@ Run `hv_winserver_2004.ps1`
 
 Run `hv_ubuntu2004.ps1`
 
+## Templates RockyLinux 8.x
+
+### Warnings - RockyLinux 8
+
+- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+- if needed - change `iso_url` variable to a proper iso name
+- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+- credentials for Windows machines: Administrator/password (removed after sysprep)
+- credentials for Linux machines: root/password
+- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+
+### Hyper-V Generation 2 RockyLinux 8.4 Image
+
+Run `hv_rockylinux84.ps1`
+
+### Hyper-V Generation 2 RockyLinux 8.4 Vagrant support
+
+Run `hv_rockylinux84_vagrant.ps1` for RockyLinux 8.4
+
+### Hyper-V Generation 2 RockyLinux 8.4 image with extra docker volume
+
+Run `hv_rockylinux84_docker.ps1` for RockyLinux 8.4
+
 ## Templates AlmaLinux 8.x
 
 ### Warnings - AlmaLinux 8
@@ -356,7 +385,7 @@ Fixed in version 1.4.4.  Do not use lower versions
 Fixed in version 1.4.4. Do not use lower versions
 ~~No resolution so far, template needs to be changed to pass real IP address, or there should be connection between these addresses. Limiting these, end with timeout errors.**~~
 
-### Packer version 1.3.0/1.3.1 have bug with `windows-restart` provisioner
+### ~~Packer version 1.3.0/1.3.1 have bug with `windows-restart` provisioner~~
 
 [https://github.com/hashicorp/packer/issues/6733](https://github.com/hashicorp/packer/issues/6733)
 

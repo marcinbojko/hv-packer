@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.9.0 2021-08-15
+
+* [RockyLinux] added `Rocky Linux 8.4` support
+* [RockyLinux] added `Rocky Linux 8.4 Docker` support
+* [RockyLinux] added `Rocky Linux 8.4 Vagrant` support
+
 ## Version 1.8.2 2021-08-14
 
 * [Extra] Bump `puppet-agent` to `6.24.0` for Windows
@@ -8,7 +14,7 @@
 * [Extra] minor script changes (unified output and naming)
 * tested with packer 1.7.3 and 1.7.4
 * [Windows] tested with Windows 2019 image from 2021-07
-* [Extra] switch `ansible` to 2.11 branch
+* [Extra] switch `ansible.sh` to 2.11 branch
 
 ## Version 1.8.1 2021-06-08
 
@@ -24,6 +30,9 @@
 
 * [BREAKING_CHANGE] switch `AlmaLinux` templates to new Packer's HCL2 syntax
 * [AlmaLinux] added several variables (memory, cpu)
+* [AlmaLinux] added `Alma Linux 8.4` support
+* [AlmaLinux] added `Alma Linux 8.4 Docker` support
+* [AlmaLinux] added `Alma Linux 8.4 Vagrant` support
 
 ## Version 1.7.2 2021-05-19
 
