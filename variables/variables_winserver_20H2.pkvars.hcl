@@ -1,0 +1,11 @@
+iso_url=".\\iso\\SW_DVD9_Win_Server_STD_CORE_20H2.9_64Bit_English_SAC_DC_STD_MLF_X22-69869.ISO"
+iso_checksum_type="sha256"
+iso_checksum="78e03226bc014d9185c79621bda83dc20d1623ed3061fbbf1a9a440c681d78e3"
+switch_name="vSwitch"
+vlan_id=""
+vm_name="packer-windows-20H2-g2"
+disk_size="70000"
+output_directory="output-windows-20H2-g2"
+secondary_iso_image="./extra/files/gen2-20H2/secondary20H2.iso"
+upgrade_timeout="240"
+

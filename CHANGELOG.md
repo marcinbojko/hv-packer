@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.9.1 2021-08-29
+
+* [Windows] added `Windows Server ver 20H2` support
+
 ## Version 1.9.0 2021-08-15
 
 * [RockyLinux] added `Rocky Linux 8.4` support

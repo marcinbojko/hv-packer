@@ -3,13 +3,13 @@ variables:
   dind: 20.10-dind
 stages:
   - get-packer
-  - centos7-packer-validate
-  - almalinux8-packer-validate
-  - rockylinux8-packer-validate
-  - ubuntu20-packer-validate
-  - windows2016-packer-validate
-  - windows2019-packer-validate
-  - windowsserver-packer-validate
+  - centos7-validate
+  - alma8-validate
+  - rocky8-validate
+  - ubuntu20-validate
+  - windows2016-validate
+  - windows2019-validate
+  - winserver-validate
   - ansible-lint
 get-packer:
   stage: get-packer
@@ -30,7 +30,7 @@ get-packer:
     - docker
     - shared
 centos79:
-  stage: centos7-packer-validate
+  stage: centos7-validate
   image: alpine
   services:
     - docker:$dind
@@ -44,7 +44,7 @@ centos79:
     - docker
     - shared
 centos79-docker:
-  stage: centos7-packer-validate
+  stage: centos7-validate
   image: alpine
   services:
     - docker:$dind
@@ -58,7 +58,7 @@ centos79-docker:
     - docker
     - shared
 centos79-vagrant:
-  stage: centos7-packer-validate
+  stage: centos7-validate
   image: alpine
   services:
     - docker:$dind
@@ -71,8 +71,8 @@ centos79-vagrant:
   tags:
     - docker
     - shared
-almalinux84:
-  stage: almalinux8-packer-validate
+alma84:
+  stage: alma8-validate
   image: alpine
   services:
     - docker:$dind
@@ -85,8 +85,8 @@ almalinux84:
   tags:
     - docker
     - shared
-almalinux84-vagrant:
-  stage: almalinux8-packer-validate
+alma84-vagrant:
+  stage: alma8-validate
   image: alpine
   services:
     - docker:$dind
@@ -99,8 +99,8 @@ almalinux84-vagrant:
   tags:
     - docker
     - shared
-almalinux84-docker:
-  stage: almalinux8-packer-validate
+alma84-docker:
+  stage: alma8-validate
   image: alpine
   services:
     - docker:$dind
@@ -114,8 +114,8 @@ almalinux84-docker:
     - docker
     - shared
 # Rocky
-rockylinux84:
-  stage: rockylinux8-packer-validate
+rocky84:
+  stage: rocky8-validate
   image: alpine
   services:
     - docker:$dind
@@ -128,8 +128,8 @@ rockylinux84:
   tags:
     - docker
     - shared
-rockylinux84-vagrant:
-  stage: rockylinux8-packer-validate
+rocky84-vagrant:
+  stage: rocky8-validate
   image: alpine
   services:
     - docker:$dind
@@ -142,8 +142,8 @@ rockylinux84-vagrant:
   tags:
     - docker
     - shared
-rockylinux84-docker:
-  stage: rockylinux8-packer-validate
+rocky84-docker:
+  stage: rocky8-validate
   image: alpine
   services:
     - docker:$dind
@@ -156,10 +156,8 @@ rockylinux84-docker:
   tags:
     - docker
     - shared
-
-
 ubuntu2004:
-  stage: ubuntu20-packer-validate
+  stage: ubuntu20-validate
   image: alpine
   services:
     - docker:$dind
@@ -172,8 +170,8 @@ ubuntu2004:
   tags:
     - docker
     - shared
-windows2016-std:
-  stage: windows2016-packer-validate
+lts2016-std:
+  stage: windows2016-validate
   image: alpine
   services:
     - docker:$dind
@@ -186,8 +184,8 @@ windows2016-std:
   tags:
     - docker
     - shared
-windows2019-std:
-  stage: windows2019-packer-validate
+lts2019-std:
+  stage: windows2019-validate
   image: alpine
   services:
     - docker:$dind
@@ -200,8 +198,8 @@ windows2019-std:
   tags:
     - docker
     - shared
-windows2019-std-vagrant:
-  stage: windows2019-packer-validate
+lts2019-std-vagrant:
+  stage: windows2019-validate
   image: alpine
   services:
     - docker:$dind
@@ -214,8 +212,8 @@ windows2019-std-vagrant:
   tags:
     - docker
     - shared
-windows2019-dc:
-  stage: windows2019-packer-validate
+lts2019-dc:
+  stage: windows2019-validate
   image: alpine
   services:
     - docker:$dind
@@ -228,8 +226,8 @@ windows2019-dc:
   tags:
     - docker
     - shared
-windows2019-dc-vagrant:
-  stage: windows2019-packer-validate
+lts2019-dc-vagrant:
+  stage: windows2019-validate
   image: alpine
   services:
     - docker:$dind
@@ -242,8 +240,8 @@ windows2019-dc-vagrant:
   tags:
     - docker
     - shared
-windowsserver1909:
-  stage: windowsserver-packer-validate
+sac1909:
+  stage: winserver-validate
   image: alpine
   services:
     - docker:$dind
@@ -256,14 +254,28 @@ windowsserver1909:
   tags:
     - docker
     - shared
-windowsserver2004:
-  stage: windowsserver-packer-validate
+sac2004:
+  stage: winserver-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_winserver_g2.pkr.hcl"
     - export var_file="./variables/variables_winserver_2004.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+sac20H2:
+  stage: winserver-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_winserver_g2.pkr.hcl"
+    - export var_file="./variables/variables_winserver_20H2.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"

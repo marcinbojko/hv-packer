@@ -24,6 +24,7 @@
   - [Templates Windows Server](#templates-windows-server)
     - [Hyper-V Generation 2 Windows Server 1909 Standard Image](#hyper-v-generation-2-windows-server-1909-standard-image)
     - [Hyper-V Generation 2 Windows Server 2004 Standard Image](#hyper-v-generation-2-windows-server-2004-standard-image)
+    - [Hyper-V Generation 2 Windows Server 20H2 Standard Image](#hyper-v-generation-2-windows-server-20h2-standard-image)
   - [Templates Ubuntu](#templates-ubuntu)
     - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
@@ -58,10 +59,10 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.7.2`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.7.4`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
-- [OPTIONAL] Vagrant >= `2.2.12` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
+- [OPTIONAL] Vagrant >= `2.2.18` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 - be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 - properly constructed virtual switch in Hyper-v allowing virtual machine to get IP from DHCP and contact Hyper-V server on mentioned packer ports. This is a must, if kickstart is reachable over the network.
 
@@ -70,13 +71,13 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.7.2 -y
+choco install packer --version=1.7.4 -y
 ```
 
 ### Install vagrant from Chocolatey
 
 ```cmd
-choco install vagrant --version=2.2.16 -y
+choco install vagrant --version=2.2.18 -y
 ```
 
 ### Use account with Administrator privileges for Hyper-V
@@ -110,17 +111,17 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
-  |puppet|6.22.1|
+  |puppet|6.24.0|
 
 - latest Nuget poweshell module
 - `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
-  - `Version` - puppet chocolatey version, for example "6.22.1"
+  - `Version` - puppet chocolatey version, for example "6.24.0"
   - `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
   - `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
 
   Example of usage:
 
-  `.\phase3.ps1 -Version 6.22.1 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
+  `.\phase3.ps1 -Version 6.24.0 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
 
   Puppet is set to clear any temp SSL keys and to be stopped after generalize phase
 
@@ -269,6 +270,15 @@ If you need changes For - prepare `secondary2004.iso` with folder structure:
 - ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
 
 Run `hv_winserver_2004.ps1`
+
+### Hyper-V Generation 2 Windows Server 20H2 Standard Image
+
+If you need changes For - prepare `secondary20H2.iso` with folder structure:
+
+- ./extra/files/gen2-20H2/Autounattend.xml     => /Autounattend.xml
+- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
+
+Run `hv_winserver_20H2.ps1`
 
 ## Templates Ubuntu
 
