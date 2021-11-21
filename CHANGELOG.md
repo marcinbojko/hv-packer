@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 1.9.2 2021-11-21
+
+* [Windows] added `Windows Server 2022 Standard` support
+* [Windows] added `Windows Server 2022 Datacenter` support
+* [Windows] added `Windows Server 2022 Standard Vagrant` support
+* [Windows] added `Windows Server 2022 Datacenter Vagrant` support
+* [Windows] bumped `puppet-agent` to version 6.25.1
+* [Windows] renamed all references from `terminus` to `tabby`
+* `extra` scripts optimizations
+
 ## Version 1.9.1 2021-08-29
 
 * [Windows] added `Windows Server ver 20H2` support

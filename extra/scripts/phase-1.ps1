@@ -19,6 +19,10 @@ $version=(Get-WMIObject win32_operatingsystem).name
             $global:os="2019"
             printWindowsVersion
         }
+        '(Server 2022)' {
+                $global:os="2022"
+                printWindowsVersion
+        }
         '(Microsoft Windows Server Standard|Microsoft Windows Server Datacenter)'{
             $ws_version=(Get-WmiObject win32_operatingsystem).buildnumber
                 switch -Regex ($ws_version) {
@@ -82,12 +86,7 @@ Write-Output "Phase 1 [START] - Start of Phase 1"
 Import-Module ServerManager
 # let's check which windows
 whichWindows
-
-#2016/1709/1803/1903/1909/2004
-# if ($global:os -notlike '2019') {
-#    # Install-WindowsFeature NET-Framework-Core,NET-Framework-Features,PowerShell-V2 -IncludeManagementTools
-# }
-# 1709/1803/1809/1903/2019
+# 1709/1803/1809/1903/2019/2022
 if ($global:os -notlike '2016') {
     Enable-NetFirewallRule -DisplayGroup "Windows Defender Firewall Remote Management" -Verbose
 }

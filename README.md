@@ -13,11 +13,20 @@
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
       - [Ansible Playbooks CentOS/AlmaLinux/RockyLinux](#ansible-playbooks-centosalmalinuxrockylinux)
+  - [Templates Windows 2022](#templates-windows-2022)
+    - [Hyper-V Generation 2 Windows Server 2022 Standard Image](#hyper-v-generation-2-windows-server-2022-standard-image)
+      - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
+    - [Hyper-V Generation 2 Windows Server 2022 Datacenter Image](#hyper-v-generation-2-windows-server-2022-datacenter-image)
+      - [Datacenter Generation 2 Prerequisites](#datacenter-generation-2-prerequisites)
+    - [[Experimental] Hyper-V generation 2 Windows Server 2022 Standard Vagrant support](#experimental-hyper-v-generation-2-windows-server-2022-standard-vagrant-support)
+    - [[Experimental] Hyper-V generation 2 Windows Server 2022 Datacenter Vagrant support](#experimental-hyper-v-generation-2-windows-server-2022-datacenter-vagrant-support)
   - [Templates Windows 2019](#templates-windows-2019)
     - [Hyper-V Generation 2 Windows Server 2019 Standard Image](#hyper-v-generation-2-windows-server-2019-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
     - [Hyper-V Generation 2 Windows Server 2019 Datacenter Image](#hyper-v-generation-2-windows-server-2019-datacenter-image)
       - [Datacenter Generation 2 Prerequisites](#datacenter-generation-2-prerequisites)
+    - [[Experimental] Hyper-V generation 2 Windows Server 2019 Standard Vagrant support](#experimental-hyper-v-generation-2-windows-server-2019-standard-vagrant-support)
+    - [[Experimental] Hyper-V generation 2 Windows Server 2019 Datacenter Vagrant support](#experimental-hyper-v-generation-2-windows-server-2019-datacenter-vagrant-support)
   - [Templates Windows 2016](#templates-windows-2016)
     - [Hyper-V Generation 2 Windows Server 2016 Standard Image](#hyper-v-generation-2-windows-server-2016-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
@@ -59,10 +68,10 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.7.4`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.7.8`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
-- [OPTIONAL] Vagrant >= `2.2.18` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
+- [OPTIONAL] Vagrant >= `2.2.19` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 - be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 - properly constructed virtual switch in Hyper-v allowing virtual machine to get IP from DHCP and contact Hyper-V server on mentioned packer ports. This is a must, if kickstart is reachable over the network.
 
@@ -71,13 +80,13 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.7.4 -y
+choco install packer --version=1.7.8 -y
 ```
 
 ### Install vagrant from Chocolatey
 
 ```cmd
-choco install vagrant --version=2.2.18 -y
+choco install vagrant --version=2.2.19 -y
 ```
 
 ### Use account with Administrator privileges for Hyper-V
@@ -111,7 +120,8 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
-  |puppet|6.24.0|
+  |puppet|6.25.1|
+  |tabby|latest|
 
 - latest Nuget poweshell module
 - `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
@@ -181,6 +191,64 @@ extra_device:                  ""    # prepare mkfs and mount extra block device
 install_motd:                  true  # install motd (neofetch run)
 ```
 
+## Templates Windows 2022
+
+### Hyper-V Generation 2 Windows Server 2022 Standard Image
+
+Run `hv_win2022_std.ps1` (Windows)
+
+#### 2022 Standard Generation 2 Prerequisites
+
+For Generation 2 prepare `secondary.iso` with folder structure:
+
+- ./extra/files/gen2-2022/std/Autounattend.xml     => /Autounattend.xml
+- ./extra/scripts/hyper-v/bootstrap.ps1            => /bootstrap.ps1
+
+This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
+
+```xml
+<InstallFrom>
+    <MetaData wcm:action="add">
+        <Key>/IMAGE/NAME </Key>
+        <Value>Windows Server 2022 SERVERSTANDARD</Value>
+    </MetaData>
+</InstallFrom>
+```
+
+### Hyper-V Generation 2 Windows Server 2022 Datacenter Image
+
+Run `hv_win2022_dc.ps1` (Windows)
+
+#### 2022 Datacenter Generation 2 Prerequisites
+
+For Generation 2 prepare `secondary.iso` with folder structure:
+
+- ./extra/files/gen2-2022/dc/Autounattend.xml     => /Autounattend.xml
+- ./extra/scripts/hyper-v/bootstrap.ps1            => /bootstrap.ps1
+
+This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
+
+```xml
+<InstallFrom>
+    <MetaData wcm:action="add">
+        <Key>/IMAGE/NAME </Key>
+        <Value>Windows Server 2022 SERVERDATACENTER</Value>
+    </MetaData>
+</InstallFrom>
+```
+
+### [Experimental] Hyper-V generation 2 Windows Server 2022 Standard Vagrant support
+
+```powershell
+hv_win2022_std_vagrant.ps1
+```
+
+### [Experimental] Hyper-V generation 2 Windows Server 2022 Datacenter Vagrant support
+
+```powershell
+hv_win2022_dc_vagrant.ps1
+```
+
 ## Templates Windows 2019
 
 ### Hyper-V Generation 2 Windows Server 2019 Standard Image
@@ -225,6 +293,18 @@ This template uses this image name in Autounattendes.xml. If youre using differe
         <Value>Windows Server 2019 SERVERDATACENTER</Value>
     </MetaData>
 </InstallFrom>
+```
+
+### [Experimental] Hyper-V generation 2 Windows Server 2019 Standard Vagrant support
+
+```powershell
+hv_win2019_std_vagrant.ps1
+```
+
+### [Experimental] Hyper-V generation 2 Windows Server 2019 Datacenter Vagrant support
+
+```powershell
+hv_win2019_dc_vagrant.ps1
 ```
 
 ## Templates Windows 2016

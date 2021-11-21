@@ -1,5 +1,5 @@
 variables:
-  packer_version: "1.7.4"
+  packer_version: "1.7.8"
   dind: 20.10-dind
 stages:
   - get-packer
@@ -9,6 +9,7 @@ stages:
   - ubuntu20-validate
   - windows2016-validate
   - windows2019-validate
+  - windows2022-validate
   - winserver-validate
   - ansible-lint
 get-packer:
@@ -170,6 +171,7 @@ ubuntu2004:
   tags:
     - docker
     - shared
+# Windows Server 2016
 lts2016-std:
   stage: windows2016-validate
   image: alpine
@@ -184,6 +186,7 @@ lts2016-std:
   tags:
     - docker
     - shared
+# Windows Server 2019
 lts2019-std:
   stage: windows2019-validate
   image: alpine
@@ -240,6 +243,37 @@ lts2019-dc-vagrant:
   tags:
     - docker
     - shared
+# Windows Server 2022
+lts2022-std:
+  stage: windows2022-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2022_g2.pkr.hcl"
+    - export var_file="./variables/variables_win2022_std.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+lts2012-dc:
+  stage: windows2022-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2022_g2.pkr.hcl"
+    - export var_file="./variables/variables_win2022_dc.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - shared
+
+# Windows SAC
 sac1909:
   stage: winserver-validate
   image: alpine
