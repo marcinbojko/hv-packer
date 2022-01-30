@@ -1,19 +1,21 @@
 #cloud-config
+
 autoinstall:
   version: 1
-  users:
-    - name: root
-      lock-passwd: false
-      password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
-#  chpasswd:
-#    list: |
-#      root: $6$5EpnCRkBp9wi$bURvIWJorTrMasyS1NCsIPywrfqCC/DlWf833HXQW9azr.nBtr9n0Fu.6PjHuYgkzI8nLR3IOr/fK/pLO9kuH1
+  indentity:
+    hostname: ubuntu2004
+    password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
+    username: root
+  # users:
+  #   - name: root
+  #     lock-passwd: false
+  #     disable_root: false
+  #     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
+  #     ssh_pwauth: true
+  #     runcmd:
+  #     - echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
   early-commands:
     - systemctl stop ssh # otherwise packer tries to connect and exceed max attempts
-#  identity:
-#    hostname: ubuntu2004
-#    password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
-#    username: root
   network:
     network:
       version: 2
@@ -32,6 +34,7 @@ autoinstall:
     - mc
     - curl
     - wget
+    - sudo
     - tar
     - bzip2
     - build-essential
@@ -46,12 +49,15 @@ autoinstall:
     allow-pw: true
   user-data:
     disable_root: false
+    lock-passwd: false
+    ssh_pwauth: true
     hostname: ubuntu2004
     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
     username: root
   late-commands:
     #- echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
     - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0 elevator=noop"/' /target/etc/default/grub
+    - sed -ie 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
     - curtin in-target --target /target update-grub2
 storage:
   config:
@@ -100,32 +106,3 @@ storage:
       type: mount
       path: /boot
       device: boot-partition-fs
-    #  storage:
-#    config:
-#    - grub_device: true
-#      id: disk-sda
-#      path: /dev/sda
-#      ptable: gpt
-#      type: disk
-#      wipe: superblock-recursive
-#    - device: disk-sda
-#      flag: bios_grub
-#      id: partition-0
-#      number: 1
-#      size: 1048576
-#      type: partition
-#
-#    - device: disk-sda
-#      id: partition-1
-#      number: 2
-#      size: -1
-#      type: partition
-#      wipe: superblock
-#    - fstype: ext4
-#      id: format-0
-#      type: format
-#      volume: partition-1
-#    - device: format-0
-#      id: mount-0
-#      path: /
-#      type: mount

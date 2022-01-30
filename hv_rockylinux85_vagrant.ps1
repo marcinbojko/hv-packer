@@ -5,9 +5,9 @@ $startDTM = (Get-Date)
 
 # Variables
 $template_file="./templates/hv_rockylinux8_g2_vagrant.pkr.hcl"
-$var_file="./variables/variables_rockylinux84.pkvars.hcl"
-$vbox_file="./vbox/packer-rockylinux84-g2.box"
-$machine="RockyLinux 8.4"
+$var_file="./variables/variables_rockylinux85.pkvars.hcl"
+$vbox_file="./vbox/packer-rockylinux85-g2.box"
+$machine="RockyLinux 8.5"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {

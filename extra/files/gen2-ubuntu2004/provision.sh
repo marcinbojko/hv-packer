@@ -2,9 +2,9 @@
 # ubuntu version of provision.sh
 INSTALL_UPDATES=true
 INSTALL_PUPPET=true
-INSTALL_HYPERV=true
+INSTALL_HYPERV=false
 INSTALL_COCKPIT=true
-INSTALL_ZABBIX=true
+INSTALL_ZABBIX=false
 STAMP_FILE="/etc/packerinfo"
 
 usage() { echo "Usage: $0 [-u <true|false> INSTALL_UPDATES ] [-p <true|false> INSTALL_PUPPET] [-w <true|false> INSTALL_COCKPIT] [-h <true|false> INSTALL_HYPERV]  [-z <true|false> INSTALL_ZABBIX]" 1>&2; }
@@ -97,10 +97,10 @@ fi
 if [ "$INSTALL_PUPPET" == "true" ]; then
 
     echo "Provisioning phase 2 - Puppet Agent"
-    # puppet 5.x repository
-    wget https://apt.puppetlabs.com/puppet5-release-bionic.deb
-    dpkg -i puppet5-release-bionic.deb
-    rm -rfv puppet5-release-bionic.deb
+    # puppet 6.x repository
+    wget https://apt.puppetlabs.com/puppet6-release-focal.deb
+    dpkg -i puppet6-release-focal.deb
+    rm -rfv puppet6-release-focal.deb
     apt-get update -y
 
     apt-get -y install puppet-agent

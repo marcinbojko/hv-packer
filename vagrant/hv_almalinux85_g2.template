@@ -4,8 +4,8 @@
 Vagrant.require_version ">= 1.6.2"
 
 Vagrant.configure("2") do |config|
-    config.vm.define "vagrant-rockylinux83"
-    config.vm.box = "rockylinux84"
+    config.vm.define "vagrant-almalinux85"
+    config.vm.box = "almalinux85"
     config.vm.communicator = "ssh"
     config.vm.synced_folder ".", "/vagrant", type: "rsync", disabled: "true"
 

@@ -1,17 +1,23 @@
 variables:
-  packer_version: "1.7.8"
+  packer_version: "1.7.9"
   dind: 20.10-dind
+  build_alma: "false"
+  build_centos: "false"
+  build_rocky: "false"
+  build_ubuntu: "false"
 stages:
   - get-packer
   - centos7-validate
   - alma8-validate
   - rocky8-validate
   - ubuntu20-validate
-  - windows2016-validate
   - windows2019-validate
   - windows2022-validate
-  - winserver-validate
   - ansible-lint
+  - build_alma
+  - build_rocky
+  - build_centos
+  - build_ubuntu
 get-packer:
   stage: get-packer
   image: alpine
@@ -29,7 +35,7 @@ get-packer:
     - rm -rf packer_"$packer_version"_linux_amd64.zip
   tags:
     - docker
-    - shared
+    - packer
 centos79:
   stage: centos7-validate
   image: alpine
@@ -43,7 +49,7 @@ centos79:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 centos79-docker:
   stage: centos7-validate
   image: alpine
@@ -57,7 +63,7 @@ centos79-docker:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 centos79-vagrant:
   stage: centos7-validate
   image: alpine
@@ -71,92 +77,92 @@ centos79-vagrant:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
-alma84:
+    - packer
+alma85:
   stage: alma8-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_almalinux8_g2.pkr.hcl"
-    - export var_file="./variables/variables_almalinux84.pkvars.hcl"
+    - export var_file="./variables/variables_almalinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
-alma84-vagrant:
+    - packer
+alma85-vagrant:
   stage: alma8-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_almalinux8_g2_vagrant.pkr.hcl"
-    - export var_file="./variables/variables_almalinux84.pkvars.hcl"
+    - export var_file="./variables/variables_almalinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
-alma84-docker:
+    - packer
+alma85-docker:
   stage: alma8-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_almalinux8_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_almalinux84.pkvars.hcl"
+    - export var_file="./variables/variables_almalinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 # Rocky
-rocky84:
+rocky85:
   stage: rocky8-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux84.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
-rocky84-vagrant:
+    - packer
+rocky85-vagrant:
   stage: rocky8-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_vagrant.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux84.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
-rocky84-docker:
+    - packer
+rocky85-docker:
   stage: rocky8-validate
   image: alpine
   services:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux84.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 ubuntu2004:
   stage: ubuntu20-validate
   image: alpine
@@ -170,23 +176,7 @@ ubuntu2004:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
-# Windows Server 2016
-lts2016-std:
-  stage: windows2016-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_win2016_g2.pkr.hcl"
-    - export var_file="./variables/variables_win2016_std.pkvars.hcl"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-# Windows Server 2019
+    - packer
 lts2019-std:
   stage: windows2019-validate
   image: alpine
@@ -200,7 +190,7 @@ lts2019-std:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 lts2019-std-vagrant:
   stage: windows2019-validate
   image: alpine
@@ -214,7 +204,7 @@ lts2019-std-vagrant:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 lts2019-dc:
   stage: windows2019-validate
   image: alpine
@@ -228,7 +218,7 @@ lts2019-dc:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 lts2019-dc-vagrant:
   stage: windows2019-validate
   image: alpine
@@ -242,7 +232,7 @@ lts2019-dc-vagrant:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 # Windows Server 2022
 lts2022-std:
   stage: windows2022-validate
@@ -257,7 +247,7 @@ lts2022-std:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
 lts2012-dc:
   stage: windows2022-validate
   image: alpine
@@ -271,51 +261,36 @@ lts2012-dc:
     - ./packer validate -var-file="$var_file" "$template_file"
   tags:
     - docker
-    - shared
+    - packer
+lts2022-std-vagrant:
+  stage: windows2022-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2022_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_win2022_std.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+lts2012-dc-vagrant:
+  stage: windows2022-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_win2022_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_win2022_dc.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
 
-# Windows SAC
-sac1909:
-  stage: winserver-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_winserver_g2.pkr.hcl"
-    - export var_file="./variables/variables_winserver_1909.pkvars.hcl"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-sac2004:
-  stage: winserver-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_winserver_g2.pkr.hcl"
-    - export var_file="./variables/variables_winserver_2004.pkvars.hcl"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
-sac20H2:
-  stage: winserver-validate
-  image: alpine
-  services:
-    - docker:$dind
-  before_script:
-    - export template_file="./templates/hv_winserver_g2.pkr.hcl"
-    - export var_file="./variables/variables_winserver_20H2.pkvars.hcl"
-  script:
-    - ./packer version --version
-    - ./packer validate -var-file="$var_file" "$template_file"
-  tags:
-    - docker
-    - shared
 ansible-lint:
   stage: ansible-lint
   image: python:3-slim
@@ -332,4 +307,173 @@ ansible-lint:
     - ansible-lint ./extra/playbooks/*.yaml
   tags:
     - docker
-    - shared
+    - packer
+# Here building starts
+
+build_alma:
+  stage: build_alma
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_almalinux85.ps1
+  rules:
+    - if: $build_alma == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_alma_docker:
+  stage: build_alma
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_almalinux85_docker.ps1
+    - .\hv_almalinux85_vagrant.ps1
+  rules:
+    - if: $build_alma == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_alma
+build_alma_vagrant:
+  stage: build_alma
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_almalinux85_vagrant.ps1
+  rules:
+    - if: $build_alma == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_alma_docker
+# Rocky
+build_rocky:
+  stage: build_rocky
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_rockylinux85.ps1
+  rules:
+    - if: $build_rocky == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_rocky_docker:
+  stage: build_rocky
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_rockylinux85_docker.ps1
+  rules:
+    - if: $build_rocky == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_rocky
+build_rocky_vagrant:
+  stage: build_rocky
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_rockylinux85_vagrant.ps1
+  rules:
+    - if: $build_rocky == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_rocky_docker
+# CentOS
+build_centos:
+  stage: build_centos
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_centos79.ps1
+  rules:
+    - if: $build_centos == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_centos_docker:
+  stage: build_centos
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_centos79_docker.ps1
+  rules:
+    - if: $build_centos == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_centos
+build_centos_vagrant:
+  stage: build_centos
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_centos79_vagrant.ps1
+  rules:
+    - if: $build_centos == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_centos_docker
+# Ubuntu
+build_ubuntu:
+  stage: build_ubuntu
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_ubuntu2004.ps1
+  rules:
+    - if: $build_ubuntu == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+

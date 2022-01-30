@@ -12,6 +12,7 @@ initial_packages:
   - elfutils-libelf-devel
   - langpacks-en
   - glibc-all-langpacks
+  - ca-certificates
 yum_extra_groups:
   - "@base"
   - "@core"
@@ -35,7 +36,7 @@ yum_extra_packages:
   - screen
   - smartmontools
   - sssd
-  - sssd-libwbclient
+  - sssd-tools
   - telnet
   - tmux
   - xauth
@@ -54,6 +55,8 @@ yum_extra_epel_packages:
   - rkhunter
 epel:
   priority: 60
+epel_package:
+  - epel-release
 selinux:
   state: disabled
 webmin:

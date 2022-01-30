@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 1.9.3 2022-01-30
+
+* [BREAKING_CHANGE] Windows Server units (1909/2004/20H2) will be deprecated and removed in next major release
+* [BREAKING_CHANGE] Windows Server 2016 will be deprecated and removed in next major release
+* [Ubuntu] fixed image being vagrant-only
+* [Ubuntu] fixed several problems with provisioning
+* [AlmaLinux] added `AlmaLinux 8.5`
+* [RockyLinux] added `RockyLinux 8.5`
+
 ## Version 1.9.2 2021-11-21
 
 * [Windows] added `Windows Server 2022 Standard` support

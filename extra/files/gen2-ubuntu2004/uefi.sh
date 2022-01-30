@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # try to deal with broken centos/ubuntu UEFI in Hyper-V
 
 # Let's find out which bootnumber we have currently in UEFI with Ubuntu label

@@ -140,10 +140,10 @@ build {
     inline_shebang    = "/bin/sh -x"
   }
 
-  provisioner "file" {
-    destination = "/tmp/common-password"
-    source      = "extra/files/gen2-ubuntu2004/common-password"
-  }
+  // provisioner "file" {
+  //   destination = "/tmp/common-password"
+  //   source      = "extra/files/gen2-ubuntu2004/common-password"
+  // }
 
   provisioner "file" {
     destination = "/tmp/puppet.conf"
@@ -155,10 +155,10 @@ build {
     source      = "extra/files/gen2-ubuntu2004/motd.sh"
   }
 
-  provisioner "file" {
-    destination = "/tmp/vagrant.sh"
-    source      = "extra/files/gen2-ubuntu2004/vagrant.sh"
-  }
+  // provisioner "file" {
+  //   destination = "/tmp/vagrant.sh"
+  //   source      = "extra/files/gen2-ubuntu2004/vagrant.sh"
+  // }
 
   provisioner "file" {
     destination = "/tmp/prepare_neofetch.sh"
@@ -172,8 +172,36 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["echo Last Phase", "chmod +x /tmp/prepare_neofetch.sh", "chmod +x /usr/local/bin/uefi.sh", "chmod +x /tmp/zeroing.sh", "mv -fv /tmp/common-password /etc/pam.d/common-password", "chmod 644 /etc/pam.d/common-password", "chown root:root /etc/pam.d/common-password", "/tmp/prepare_neofetch.sh", "/tmp/zeroing.sh", "/bin/rm -rfv /tmp/*", "/bin/rm -f /etc/ssh/*key*", "/usr/bin/ssh-keygen -A", "echo 'packerVersion: ${packer.version}' >>/etc/packerinfo"]
+    inline          = ["echo Last Phase",
+    "chmod +x /tmp/prepare_neofetch.sh",
+    "chmod +x /usr/local/bin/uefi.sh",
+    "chmod +x /tmp/zeroing.sh",
+    "/tmp/prepare_neofetch.sh",
+    "/tmp/zeroing.sh",
+    "/bin/rm -rfv /tmp/*",
+    "/bin/rm -f /etc/ssh/*key*",
+    "/usr/bin/ssh-keygen -A",
+    "echo 'packerVersion: ${packer.version}' >>/etc/packerinfo"]
     inline_shebang  = "/bin/sh -x"
   }
+
+  # vagrant
+  // provisioner "shell" {
+  //   execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+  //   inline          = ["echo Last Phase",
+  //   "chmod +x /tmp/prepare_neofetch.sh",
+  //   "chmod +x /usr/local/bin/uefi.sh",
+  //   "chmod +x /tmp/zeroing.sh",
+  //   "mv -fv /tmp/common-password /etc/pam.d/common-password",
+  //   "chmod 644 /etc/pam.d/common-password",
+  //   "chown root:root /etc/pam.d/common-password",
+  //   "/tmp/prepare_neofetch.sh",
+  //   "/tmp/zeroing.sh",
+  //   "/bin/rm -rfv /tmp/*",
+  //   "/bin/rm -f /etc/ssh/*key*",
+  //   "/usr/bin/ssh-keygen -A",
+  //   "echo 'packerVersion: ${packer.version}' >>/etc/packerinfo"]
+  //   inline_shebang  = "/bin/sh -x"
+  // }
 
 }

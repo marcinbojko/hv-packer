@@ -8,7 +8,8 @@
     - [Install vagrant from Chocolatey](#install-vagrant-from-chocolatey)
     - [Use account with Administrator privileges for Hyper-V](#use-account-with-administrator-privileges-for-hyper-v)
     - [Add firewal exclusions for TCP ports 8000-9000 default range](#add-firewal-exclusions-for-tcp-ports-8000-9000-default-range)
-    - [To adjust to your Hyper-V, please check variables below and/or in ./variables files - for](#to-adjust-to-your-hyper-v-please-check-variables-below-andor-in-variables-files---for)
+    - [Adjust Hyper-V settings](#adjust-hyper-v-settings)
+    - [Default passwords](#default-passwords)
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
@@ -99,13 +100,27 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
 ```
 
-### To adjust to your Hyper-V, please check variables below and/or in ./variables files - for
+### Adjust Hyper-V settings
+
+To adjust to your Hyper-V, please check variables below and/or in ./variables files
 
 - proper VLAN ID (possible passing as variable `-var 'vlan_id=0'` ). Look to your build server NIC setings.
 - proper Hyper-V Virtual Switch name (access to Internet will be required) (possible passing as variable `-var 'switch_name=vSwitch'`). Remember - creation of new switch by packer, instead of reusing existing one can cause lack of Internet access. If it's possible substitute variable with your current switch's name.
 - proper URL for ISO images in packer's template (possible passing as variable `-var 'iso_url=file.iso'` ). Be warned - using your own or different images can fail the build, as for example image index or image name used by your ISO can be different then specified by script. Look at the bottom of this Readme to read how to find or use image index.
 - proper checksum type (possible passing as variable `-var 'iso_checksum_type=sha256'` )
 - proper checksum  (possible passing as variable `-var 'iso_checksum=aaaabbbbbbbcccccccddddd'` )
+
+### Default passwords
+
+|OS|username|password|
+|--|--------|--------|
+|Windows|Administrator|password|
+||vagrant|vagrant|
+|CentOS/RHEL|root|password|
+||vagrant|vagrant|
+|Ubuntu|ubuntu|password|
+||vagrant|vagrant|
+|||
 
 ## Scripts
 

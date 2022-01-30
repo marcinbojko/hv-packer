@@ -4,10 +4,9 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_almalinux8_g2_vagrant.pkr.hcl"
-$var_file="./variables/variables_almalinux84.pkvars.hcl"
-$vbox_file="./vbox/packer-almalinux84-g2.box"
-$machine="AlmaLinux 8.4"
+$template_file="./templates/hv_rockylinux8_g2.pkr.hcl"
+$var_file="./variables/variables_rockylinux85.pkvars.hcl"
+$machine="RockyLinux 8.5"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -25,10 +24,6 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
     $env:PACKER_LOG=$packer_log
     packer version
     packer build --force -var-file="$var_file" "$template_file"
-    if ($?) {
-      Write-Output "Calculating checksums"
-      Get-FileHash -Algorithm SHA256 -Path "$vbox_file"|Out-File "$vbox_file.sha256" -Verbose
-    }
   }
   catch {
     Write-Output "Packer build failed, exiting."

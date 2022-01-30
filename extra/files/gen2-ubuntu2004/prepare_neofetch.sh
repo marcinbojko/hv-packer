@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # prepare (comment/uncomment lines according to our needs)
 
 config="/etc/neofetch/config.conf"

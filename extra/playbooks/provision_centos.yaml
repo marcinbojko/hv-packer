@@ -90,10 +90,12 @@
         - base
     # enable epel repo - mandatory for other settings
     - name: install_epel
-      ansible.builtin.package:
-        name: epel-release
+      ansible.builtin.yum:
+        name: "{{ item }}"
         state: latest
+        disable_gpg_check: yes
       retries: "{{ retries_count }}"
+      loop: "{{ epel_package }}"
       delay: "{{ delay_time }}"
       register: r_install_epel
       until: r_install_epel is success
@@ -217,6 +219,7 @@
           ansible.builtin.rpm_key:
             key: "{{ item.gpgkey }}"
             state: present
+            validate_certs: false
           loop: "{{ zabbix.repository }}"
           notify:
             - clean-metadata

@@ -5,8 +5,8 @@ $startDTM = (Get-Date)
 
 # Variables
 $template_file="./templates/hv_almalinux8_g2.pkr.hcl"
-$var_file="./variables/variables_almalinux84.pkvars.hcl"
-$machine="AlmaLinux 8.4"
+$var_file="./variables/variables_almalinux85.pkvars.hcl"
+$machine="AlmaLinux 8.5"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {

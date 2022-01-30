@@ -2,20 +2,20 @@ initial_packages:
   - curl
   - mc
   - wget
-  - yum-cron
-  - yum-plugin-priorities
-  - yum-plugin-versionlock
-  - yum-utils
-  - deltarpm
+  - tar
+  - bzip2
+  - kernel-devel
+  - kernel-headers
+  - perl
+  - gcc
+  - make
+  - elfutils-libelf-devel
+  - langpacks-en
+  - glibc-all-langpacks
   - ca-certificates
 yum_extra_groups:
   - "@base"
-  - "@compat-libraries"
   - "@core"
-  - "@guest-agents"
-  - "@input-methods"
-  - "@network-file-system-client"
-  - "@performance"
 yum_extra_packages:
   - adcli
   - firefox
@@ -25,8 +25,7 @@ yum_extra_packages:
   - krb5-workstation
   - make
   - nmap
-  - ntp
-  - ntpdate
+  - chrony
   - oddjob
   - oddjob-mkhomedir
   - parted
@@ -47,7 +46,6 @@ yum_extra_epel_packages:
   - bmon
   - gparted
   - htop
-  - httpie
   - iftop
   - jq
   - multitail
@@ -58,7 +56,7 @@ yum_extra_epel_packages:
 epel:
   priority: 60
 epel_package:
-  - epel-release
+  - https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 selinux:
   state: disabled
 webmin:
@@ -70,7 +68,7 @@ webmin:
     enabled: 1
 zabbix:
   repository:
-    - url: https://repo.zabbix.com/zabbix/5.2/rhel/7/x86_64/zabbix-release-5.2-1.el7.noarch.rpm
+    - url: https://repo.zabbix.com/zabbix/5.2/rhel/8/x86_64/zabbix-release-5.2-1.el8.noarch.rpm
       name: zabbix-agent2
       file: /etc/yum.repos.d/zabbix.repo
       gpgkey: https://repo.zabbix.com/RPM-GPG-KEY-ZABBIX-A14FE591
@@ -82,7 +80,7 @@ zabbix:
     service: zabbix-agent2
 puppet:
   repository:
-    - url: https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
+    - url: https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
       gpgkey: https://yum.puppet.com/RPM-GPG-KEY-puppet-20250406
   service:
     - name: puppet
@@ -90,7 +88,7 @@ puppet:
       enabled: no
   priorities:
     - name: puppet6
-      priority: 10
+      priority: 20
       path: /etc/yum.repos.d/puppet6.repo
   package:
     name: puppet-agent
@@ -104,7 +102,7 @@ puppet:
         value: foreman.spcph.local
 neofetch:
   repository:
-    - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-7/konimex-neofetch-epel-7.repo
+    - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-8/konimex-neofetch-epel-8.repo
       dest: /etc/yum.repos.d/konimex-neofetch.repo
   package:
     name: neofetch
@@ -132,18 +130,12 @@ services:
   - name: firewalld
     state: started
     enabled: true
-  - name: ntpd
+  - name: chronyd
     state: started
     enabled: true
   - name: sshd
     state: started
     enabled: true
-  - name: initial-setup-text
-    enabled: false
-    state: stopped
-  - name: initial-setup-graphical
-    enabled: false
-    state: stopped
 sysctl:
   - key: net.ipv4.ip_forward
     value: 1

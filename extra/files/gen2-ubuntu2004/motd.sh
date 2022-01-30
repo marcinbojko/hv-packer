@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 neofetch --config /etc/neofetch/config.conf
 if [ -f ~/.Xauthority ]; then
   xauth merge ~/.Xauthority
