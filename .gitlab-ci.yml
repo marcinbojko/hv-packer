@@ -1,15 +1,17 @@
 variables:
-  packer_version: "1.7.9"
+  packer_version: "1.7.10"
   dind: 20.10-dind
   build_alma: "false"
   build_centos: "false"
   build_rocky: "false"
+  build_oracle: "false"
   build_ubuntu: "false"
 stages:
   - get-packer
   - centos7-validate
   - alma8-validate
   - rocky8-validate
+  - oracle8-validate
   - ubuntu20-validate
   - windows2019-validate
   - windows2022-validate
@@ -17,6 +19,7 @@ stages:
   - build_alma
   - build_rocky
   - build_centos
+  - build_oracle
   - build_ubuntu
 get-packer:
   stage: get-packer
@@ -157,6 +160,49 @@ rocky85-docker:
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
     - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+# Validate Oracle
+oracle85:
+  stage: oracle8-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_oraclelinux8_g2.pkr.hcl"
+    - export var_file="./variables/variables_oraclelinux85.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+oracle85-vagrant:
+  stage: oracle8-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_oraclelinux8_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_oraclelinux85.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+oracle85-docker:
+  stage: oracle8-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_oraclelinux8_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_oraclelinux85.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -410,6 +456,56 @@ build_rocky_vagrant:
     - hyperv
   needs:
     - build_rocky_docker
+# Build Oracle
+build_oracle:
+  stage: build_oracle
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_oraclelinux85.ps1
+  rules:
+    - if: $build_oracle == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_oracle_docker:
+  stage: build_oracle
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_oraclelinux85_docker.ps1
+  rules:
+    - if: $build_oracle == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_oracle
+build_oracle_vagrant:
+  stage: build_oracle
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_oraclelinux85_vagrant.ps1
+  rules:
+    - if: $build_oracle == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_oracle
 # CentOS
 build_centos:
   stage: build_centos

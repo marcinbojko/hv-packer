@@ -433,7 +433,7 @@
           ansible.builtin.file:
             path: /etc/neofetch
             state: directory
-            mode: "0644"
+            mode: "0655"
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           register: r_create_config_folder

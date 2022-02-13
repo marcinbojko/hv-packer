@@ -46,10 +46,16 @@ function install_ansible {
 
 function check_ansible {
   echo "Checking for ansible presence"
-  which ansible
-  which ansible-playbook
-  ansible --version||true
-  ansible-playbook --version||true
+  if command -v ansible >/dev/null 2>&1;then
+    ansible --version
+  fi
+  if command -v ansible-playbook >/dev/null 2>&1;then
+    ansible-playbook --version
+  fi
+  if command -v ansible-galaxy >/dev/null 2>&1;then
+    ansible-galaxy --version
+  fi
+
 }
 
 function add_path {
@@ -62,14 +68,16 @@ function add_path {
 if [ "$INSTALL" == "true" ] && [[ "$OS" =~ rhel|centos|fedora ]];then
   echo "Installing ansible on RHEL/CENTOS/FEDORA/ORACLE"
   add_path
-  if which dnf;then
+  if command -v dnf >/dev/null 2>&1;then
     manager=dnf
   else
     manager=yum
   fi
   $manager clean all -y
   $manager makecache -y
-  $manager remove ansible ansible-base ansible-core -y||true
+  $manager remove ansible ansible-base ansible-core -y -q ||true
+  # repeat code from kickstart
+  $manager install -y chrony mc curl wget yum-priorities yum-versionlock yum-utils yum-cron openssh-server openssh-clients openssh kernel-devel kernel-headers make patch gcc
   $manager install ca-certificates python3 python3-devel python3-pip python3-wheel krb5-devel krb5-workstation -y
   $manager install python3-setuptools python3-psutil -y
   /usr/bin/python3 -m pip install --upgrade setuptools-rust
@@ -87,10 +95,10 @@ if [ "$INSTALL" == "false" ] && [[ "$OS" =~ rhel|centos|fedora ]];then
   $manager clean all -y
   $manager makecache -y
   /usr/bin/python3 -m pip uninstall jmespath jsonlint yamllint ansible-core ansible setuptools-rust pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp -y
-  rm -rfv /root/.ansible||true
-  rm -rfv /root/.cache||true
-  rm -rfv /home/vagrant/.ansible||true
-  rm -rfv /home/vagrant/.cache||true
+  rm -rf /root/.ansible||true
+  rm -rf /root/.cache||true
+  rm -rf /home/vagrant/.ansible||true
+  rm -rf /home/vagrant/.cache||true
   $manager clean -y all
 fi
 
@@ -100,7 +108,9 @@ if [ "$INSTALL" == "true" ] && [[ "$OS" =~ debian|ubuntu ]];then
   apt-get clean all -y
   apt-get update -y
   apt-get purge ansible ansible-base ansible-core -y||true
-  apt-get install ca-certificates python3 python3-dev python3-pip python3-wheel libkrb5-dev -y
+  # repeat code from cloud-init
+  apt-get install -y mc curl wget sudo tar bzip2 build-essential linux-image-virtual linux-tools-virtual linux-cloud-tools-virtual net-tools
+  apt-get install -y ca-certificates python3 python3-dev python3-pip python3-wheel libkrb5-dev
   install_ansible
   check_ansible
 fi
@@ -110,8 +120,8 @@ if [ "$INSTALL" == "false" ] && [[ "$OS" =~ debian|ubuntu ]];then
   apt-get clean all -y
   apt-get update -y
   /usr/bin/python3 -m pip uninstall jmespath jsonlint yamllint ansible-core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp -y
-  rm -rfv /root/.ansible||true
-  rm -rfv /root/.cache||true
-  rm -rfv /home/vagrant/.ansible||true
-  rm -rfv /home/vagrant/.cache||true
+  rm -rf /root/.ansible||true
+  rm -rf /root/.cache||true
+  rm -rf /home/vagrant/.ansible||true
+  rm -rf /home/vagrant/.cache||true
 fi

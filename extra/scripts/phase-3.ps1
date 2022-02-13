@@ -4,7 +4,7 @@
 param(
     [Parameter()]
     [ValidateNotNullOrEmpty()]
-    [string]$Version="6.25.1",
+    [string]$Version="6.26.0",
     [Parameter()]
     [ValidateNotNullOrEmpty()]
     [ValidateSet('true','false','$true','$false','0','1')]
@@ -16,12 +16,10 @@ param(
 
 Write-Output "Phase 3 [START] - Start of Phase 3"
 $PuppetConfig="$Env:ProgramData\PuppetLabs\puppet\etc\puppet.conf"
-
 Write-Output "Phase 3 [INFO] - Puppet version  is: $Version"
 Write-Output "Phase 3 [INFO] - AddPrivateChoco is: $AddPrivateChoco"
 Write-Output "Phase 3 [INFO] - PuppetMaster    is: $PuppetMaster"
 Write-Output "Phase 3 [INFO] - PuppetConfig    is: $PuppetConfig"
-
 
     # add my myget source
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12

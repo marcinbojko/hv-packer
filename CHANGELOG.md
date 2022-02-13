@@ -1,5 +1,16 @@
 # Changelog
 
+## Version 1.9.4 2022-02-13
+
+* [BREAKING_CHANGE] change puppet server default name to more generic `foreman.example.com` in `\extra\playbooks\*_variables.yml`
+* [Windows] bumped `puppet-agent` to version 6.26.0
+* [Oracle] added `Oracle Linux 8.5` support
+* [Oracle] added `Oracle Linux 8.5 Docker` support
+* [Oracle] added `Oracle Linux 8.5 Vagrant` support
+* [Linux] by default, disabled instalation of Webmin in favor of Cockpit (on every 8.x RHEL clone). See `variables` folder
+* [Extra] small fixes in deploy scripts
+* Introduced `.gitattribues` as cloning this repo in Windows Environment was converting all .sh files to CR/LF
+
 ## Version 1.9.3 2022-01-30
 
 * [BREAKING_CHANGE] Windows Server units (1909/2004/20H2) will be deprecated and removed in next major release

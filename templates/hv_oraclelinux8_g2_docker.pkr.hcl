@@ -1,10 +1,12 @@
+
 variable "ansible_override" {
   type    = string
   default = ""
 }
 
 variable "boot_command" {
-  type    = list(string)
+  type    = string
+  default = ""
 }
 
 variable "disk_size" {
@@ -34,7 +36,7 @@ variable "iso_checksum" {
 
 variable "iso_checksum_type" {
   type    = string
-  default = "none"
+  default = ""
 }
 
 variable "iso_url" {
@@ -46,17 +48,14 @@ variable "output_directory" {
   type    = string
   default = ""
 }
-
 variable "provision_script_options" {
   type    = string
   default = ""
 }
-
 variable "output_vagrant" {
   type    = string
   default = ""
 }
-
 variable "ssh_password" {
   type    = string
   default = ""
@@ -67,12 +66,10 @@ variable "switch_name" {
   type    = string
   default = ""
 }
-
 variable "vagrantfile_template" {
   type    = string
   default = ""
 }
-
 variable "vlan_id" {
   type    = string
   default = ""
@@ -84,43 +81,76 @@ variable "vm_name" {
 }
 
 source "hyperv-iso" "vm" {
-  boot_command          = "${var.boot_command}"
-  boot_wait             = "1s"
+  boot_command          = ["${var.boot_command}"]
+  boot_wait             = "5s"
   communicator          = "ssh"
   cpus                  = "${var.cpus}"
+  disk_additional_size  = "${var.disk_additional_size}"
   disk_block_size       = "1"
   disk_size             = "${var.disk_size}"
   enable_dynamic_memory = "true"
   enable_secure_boot    = false
   generation            = 2
   guest_additions_mode  = "disable"
-  http_directory        = "./extra/files/gen2-ubuntu2004"
+  http_directory        = "./extra/files"
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
   iso_url               = "${var.iso_url}"
   memory                = "${var.memory}"
-  output_directory      = "${var.output_directory}"
+  output_directory      = "${var.output_directory}-dck"
   shutdown_command      = "echo 'password' | sudo -S shutdown -P now"
   shutdown_timeout      = "30m"
   ssh_password          = "${var.ssh_password}"
   ssh_timeout           = "4h"
-  ssh_username          = "ubuntu"
+  ssh_username          = "root"
   switch_name           = "${var.switch_name}"
   temp_path             = "."
   vlan_id               = "${var.vlan_id}"
-  vm_name               = "${var.vm_name}"
+  vm_name               = "${var.vm_name}-dck"
 }
 
 build {
   sources = ["source.hyperv-iso.vm"]
 
   provisioner "file" {
-    destination = "/tmp/uefi.sh"
-    source      = "extra/files/gen2-ubuntu2004/uefi.sh"
+    destination = "/tmp/ansible.sh"
+    source      = "extra/files/gen2-linux/ansible.sh"
+  }
+
+  provisioner "shell" {
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+    inline          = ["chmod +x /tmp/ansible.sh", "/tmp/ansible.sh -i true"]
+    inline_shebang  = "/bin/sh -x"
   }
 
   provisioner "file" {
-    destination = "/tmp/provision.sh"
-    source      = "extra/files/gen2-ubuntu2004/provision.sh"
+    destination = "/tmp/variables.yml"
+    source      = "extra/playbooks/provision_oracle8_variables.yml"
+  }
+
+  provisioner "file" {
+    destination = "/tmp/override.yml"
+    source      = "${var.ansible_override}"
+  }
+
+  provisioner "file" {
+    destination = "/tmp/prepare_neofetch.sh"
+    source      = "extra/files/gen2-linux/prepare_neofetch.sh"
+  }
+
+  provisioner "ansible-local" {
+    extra_arguments = ["-e", "@/tmp/variables.yml", "-e", "@/tmp/override.yml"]
+    playbook_file   = "extra/playbooks/provision_centos.yaml"
+  }
+
+  provisioner "shell" {
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+    inline          = ["chmod +x /tmp/ansible.sh", "/tmp/ansible.sh -i false"]
+    inline_shebang  = "/bin/sh -x"
+  }
+
+  provisioner "file" {
+    destination = "/usr/local/bin/uefi.sh"
+    source      = "extra/files/gen2-oraclelinux8/uefi.sh"
   }
 
   provisioner "file" {
@@ -136,43 +166,19 @@ build {
   provisioner "shell" {
     execute_command   = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
     expect_disconnect = true
-    inline            = ["chmod +x /tmp/provision.sh", "chmod +x /tmp/uefi.sh", "mv /tmp/uefi.sh /usr/local/bin/uefi.sh", "/tmp/provision.sh ${var.provision_script_options}", "sync;sync;reboot"]
+    inline            = ["chmod +x /tmp/install", "sh /tmp/install \"$(ls /tmp/scvmm*.x64.tar)\"", "reboot"]
     inline_shebang    = "/bin/sh -x"
   }
 
   provisioner "file" {
-    destination = "/tmp/puppet.conf"
-    source      = "extra/files/gen2-ubuntu2004/puppet.conf"
-  }
-
-  provisioner "file" {
-    destination = "/tmp/motd.sh"
-    source      = "extra/files/gen2-ubuntu2004/motd.sh"
-  }
-
-  provisioner "file" {
-    destination = "/tmp/prepare_neofetch.sh"
-    source      = "extra/files/gen2-ubuntu2004/prepare_neofetch.sh"
-  }
-
-  provisioner "file" {
     destination = "/tmp/zeroing.sh"
-    source      = "extra/files/gen2-ubuntu2004/zeroing.sh"
+    source      = "extra/files/gen2-linux/zeroing.sh"
   }
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["echo Last Phase",
-    "chmod +x /tmp/prepare_neofetch.sh",
-    "chmod +x /usr/local/bin/uefi.sh",
-    "chmod +x /tmp/zeroing.sh",
-    "/tmp/prepare_neofetch.sh",
-    "/tmp/zeroing.sh",
-    "/bin/rm -rfv /tmp/*",
-    "/bin/rm -f /etc/ssh/*key*",
-    "/usr/bin/ssh-keygen -A",
-    "echo 'packerVersion: ${packer.version}' >>/etc/packerinfo"]
+    inline          = ["echo Last Phase", "chmod +x /usr/local/bin/uefi.sh", "systemctl set-default multi-user.target", "/bin/rm -f /etc/ssh/*key*", "chmod +x /tmp/zeroing.sh", "/tmp/zeroing.sh", "/bin/rm -rfv /tmp/*"]
     inline_shebang  = "/bin/sh -x"
+    pause_before    = "30s"
   }
-
 }

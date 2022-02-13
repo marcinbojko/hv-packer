@@ -161,7 +161,7 @@ build {
 
   provisioner "file" {
     destination = "/tmp/install"
-    source      = "extra/files/scagent/1.0.3.1028/install"
+    source      = "extra/files/scagent/1.0.3.1028/install.sh"
   }
 
   provisioner "shell" {

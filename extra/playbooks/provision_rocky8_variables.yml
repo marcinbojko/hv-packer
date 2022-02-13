@@ -99,7 +99,7 @@ puppet:
       - key: runinterval
         value:  1800
       - key: server
-        value: foreman.spcph.local
+        value: foreman.example.com
 neofetch:
   repository:
     - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-8/konimex-neofetch-epel-8.repo

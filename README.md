@@ -40,14 +40,19 @@
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
   - [Templates RockyLinux 8.x](#templates-rockylinux-8x)
     - [Warnings - RockyLinux 8](#warnings---rockylinux-8)
-    - [Hyper-V Generation 2 RockyLinux 8.4 Image](#hyper-v-generation-2-rockylinux-84-image)
-    - [Hyper-V Generation 2 RockyLinux 8.4 Vagrant support](#hyper-v-generation-2-rockylinux-84-vagrant-support)
-    - [Hyper-V Generation 2 RockyLinux 8.4 image with extra docker volume](#hyper-v-generation-2-rockylinux-84-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 RockyLinux 8.5 Image](#hyper-v-generation-2-rockylinux-85-image)
+    - [Hyper-V Generation 2 RockyLinux 8.5 Vagrant support](#hyper-v-generation-2-rockylinux-85-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 8.5 image with extra docker volume](#hyper-v-generation-2-rockylinux-85-image-with-extra-docker-volume)
+  - [Templates OracleLinux 8.x](#templates-oraclelinux-8x)
+    - [Warnings - OracleLinux 8](#warnings---oraclelinux-8)
+    - [Hyper-V Generation 2 OracleLinux 8.5 Image](#hyper-v-generation-2-oraclelinux-85-image)
+    - [Hyper-V Generation 2 OracleLinux 8.5 Vagrant support](#hyper-v-generation-2-oraclelinux-85-vagrant-support)
+    - [Hyper-V Generation 2 OracleLinux 8.5 image with extra docker volume](#hyper-v-generation-2-oraclelinux-85-image-with-extra-docker-volume)
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
-    - [Hyper-V Generation 2 AlmaLinux 8.4 Image](#hyper-v-generation-2-almalinux-84-image)
-    - [Hyper-V Generation 2 AlmaLinux 8.4 Vagrant support](#hyper-v-generation-2-almalinux-84-vagrant-support)
-    - [Hyper-V Generation 2 AlmaLinux 8.4 image with extra docker volume](#hyper-v-generation-2-almalinux-84-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 AlmaLinux 8.5 Image](#hyper-v-generation-2-almalinux-85-image)
+    - [Hyper-V Generation 2 AlmaLinux 8.5 Vagrant support](#hyper-v-generation-2-almalinux-85-vagrant-support)
+    - [Hyper-V Generation 2 AlmaLinux 8.5 image with extra docker volume](#hyper-v-generation-2-almalinux-85-image-with-extra-docker-volume)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
@@ -69,7 +74,7 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.7.8`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.7.10`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.19` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
@@ -81,7 +86,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.7.8 -y
+choco install packer --version=1.7.10 -y
 ```
 
 ### Install vagrant from Chocolatey
@@ -135,18 +140,18 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
-  |puppet|6.25.1|
+  |puppet|6.26.0|
   |tabby|latest|
 
 - latest Nuget poweshell module
 - `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
-  - `Version` - puppet chocolatey version, for example "6.24.0"
+  - `Version` - puppet chocolatey version, for example "6.26.0"
   - `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
   - `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
 
   Example of usage:
 
-  `.\phase3.ps1 -Version 6.24.0 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
+  `.\phase3.ps1 -Version 6.26.0 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
 
   Puppet is set to clear any temp SSL keys and to be stopped after generalize phase
 
@@ -403,17 +408,41 @@ Run `hv_ubuntu2004.ps1`
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 RockyLinux 8.4 Image
+### Hyper-V Generation 2 RockyLinux 8.5 Image
 
-Run `hv_rockylinux84.ps1`
+Run `hv_rockylinux85.ps1`
 
-### Hyper-V Generation 2 RockyLinux 8.4 Vagrant support
+### Hyper-V Generation 2 RockyLinux 8.5 Vagrant support
 
-Run `hv_rockylinux84_vagrant.ps1` for RockyLinux 8.4
+Run `hv_rockylinux85_vagrant.ps1` for RockyLinux 8.5
 
-### Hyper-V Generation 2 RockyLinux 8.4 image with extra docker volume
+### Hyper-V Generation 2 RockyLinux 8.5 image with extra docker volume
 
-Run `hv_rockylinux84_docker.ps1` for RockyLinux 8.4
+Run `hv_rockylinux85_docker.ps1` for RockyLinux 8.5
+
+## Templates OracleLinux 8.x
+
+### Warnings - OracleLinux 8
+
+- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+- if needed - change `iso_url` variable to a proper iso name
+- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+- credentials for Windows machines: Administrator/password (removed after sysprep)
+- credentials for Linux machines: root/password
+- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+
+### Hyper-V Generation 2 OracleLinux 8.5 Image
+
+Run `hv_oraclelinux85.ps1`
+
+### Hyper-V Generation 2 OracleLinux 8.5 Vagrant support
+
+Run `hv_oraclelinux85_vagrant.ps1` for OracleLinux 8.5
+
+### Hyper-V Generation 2 OracleLinux 8.5 image with extra docker volume
+
+Run `hv_oraclelinux85_docker.ps1` for OracleLinux 8.5
 
 ## Templates AlmaLinux 8.x
 
@@ -427,17 +456,17 @@ Run `hv_rockylinux84_docker.ps1` for RockyLinux 8.4
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 AlmaLinux 8.4 Image
+### Hyper-V Generation 2 AlmaLinux 8.5 Image
 
-Run `hv_almalinux84.ps1`
+Run `hv_almalinux85.ps1`
 
-### Hyper-V Generation 2 AlmaLinux 8.4 Vagrant support
+### Hyper-V Generation 2 AlmaLinux 8.5 Vagrant support
 
-Run `hv_almalinux84_vagrant.ps1` for AlmaLinux 8.4
+Run `hv_almalinux85_vagrant.ps1` for AlmaLinux 8.5
 
-### Hyper-V Generation 2 AlmaLinux 8.4 image with extra docker volume
+### Hyper-V Generation 2 AlmaLinux 8.5 image with extra docker volume
 
-Run `hv_almalinux84_docker.ps1` for AlmaLinux 8.4
+Run `hv_almalinux85_docker.ps1` for AlmaLinux 8.5
 
 ## Templates CentOS 7.x
 
@@ -483,7 +512,7 @@ In manual setup you can run it as a part of your deploy. In SCVMM deployment I'd
 
 [https://github.com/hashicorp/packer/issues/7278#issuecomment-468492880](https://github.com/hashicorp/packer/issues/7278#issuecomment-468492880)
 
-Fixed in version 1.4.4.  Do not use lower versions
+Fixed in version 1.4.4.  Do not use previous versions
 
 ### ~~When Hyper-V host has more than one interface Packer sets {{ .HTTPIP }} variable to inproper interface~~
 
