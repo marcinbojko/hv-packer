@@ -4,7 +4,6 @@ variable "ansible_override" {
 }
 
 variable "boot_command" {
-  type    = list(string)
 }
 
 variable "disk_size" {

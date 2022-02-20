@@ -11,8 +11,4 @@ vlan_id=""
 vagrantfile_template="./vagrant/hv_ubuntu2004_g2.template"
 ssh_password="password"
 provision_script_options="-z false"
-boot_command=["<esc><wait3>",
-"linux /casper/vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ <enter>",
-"initrd /casper/initrd <enter>",
-"boot <enter>"
-]
+boot_command=["<esc><wait3>","linux /casper/vmlinuz quiet autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net\\;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ <enter>","initrd /casper/initrd <enter>","boot <enter>"]

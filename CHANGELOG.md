@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.9.5 20202-02-20
+
+* [Ubuntu] fixed `boot_command` variable not being passed properly, thus failing Ubuntu builds
+
 ## Version 1.9.4 2022-02-13
 
 * [BREAKING_CHANGE] change puppet server default name to more generic `foreman.example.com` in `\extra\playbooks\*_variables.yml`
