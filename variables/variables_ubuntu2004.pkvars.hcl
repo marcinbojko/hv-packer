@@ -1,6 +1,6 @@
-iso_url="https://ubuntu.man.lodz.pl/ubuntu-releases/20.04.3/ubuntu-20.04.3-live-server-amd64.iso"
+iso_url="https://ubuntu.man.lodz.pl/ubuntu-releases/focal/ubuntu-20.04.4-live-server-amd64.iso"
 iso_checksum_type="sha256"
-iso_checksum="f8e3086f3cea0fb3fefb29937ab5ed9d19e767079633960ccb50e76153effc98"
+iso_checksum="28ccdb56450e643bad03bb7bcf7507ce3d8d90e8bf09e38f6bd9ac298a98eaad"
 vm_name="packer-ubuntu2004-g2"
 disk_size="70000"
 disk_additional_size=["150000"]

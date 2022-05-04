@@ -26,7 +26,7 @@
   gather_facts: false
   pre_tasks:
     - name: verify_ansible_meets_version_requirements
-      assert:
+      ansible.builtin.assert:
         that: "ansible_version.full is version_compare('2.10', '>=')"
         msg: >
           "You must update Ansible to at least 2.10 to use this version of playbook"
@@ -52,7 +52,7 @@
         - assert
   tasks:
     - name: display_initial_values
-      debug:
+      ansible.builtin.debug:
         msg:
           - "Ansible package manager        :{{ ansible_pkg_mgr }}"
           - "Extra volume name              :{{ extra_device }}"
@@ -71,7 +71,7 @@
           - "Reboot server                  :{{ reboot_server }}"
     # initial cleaning and refreshing metadata for packages
     - name: initial_clean
-      debug:
+      ansible.builtin.debug:
         msg: "Starting provision"
       notify: clean-metadata
       changed_when: true
@@ -93,7 +93,7 @@
       ansible.builtin.yum:
         name: "{{ item }}"
         state: latest
-        disable_gpg_check: yes
+        disable_gpg_check: true
       retries: "{{ retries_count }}"
       loop: "{{ epel_package }}"
       delay: "{{ delay_time }}"
@@ -137,7 +137,7 @@
         - base
     # let's install extra yumgroups
     - name: refresh_repos
-      debug:
+      ansible.builtin.debug:
         msg: "Refreshing repos"
       notify: makecache
       changed_when: true
@@ -322,7 +322,7 @@
             - clean-metadata
             - makecache
         - name: install_puppet_repository
-          yum:
+          ansible.builtin.yum:
             name: "{{ item.url }}"
             state: present
           loop: "{{ puppet.repository }}"
@@ -346,7 +346,7 @@
           until: r_puppet_repository_priority is success
           notify: makecache
         - name: install_puppet_package
-          yum:
+          ansible.builtin.yum:
             name: "{{ puppet.package.name }}"
             state: latest
           retries: "{{ retries_count }}"
@@ -354,7 +354,7 @@
           register: r_install_puppet_package
           until: r_install_puppet_package is success
         - name: set_puppet_service_state
-          systemd:
+          ansible.builtin.systemd:
             name: "{{ item.name }}"
             state: "{{ item.state }}"
             enabled: "{{ item.enabled }}"
@@ -365,7 +365,7 @@
           until: r_set_puppet_service is success
           when: r_install_puppet_package is success
         - name: remove_temp_ssl_keys
-          file:
+          ansible.builtin.file:
             path: /etc/puppetlabs/puppet/ssl
             state: absent
           register: r_remove_temp_ssl_keys
@@ -374,7 +374,7 @@
           until: r_remove_temp_ssl_keys is success
           when: r_install_puppet_package is success and remove_puppet_ssl_keys
         - name: create_puppet_config
-          file:
+          ansible.builtin.file:
             path: "{{ puppet.config.location }}"
             state: touch
             mode: "{{ puppet.config.mode }}"
@@ -424,7 +424,7 @@
           until: r_install_neofetch_package is success
           when: r_neofetch_repository is success
         - name: neofetch_first_run
-          command: neofetch
+          ansible.builtin.command: neofetch
           when: r_neofetch_repository is success
           changed_when: false
           ignore_errors: true
@@ -513,7 +513,7 @@
           when: r_check_for_extra_device.stat.exists and r_check_for_extra_device is defined
           register: r_partition_docker_volume
         - name: display_info
-          debug:
+          ansible.builtin.debug:
             var: r_partition_docker_volume
         - name: create_docker_filesystem
           community.general.filesystem:
@@ -532,11 +532,6 @@
           register: setup_status
           until: setup_status is success
           changed_when: false
-#        - name: get_extra_volume_uid
-#          ansible.builtin.stat:
-#            path: "{{ extra_device }}1"
-#          register: r_check_for_extra_device_uuid
-#          when: r_create_docker_filesystem is defined and r_create_docker_filesystem is success
         - name: prepare_docker_folder
           ansible.builtin.file:
             name: /var/lib/docker
@@ -610,7 +605,7 @@
           until: r_start_firewalld is success
         # set default zone
         - name: display_interface_info
-          debug:
+          ansible.builtin.debug:
             msg: "Primary network interface is: {{ ansible_default_ipv4.interface }}"
           when: ansible_default_ipv4.interface is defined
         - name: make_default_zone
@@ -763,7 +758,7 @@
             machine_type: "{{ ansible_virtualization_role }}"
           when: ansible_virtualization_role is defined
         - name: display_machine_type
-          debug:
+          ansible.builtin.debug:
             msg: "Machine type is: {{ machine_type }}"
           when: ansible_virtualization_role is defined
         - name: set_tuned_for_baremetal
@@ -821,33 +816,33 @@
           notify:
             - clean-metadata
     - name: reboot_server
-      reboot:
+      ansible.builtin.reboot:
         pre_reboot_delay: 20
         post_reboot_delay: 20
         reboot_timeout: 1200
       when: reboot_server
     # end play
     - name: end_host
-      meta: end_host
+      ansible.builtin.meta: end_host
   handlers:
     - name: makecache
-      command: "{{ ansible_pkg_mgr }} makecache -y"
+      ansible.builtin.command: "{{ ansible_pkg_mgr }} makecache -y"
       args:
         warn: false
       changed_when: false
     - name: clean-metadata
-      command: "{{ ansible_pkg_mgr }} clean metadata all -y"
+      ansible.builtin.command: "{{ ansible_pkg_mgr }} clean metadata all -y"
       args:
         warn: false
       changed_when: false
     - name: switch_default_firewalld_zone
-      shell: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
+      ansible.builtin.shell: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
       args:
         warn: false
       changed_when: false
       when: (firewalld.default_zone is defined) and (firewalld.default_zone|length>0)
     - name: reload_firewalld
-      shell: "firewall-cmd --reload"
+      ansible.builtin.shell: "firewall-cmd --reload"
       args:
         warn: false
       changed_when: false

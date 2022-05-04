@@ -144,10 +144,10 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
   |tabby|latest|
 
 - latest Nuget poweshell module
-- `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
+- `phase3.ps1` Puppet agent settings will be customized (`server=foreman.example.com`) with parameters:
   - `Version` - puppet chocolatey version, for example "6.26.0"
   - `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
-  - `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
+  - `PuppetMaster` (foreman.example.com) - if set, in `puppet.conf` section server will point to that variable
 
   Example of usage:
 

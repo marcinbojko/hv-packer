@@ -12,7 +12,7 @@
   gather_facts: false
   pre_tasks:
     - name: verify_ansible_meets_version_requirements
-      assert:
+      ansible.builtin.assert:
         that: "ansible_version.full is version_compare('2.10', '>=')"
         msg: >
           "You must update Ansible to at least 2.10 to use this version of playbook"
@@ -30,7 +30,7 @@
         - assert
   tasks:
     - name: display_initial_values
-      debug:
+      ansible.builtin.debug:
         msg:
           - "Ansible package manager :{{ ansible_pkg_mgr }}"
           - "vagrant username        :{{ vagrant_username }}"

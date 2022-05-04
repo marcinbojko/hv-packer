@@ -11,3 +11,4 @@ extra/.snippets*
 vbox/*
 *.box
 .scripts/*
+.vscode/*

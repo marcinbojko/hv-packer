@@ -4,14 +4,14 @@
 param(
     [Parameter()]
     [ValidateNotNullOrEmpty()]
-    [string]$Version="6.26.0",
+    [string]$Version="7.14.0",
     [Parameter()]
     [ValidateNotNullOrEmpty()]
     [ValidateSet('true','false','$true','$false','0','1')]
     [boolean]$AddPrivateChoco=$true,
     [Parameter()]
     [ValidateNotNullOrEmpty()]
-    [string]$PuppetMaster="foreman.spcph.local"
+    [string]$PuppetMaster="foreman.example.com"
 )
 
 Write-Output "Phase 3 [START] - Start of Phase 3"

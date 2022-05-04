@@ -83,9 +83,9 @@ fi
 if [ "$INSTALL_ZABBIX" == true ]; then
   echo "Provisioning phase 2 - Zabbix"
 # zabbix 5.2 repository
-  wget https://repo.zabbix.com/zabbix/5.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.2-1+ubuntu20.04_all.deb
-  dpkg -i zabbix-release_5.2-1+ubuntu20.04_all.deb
-  rm -rfv zabbix-release_5.2-1+ubuntu20.04_all.deb
+  wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-1+ubuntu20.04_all.deb
+  dpkg -i zabbix-release_6.0-1+ubuntu20.04_all.deb
+  rm -rfv zabbix-release_6.0-1+ubuntu20.04_all.deb
   apt-get update -y
   apt-get install zabbix-agent -y
   systemctl enable zabbix-agent
@@ -98,9 +98,9 @@ if [ "$INSTALL_PUPPET" == "true" ]; then
 
     echo "Provisioning phase 2 - Puppet Agent"
     # puppet 6.x repository
-    wget https://apt.puppetlabs.com/puppet6-release-focal.deb
-    dpkg -i puppet6-release-focal.deb
-    rm -rfv puppet6-release-focal.deb
+    wget https://apt.puppet.com/puppet7-release-focal.deb
+    dpkg -i puppet7-release-focal.deb
+    rm -rfv puppet7-release-focal.deb
     apt-get update -y
 
     apt-get -y install puppet-agent

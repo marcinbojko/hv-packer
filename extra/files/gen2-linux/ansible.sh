@@ -4,7 +4,7 @@
 # vars
 # set ansible-core version due to python requirements in ansible 2.12
 
-ansible_core="2.11.7"
+ansible_core="2.11.11"
 
 usage() { echo "Usage: $0 [-i <true|false> Install or uninstall ansible ]" 1>&2; }
 
@@ -22,6 +22,7 @@ while getopts :i:  option
     done
 # what os we're dealing with
 OS=$(grep -e '^ID_LIKE=' /etc/os-release|tr -d '"'|sed -e "s/^ID_LIKE=//"|tr "[:upper:]" "[:lower:]")
+VERSION_ID=$(grep -e '^VERSION_ID=' /etc/os-release|tr -d '"'|sed -e "s/^VERSION_ID=//"|tr "[:upper:]" "[:lower:]")
 
 if [ -z "$OS" ];then
 echo "Couldn't recognise os, exiting"
@@ -38,7 +39,21 @@ fi
 function install_ansible {
   echo "Starting ansible installation step, ansible-core in version: $ansible_core"
   /usr/bin/python3 -m pip install --upgrade pip
-  /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp
+  # let's prepare for ansible dependency in CentOS 7
+  if [ "$VERSION_ID" == '7' ];then
+    # RHEL 7, constrain ansible-core to 2.11.11
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==2.11.11 ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp
+  else
+    # RHEL 8 or higher
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp
+  fi
+
+  # build a block to supress warnings and other ansible configs
+  mkdir -p /etc/ansible && chmod 755 /etc/ansible
+  echo "[defaults]" > /etc/ansible/ansible.cfg
+  echo "deprecation_warnings=False" >> /etc/ansible/ansible.cfg
+
+  # let's install required modules, use --upgrade if possible
   /usr/local/bin/ansible-galaxy collection install --upgrade ansible.posix
   /usr/local/bin/ansible-galaxy collection install --upgrade community.general
   /usr/local/bin/ansible-galaxy collection install --upgrade community.crypto
@@ -77,7 +92,7 @@ if [ "$INSTALL" == "true" ] && [[ "$OS" =~ rhel|centos|fedora ]];then
   $manager makecache -y
   $manager remove ansible ansible-base ansible-core -y -q ||true
   # repeat code from kickstart
-  $manager install -y chrony mc curl wget yum-priorities yum-versionlock yum-utils yum-cron openssh-server openssh-clients openssh kernel-devel kernel-headers make patch gcc
+  $manager install -y chrony mc curl wget yum-utils openssh-server openssh-clients openssh kernel-devel kernel-headers make patch gcc
   $manager install ca-certificates python3 python3-devel python3-pip python3-wheel krb5-devel krb5-workstation -y
   $manager install python3-setuptools python3-psutil -y
   /usr/bin/python3 -m pip install --upgrade setuptools-rust
@@ -87,7 +102,7 @@ fi
 
 if [ "$INSTALL" == "false" ] && [[ "$OS" =~ rhel|centos|fedora ]];then
   echo "Removing ansible on RHEL/related"
-  if which dnf;then
+  if command -v dnf >/dev/null 2>&1;then
     manager=dnf
   else
     manager=yum

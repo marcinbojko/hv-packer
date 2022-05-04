@@ -1,11 +1,13 @@
 variables:
-  packer_version: "1.7.10"
+  packer_version: "1.8.0"
   dind: 20.10-dind
   build_alma: "false"
   build_centos: "false"
   build_rocky: "false"
   build_oracle: "false"
   build_ubuntu: "false"
+  build_windows2022_std: "true"
+  build_windows2022_dc: "true"
 stages:
   - get-packer
   - centos7-validate
@@ -16,11 +18,13 @@ stages:
   - windows2019-validate
   - windows2022-validate
   - ansible-lint
+  - install_packer
   - build_alma
   - build_rocky
   - build_centos
   - build_oracle
   - build_ubuntu
+  - build_windows2022
 get-packer:
   stage: get-packer
   image: alpine
@@ -53,6 +57,8 @@ centos79:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 centos79-docker:
   stage: centos7-validate
   image: alpine
@@ -67,6 +73,8 @@ centos79-docker:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 centos79-vagrant:
   stage: centos7-validate
   image: alpine
@@ -81,6 +89,8 @@ centos79-vagrant:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 alma85:
   stage: alma8-validate
   image: alpine
@@ -95,6 +105,8 @@ alma85:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 alma85-vagrant:
   stage: alma8-validate
   image: alpine
@@ -109,6 +121,8 @@ alma85-vagrant:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 alma85-docker:
   stage: alma8-validate
   image: alpine
@@ -123,6 +137,8 @@ alma85-docker:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 # Rocky
 rocky85:
   stage: rocky8-validate
@@ -138,6 +154,8 @@ rocky85:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 rocky85-vagrant:
   stage: rocky8-validate
   image: alpine
@@ -152,6 +170,8 @@ rocky85-vagrant:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 rocky85-docker:
   stage: rocky8-validate
   image: alpine
@@ -166,6 +186,8 @@ rocky85-docker:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 # Validate Oracle
 oracle85:
   stage: oracle8-validate
@@ -181,6 +203,8 @@ oracle85:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 oracle85-vagrant:
   stage: oracle8-validate
   image: alpine
@@ -195,6 +219,8 @@ oracle85-vagrant:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 oracle85-docker:
   stage: oracle8-validate
   image: alpine
@@ -209,6 +235,8 @@ oracle85-docker:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 ubuntu2004:
   stage: ubuntu20-validate
   image: alpine
@@ -223,6 +251,8 @@ ubuntu2004:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 lts2019-std:
   stage: windows2019-validate
   image: alpine
@@ -237,6 +267,8 @@ lts2019-std:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 lts2019-std-vagrant:
   stage: windows2019-validate
   image: alpine
@@ -251,6 +283,8 @@ lts2019-std-vagrant:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 lts2019-dc:
   stage: windows2019-validate
   image: alpine
@@ -265,6 +299,8 @@ lts2019-dc:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 lts2019-dc-vagrant:
   stage: windows2019-validate
   image: alpine
@@ -279,6 +315,8 @@ lts2019-dc-vagrant:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 # Windows Server 2022
 lts2022-std:
   stage: windows2022-validate
@@ -294,7 +332,9 @@ lts2022-std:
   tags:
     - docker
     - packer
-lts2012-dc:
+  needs:
+    - get-packer
+lts2022-dc:
   stage: windows2022-validate
   image: alpine
   services:
@@ -308,6 +348,8 @@ lts2012-dc:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 lts2022-std-vagrant:
   stage: windows2022-validate
   image: alpine
@@ -322,7 +364,9 @@ lts2022-std-vagrant:
   tags:
     - docker
     - packer
-lts2012-dc-vagrant:
+  needs:
+    - get-packer
+lts2022-dc-vagrant:
   stage: windows2022-validate
   image: alpine
   services:
@@ -336,15 +380,14 @@ lts2012-dc-vagrant:
   tags:
     - docker
     - packer
-
+  needs:
+    - get-packer
 ansible-lint:
   stage: ansible-lint
-  image: python:3-slim
+  image: marcinbojko/pipetools-ansible
   services:
     - docker:$dind
   before_script:
-  - /usr/local/bin/python -m pip install --upgrade pip
-  - pip install --upgrade ansible-lint yamllint ansible
   - yamllint --version
   - ansible-lint --version
   script:
@@ -354,8 +397,18 @@ ansible-lint:
   tags:
     - docker
     - packer
+  needs:
+    - get-packer
 # Here building starts
-
+# Install required packer choco package
+install_packer:
+  stage: install_packer
+  script:
+    - choco upgrade packer --version $packer_version -y
+    - packer --version
+  tags:
+    - windows
+    - hyperv
 build_alma:
   stage: build_alma
   script:
@@ -572,4 +625,34 @@ build_ubuntu:
   tags:
     - windows
     - hyperv
-
+# build windows 2022 std
+build_windows_2022_std:
+  stage: build_windows2022
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_win2022_std.ps1
+  rules:
+    - if: $build_windows2022_std == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_windows_2022_dc:
+  stage: build_windows2022
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_win2022_dc.ps1
+  rules:
+    - if: $build_windows2022_dc == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv

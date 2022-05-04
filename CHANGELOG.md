@@ -1,6 +1,13 @@
 # Changelog
 
-## Version 1.9.5 20202-02-20
+## Version 1.9.6 2022-05-04
+
+* [BREAKING_CHANGE] bumped `puppet` package and repository to version 7, for all Linux RHEL-based machines
+* [BREAKING_CHANGE] bumped `zabbix` package and repository version to 6 LTS for all Linux RHEL-based machines
+* [BREAKING_CHANGE] bumped `puppet-agent` version to 7.14.0  (7.x branch) for all Windows machines
+* `extra` scripts optimizations
+
+## Version 1.9.5 2022-02-20
 
 * [Ubuntu] fixed `boot_command` variable not being passed properly, thus failing Ubuntu builds
 
