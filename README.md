@@ -40,14 +40,14 @@
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
   - [Templates RockyLinux 8.x](#templates-rockylinux-8x)
     - [Warnings - RockyLinux 8](#warnings---rockylinux-8)
-    - [Hyper-V Generation 2 RockyLinux 8.5 Image](#hyper-v-generation-2-rockylinux-85-image)
-    - [Hyper-V Generation 2 RockyLinux 8.5 Vagrant support](#hyper-v-generation-2-rockylinux-85-vagrant-support)
-    - [Hyper-V Generation 2 RockyLinux 8.5 image with extra docker volume](#hyper-v-generation-2-rockylinux-85-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 RockyLinux 8.6 Image](#hyper-v-generation-2-rockylinux-86-image)
+    - [Hyper-V Generation 2 RockyLinux 8.6 Vagrant support](#hyper-v-generation-2-rockylinux-86-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume](#hyper-v-generation-2-rockylinux-86-image-with-extra-docker-volume)
   - [Templates OracleLinux 8.x](#templates-oraclelinux-8x)
     - [Warnings - OracleLinux 8](#warnings---oraclelinux-8)
-    - [Hyper-V Generation 2 OracleLinux 8.5 Image](#hyper-v-generation-2-oraclelinux-85-image)
-    - [Hyper-V Generation 2 OracleLinux 8.5 Vagrant support](#hyper-v-generation-2-oraclelinux-85-vagrant-support)
-    - [Hyper-V Generation 2 OracleLinux 8.5 image with extra docker volume](#hyper-v-generation-2-oraclelinux-85-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 OracleLinux 8.6 Image](#hyper-v-generation-2-oraclelinux-86-image)
+    - [Hyper-V Generation 2 OracleLinux 8.6 Vagrant support](#hyper-v-generation-2-oraclelinux-86-vagrant-support)
+    - [Hyper-V Generation 2 OracleLinux 8.6 image with extra docker volume](#hyper-v-generation-2-oraclelinux-86-image-with-extra-docker-volume)
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
     - [Hyper-V Generation 2 AlmaLinux 8.5 Image](#hyper-v-generation-2-almalinux-85-image)
@@ -140,7 +140,7 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
-  |puppet|6.26.0|
+  |puppet|7.14.0|
   |tabby|latest|
 
 - latest Nuget poweshell module
@@ -151,7 +151,7 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
 
   Example of usage:
 
-  `.\phase3.ps1 -Version 6.26.0 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
+  `.\phase3.ps1 -Version 7.14.0 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
 
   Puppet is set to clear any temp SSL keys and to be stopped after generalize phase
 
@@ -408,17 +408,17 @@ Run `hv_ubuntu2004.ps1`
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 RockyLinux 8.5 Image
+### Hyper-V Generation 2 RockyLinux 8.6 Image
 
-Run `hv_rockylinux85.ps1`
+Run `hv_rockylinux86.ps1`
 
-### Hyper-V Generation 2 RockyLinux 8.5 Vagrant support
+### Hyper-V Generation 2 RockyLinux 8.6 Vagrant support
 
-Run `hv_rockylinux85_vagrant.ps1` for RockyLinux 8.5
+Run `hv_rockylinux86_vagrant.ps1` for RockyLinux 8.6
 
-### Hyper-V Generation 2 RockyLinux 8.5 image with extra docker volume
+### Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume
 
-Run `hv_rockylinux85_docker.ps1` for RockyLinux 8.5
+Run `hv_rockylinux86_docker.ps1` for RockyLinux 8.6
 
 ## Templates OracleLinux 8.x
 
@@ -432,17 +432,17 @@ Run `hv_rockylinux85_docker.ps1` for RockyLinux 8.5
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 OracleLinux 8.5 Image
+### Hyper-V Generation 2 OracleLinux 8.6 Image
 
-Run `hv_oraclelinux85.ps1`
+Run `hv_oraclelinux86.ps1`
 
-### Hyper-V Generation 2 OracleLinux 8.5 Vagrant support
+### Hyper-V Generation 2 OracleLinux 8.6 Vagrant support
 
-Run `hv_oraclelinux85_vagrant.ps1` for OracleLinux 8.5
+Run `hv_oraclelinux86_vagrant.ps1` for OracleLinux 8.5
 
-### Hyper-V Generation 2 OracleLinux 8.5 image with extra docker volume
+### Hyper-V Generation 2 OracleLinux 8.6 image with extra docker volume
 
-Run `hv_oraclelinux85_docker.ps1` for OracleLinux 8.5
+Run `hv_oraclelinux86_docker.ps1` for OracleLinux 8.6
 
 ## Templates AlmaLinux 8.x
 

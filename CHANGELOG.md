@@ -1,5 +1,12 @@
 # Changelog
 
+## version 1.9.7 2022-06-22
+
+* `extra` scripts and playbooks optimizations
+* [RockyLinux] added `RockyLinux 8.6`
+* [OracleLinux] added `OracleLinux 8.6`
+* [Windows] bump puppet-agent package to version 7.14.0
+
 ## Version 1.9.6 2022-05-04
 
 * [BREAKING_CHANGE] bumped `puppet` package and repository to version 7, for all Linux RHEL-based machines

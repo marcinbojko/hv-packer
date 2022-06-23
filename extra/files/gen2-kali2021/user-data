@@ -1,0 +1,108 @@
+#cloud-config
+
+autoinstall:
+  version: 1
+  indentity:
+    hostname: ubuntu2004
+    password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
+    username: root
+  # users:
+  #   - name: root
+  #     lock-passwd: false
+  #     disable_root: false
+  #     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
+  #     ssh_pwauth: true
+  #     runcmd:
+  #     - echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+  early-commands:
+    - systemctl stop ssh # otherwise packer tries to connect and exceed max attempts
+  network:
+    network:
+      version: 2
+      ethernets:
+        eth0:
+          dhcp4: yes
+          dhcp-identifier: mac
+  update: no
+  apt:
+    geoip: true
+    preserve_sources_list: false
+    primary:
+      - arches: [amd64]
+        uri: "http://archive.ubuntu.com/ubuntu/"
+  packages:
+    - mc
+    - curl
+    - wget
+    - sudo
+    - tar
+    - bzip2
+    - build-essential
+    - linux-image-virtual
+    - linux-tools-virtual
+    - linux-cloud-tools-virtual
+    - net-tools
+  locale: en_US.UTF-8
+  timezone: Europe/Copenhagen
+  ssh:
+    install-server: true
+    allow-pw: true
+  user-data:
+    disable_root: false
+    lock-passwd: false
+    ssh_pwauth: true
+    hostname: ubuntu2004
+    password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
+    username: root
+  late-commands:
+    #- echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0 elevator=noop"/' /target/etc/default/grub
+    - sed -ie 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+    - curtin in-target --target /target update-grub2
+storage:
+  config:
+    - type: disk
+      id: disk0
+      ptable: gpt
+      wipe: superblock
+      grub_device: true
+      match:
+        size: largest
+    - id: efi-partition # create partitions on disk (like sda1)
+      type: partition
+      device: disk0
+      size: 512MB
+      flag: boot # EFI system partition needs boot flag
+    - type: partition
+      id: boot-partition
+      device: disk0
+      size: 2GB
+    - type: partition
+      device: disk0
+      id: root-partition
+      size: -1
+    - id: efi-partition-fs # format partitions on disk
+      type: format
+      volume: efi-partition
+      fstype: fat32
+      label: EFI
+    - id: boot-partition-fs
+      type: format
+      fstype: ext4
+      volume: boot-partition
+    - id: root-partition-fs
+      type: format
+      fstype: ext4
+      volume: root-partition
+    - id: efi-partition-fs-mount # mount partitions
+      type: mount
+      device: efi-partition-fs
+      path: /boot/efi
+    - id: root-partition-fs-mount
+      type: mount
+      path: /
+      device: root-partition-fs
+    - id: boot-partition-fs-mount
+      type: mount
+      path: /boot
+      device: boot-partition-fs

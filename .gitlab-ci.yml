@@ -1,13 +1,13 @@
 variables:
-  packer_version: "1.8.0"
+  packer_version: "1.8.1"
   dind: 20.10-dind
   build_alma: "false"
   build_centos: "false"
   build_rocky: "false"
   build_oracle: "false"
   build_ubuntu: "false"
-  build_windows2022_std: "true"
-  build_windows2022_dc: "true"
+  build_windows2022_std: "false"
+  build_windows2022_dc: "false"
 stages:
   - get-packer
   - centos7-validate
@@ -147,7 +147,7 @@ rocky85:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -163,7 +163,7 @@ rocky85-vagrant:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_vagrant.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -179,7 +179,7 @@ rocky85-docker:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux85.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -196,7 +196,7 @@ oracle85:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_oraclelinux8_g2.pkr.hcl"
-    - export var_file="./variables/variables_oraclelinux85.pkvars.hcl"
+    - export var_file="./variables/variables_oraclelinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -212,7 +212,7 @@ oracle85-vagrant:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_oraclelinux8_g2_vagrant.pkr.hcl"
-    - export var_file="./variables/variables_oraclelinux85.pkvars.hcl"
+    - export var_file="./variables/variables_oraclelinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -228,7 +228,7 @@ oracle85-docker:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_oraclelinux8_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_oraclelinux85.pkvars.hcl"
+    - export var_file="./variables/variables_oraclelinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -468,7 +468,7 @@ build_rocky:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux85.ps1
+    - .\hv_rockylinux86.ps1
   rules:
     - if: $build_rocky == "true"
       when: on_success
@@ -483,7 +483,7 @@ build_rocky_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux85_docker.ps1
+    - .\hv_rockylinux86_docker.ps1
   rules:
     - if: $build_rocky == "true"
       when: on_success
@@ -500,7 +500,7 @@ build_rocky_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux85_vagrant.ps1
+    - .\hv_rockylinux86_vagrant.ps1
   rules:
     - if: $build_rocky == "true"
       when: on_success
@@ -518,7 +518,7 @@ build_oracle:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_oraclelinux85.ps1
+    - .\hv_oraclelinux86.ps1
   rules:
     - if: $build_oracle == "true"
       when: on_success
@@ -533,7 +533,7 @@ build_oracle_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_oraclelinux85_docker.ps1
+    - .\hv_oraclelinux86_docker.ps1
   rules:
     - if: $build_oracle == "true"
       when: on_success
@@ -550,7 +550,7 @@ build_oracle_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_oraclelinux85_vagrant.ps1
+    - .\hv_oraclelinux86_vagrant.ps1
   rules:
     - if: $build_oracle == "true"
       when: on_success

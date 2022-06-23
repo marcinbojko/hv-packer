@@ -4,9 +4,10 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_oraclelinux8_g2.pkr.hcl"
-$var_file="./variables/variables_oraclelinux85.pkvars.hcl"
-$machine="OracleLinux 8.5"
+$template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
+$var_file="./variables/variables_rockylinux86.pkvars.hcl"
+$override="./variables/rockylinux8_docker.yml"
+$machine="RockyLinux 8.6"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -14,7 +15,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   Write-Output "Building: $machine"
   try {
     $env:PACKER_LOG=$packer_log
-    packer validate -var-file="$var_file" "$template_file"
+    packer validate -var-file="$var_file" -var "ansible_override=$override" "$template_file"
   }
   catch {
     Write-Output "Packer validation failed, exiting."
@@ -23,7 +24,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   try {
     $env:PACKER_LOG=$packer_log
     packer version
-    packer build --force -var-file="$var_file" "$template_file"
+    packer build --force -var-file="$var_file" -var "ansible_override=$override" "$template_file"
   }
   catch {
     Write-Output "Packer build failed, exiting."
