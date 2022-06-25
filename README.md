@@ -13,7 +13,7 @@
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
-      - [Ansible Playbooks CentOS/AlmaLinux/RockyLinux](#ansible-playbooks-centosalmalinuxrockylinux)
+      - [Ansible Playbooks CentOS/AlmaLinux/RockyLinux/OracleLinux](#ansible-playbooks-centosalmalinuxrockylinuxoraclelinux)
   - [Templates Windows 2022](#templates-windows-2022)
     - [Hyper-V Generation 2 Windows Server 2022 Standard Image](#hyper-v-generation-2-windows-server-2022-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
@@ -50,9 +50,9 @@
     - [Hyper-V Generation 2 OracleLinux 8.6 image with extra docker volume](#hyper-v-generation-2-oraclelinux-86-image-with-extra-docker-volume)
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
-    - [Hyper-V Generation 2 AlmaLinux 8.5 Image](#hyper-v-generation-2-almalinux-85-image)
-    - [Hyper-V Generation 2 AlmaLinux 8.5 Vagrant support](#hyper-v-generation-2-almalinux-85-vagrant-support)
-    - [Hyper-V Generation 2 AlmaLinux 8.5 image with extra docker volume](#hyper-v-generation-2-almalinux-85-image-with-extra-docker-volume)
+    - [Hyper-V Generation 2 AlmaLinux 8.6 Image](#hyper-v-generation-2-almalinux-86-image)
+    - [Hyper-V Generation 2 AlmaLinux 8.6 Vagrant support](#hyper-v-generation-2-almalinux-86-vagrant-support)
+    - [Hyper-V Generation 2 AlmaLinux 8.6 image with extra docker volume](#hyper-v-generation-2-almalinux-86-image-with-extra-docker-volume)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
@@ -74,7 +74,7 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.7.10`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.8.1`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.19` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
@@ -86,7 +86,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.7.10 -y
+choco install packer --version=1.8.1 -y
 ```
 
 ### Install vagrant from Chocolatey
@@ -185,7 +185,7 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
 
   Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
 
-#### Ansible Playbooks (CentOS/AlmaLinux/RockyLinux)
+#### Ansible Playbooks (CentOS/AlmaLinux/RockyLinux/OracleLinux)
 
 During deployment ansible-base and ansible are installed in operating system. After deployment ends, these packages are removed.
 Playbooks are held in `/extra/playbooks` folder, with proper OS variables.
@@ -456,17 +456,17 @@ Run `hv_oraclelinux86_docker.ps1` for OracleLinux 8.6
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 AlmaLinux 8.5 Image
+### Hyper-V Generation 2 AlmaLinux 8.6 Image
 
-Run `hv_almalinux85.ps1`
+Run `hv_almalinux86.ps1`
 
-### Hyper-V Generation 2 AlmaLinux 8.5 Vagrant support
+### Hyper-V Generation 2 AlmaLinux 8.6 Vagrant support
 
-Run `hv_almalinux85_vagrant.ps1` for AlmaLinux 8.5
+Run `hv_almalinux86_vagrant.ps1` for AlmaLinux 8.6
 
-### Hyper-V Generation 2 AlmaLinux 8.5 image with extra docker volume
+### Hyper-V Generation 2 AlmaLinux 8.6 image with extra docker volume
 
-Run `hv_almalinux85_docker.ps1` for AlmaLinux 8.5
+Run `hv_almalinux86_docker.ps1` for AlmaLinux 8.6
 
 ## Templates CentOS 7.x
 

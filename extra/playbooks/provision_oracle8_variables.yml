@@ -38,6 +38,7 @@ yum_extra_packages:
   - smartmontools
   - sssd
   - sssd-libwbclient
+  - sssd-tools
   - telnet
   - tmux
   - xauth

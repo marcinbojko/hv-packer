@@ -98,7 +98,7 @@ alma85:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_almalinux8_g2.pkr.hcl"
-    - export var_file="./variables/variables_almalinux85.pkvars.hcl"
+    - export var_file="./variables/variables_almalinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -114,7 +114,7 @@ alma85-vagrant:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_almalinux8_g2_vagrant.pkr.hcl"
-    - export var_file="./variables/variables_almalinux85.pkvars.hcl"
+    - export var_file="./variables/variables_almalinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -130,7 +130,7 @@ alma85-docker:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_almalinux8_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_almalinux85.pkvars.hcl"
+    - export var_file="./variables/variables_almalinux86.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -417,7 +417,7 @@ build_alma:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_almalinux85.ps1
+    - .\hv_almalinux86.ps1
   rules:
     - if: $build_alma == "true"
       when: on_success
@@ -432,8 +432,7 @@ build_alma_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_almalinux85_docker.ps1
-    - .\hv_almalinux85_vagrant.ps1
+    - .\hv_almalinux86_docker.ps1
   rules:
     - if: $build_alma == "true"
       when: on_success
@@ -450,7 +449,7 @@ build_alma_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_almalinux85_vagrant.ps1
+    - .\hv_almalinux86_vagrant.ps1
   rules:
     - if: $build_alma == "true"
       when: on_success

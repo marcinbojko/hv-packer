@@ -1,6 +1,10 @@
 # Changelog
 
-## version 1.9.7 2022-06-22
+## Version 1.9.8 2022-06-25
+
+* [AlmaLinux] added `AlmaLinux 8.6`
+
+## Version 1.9.7 2022-06-22
 
 * `extra` scripts and playbooks optimizations
 * [RockyLinux] added `RockyLinux 8.6`
