@@ -1,11 +1,12 @@
 variables:
-  packer_version: "1.8.1"
+  packer_version: "1.8.2"
   dind: 20.10-dind
   build_alma: "false"
   build_centos: "false"
   build_rocky: "false"
   build_oracle: "false"
-  build_ubuntu: "false"
+  build_ubuntu2004: "false"
+  build_ubuntu2204: "false"
   build_windows2022_std: "false"
   build_windows2022_dc: "false"
 stages:
@@ -91,7 +92,7 @@ centos79-vagrant:
     - packer
   needs:
     - get-packer
-alma85:
+alma8:
   stage: alma8-validate
   image: alpine
   services:
@@ -107,7 +108,7 @@ alma85:
     - packer
   needs:
     - get-packer
-alma85-vagrant:
+alma8-vagrant:
   stage: alma8-validate
   image: alpine
   services:
@@ -123,7 +124,7 @@ alma85-vagrant:
     - packer
   needs:
     - get-packer
-alma85-docker:
+alma8-docker:
   stage: alma8-validate
   image: alpine
   services:
@@ -140,7 +141,7 @@ alma85-docker:
   needs:
     - get-packer
 # Rocky
-rocky85:
+rocky8:
   stage: rocky8-validate
   image: alpine
   services:
@@ -156,7 +157,7 @@ rocky85:
     - packer
   needs:
     - get-packer
-rocky85-vagrant:
+rocky8-vagrant:
   stage: rocky8-validate
   image: alpine
   services:
@@ -172,7 +173,7 @@ rocky85-vagrant:
     - packer
   needs:
     - get-packer
-rocky85-docker:
+rocky8-docker:
   stage: rocky8-validate
   image: alpine
   services:
@@ -189,7 +190,7 @@ rocky85-docker:
   needs:
     - get-packer
 # Validate Oracle
-oracle85:
+oracle8:
   stage: oracle8-validate
   image: alpine
   services:
@@ -205,7 +206,7 @@ oracle85:
     - packer
   needs:
     - get-packer
-oracle85-vagrant:
+oracle8-vagrant:
   stage: oracle8-validate
   image: alpine
   services:
@@ -221,7 +222,7 @@ oracle85-vagrant:
     - packer
   needs:
     - get-packer
-oracle85-docker:
+oracle8-docker:
   stage: oracle8-validate
   image: alpine
   services:
@@ -245,6 +246,22 @@ ubuntu2004:
   before_script:
     - export template_file="./templates/hv_ubuntu2004_g2.pkr.hcl"
     - export var_file="./variables/variables_ubuntu2004.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+ubuntu2204:
+  stage: ubuntu20-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_ubuntu2204_g2.pkr.hcl"
+    - export var_file="./variables/variables_ubuntu2204.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -402,7 +419,15 @@ ansible-lint:
 # Here building starts
 # Install required packer choco package
 install_packer:
+  variables:
+    GIT_STRATEGY: none
   stage: install_packer
+  before_script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force -TurnOff -Verbose"
+    - Sleep 30
+    - "Get-Vm -name packer-*|Remove-VM -Force"
   script:
     - choco upgrade packer --version $packer_version -y
     - packer --version
@@ -414,7 +439,7 @@ build_alma:
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
-    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - "Get-Vm -name packer-*|Stop-VM -Force -TurnOff -Verbose"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - .\hv_almalinux86.ps1
@@ -609,7 +634,7 @@ build_centos_vagrant:
   needs:
     - build_centos_docker
 # Ubuntu
-build_ubuntu:
+build_ubuntu2004:
   stage: build_ubuntu
   script:
     - pwd
@@ -619,7 +644,22 @@ build_ubuntu:
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - .\hv_ubuntu2004.ps1
   rules:
-    - if: $build_ubuntu == "true"
+    - if: $build_ubuntu2004 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_ubuntu2204:
+  stage: build_ubuntu
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_ubuntu2204.ps1
+  rules:
+    - if: $build_ubuntu2204 == "true"
       when: on_success
   tags:
     - windows

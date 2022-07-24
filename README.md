@@ -10,6 +10,7 @@
     - [Add firewal exclusions for TCP ports 8000-9000 default range](#add-firewal-exclusions-for-tcp-ports-8000-9000-default-range)
     - [Adjust Hyper-V settings](#adjust-hyper-v-settings)
     - [Default passwords](#default-passwords)
+    - [Enable Packer debug logging](#enable-packer-debug-logging)
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
@@ -38,6 +39,7 @@
   - [Templates Ubuntu](#templates-ubuntu)
     - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
+    - [Hyper-V Generation 2 Ubuntu 22.04 Image](#hyper-v-generation-2-ubuntu-2204-image)
   - [Templates RockyLinux 8.x](#templates-rockylinux-8x)
     - [Warnings - RockyLinux 8](#warnings---rockylinux-8)
     - [Hyper-V Generation 2 RockyLinux 8.6 Image](#hyper-v-generation-2-rockylinux-86-image)
@@ -74,7 +76,7 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.8.1`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.8.2`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.19` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
@@ -86,7 +88,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.8.1 -y
+choco install packer --version=1.8.2 -y
 ```
 
 ### Install vagrant from Chocolatey
@@ -126,6 +128,16 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
 |Ubuntu|ubuntu|password|
 ||vagrant|vagrant|
 |||
+
+### Enable Packer debug logging
+
+Soon to be parametrized
+
+In building script set `packet_log`  variable to 1
+
+```powershell
+$packer_log=1
+```
 
 ## Scripts
 
@@ -171,9 +183,9 @@ To adjust to your Hyper-V, please check variables below and/or in ./variables fi
 
   |Repository|Package|switch|
   |----------|------------|---|
-  |Epel 7/8|epel-release|can be switched off by setting "install_epel" to `false`|
-  |Zabbix 5.2|zabbix-agent|can be switched on by setting "install_zabbix" to `true`|
-  |Puppet 6  |puppet-agent|can be switched off by setting "install_puppet" to false|
+  |Epel 7/8/9|epel-release|can be switched off by setting "install_epel" to `false`|
+  |Zabbix 6.0|zabbix-agent|can be switched on by setting "install_zabbix" to `true`|
+  |Puppet 7  |puppet-agent|can be switched off by setting "install_puppet" to false|
   |Webmin |webmin|can be switched on by setting "install_webmin" to `false`|
   |Cockpit |cockpit|can be switched on by setting "install_zabbix" to `true`|
   |Hyper-V |SCVMM Agent|can be switched off by setting "install_hyperv" to `false`|
@@ -395,6 +407,10 @@ Run `hv_winserver_20H2.ps1`
 ### Hyper-V Generation 2 Ubuntu 20.04 Image
 
 Run `hv_ubuntu2004.ps1`
+
+### Hyper-V Generation 2 Ubuntu 22.04 Image
+
+Run `hv_ubuntu2204.ps1`
 
 ## Templates RockyLinux 8.x
 

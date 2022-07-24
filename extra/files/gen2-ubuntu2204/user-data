@@ -3,17 +3,9 @@
 autoinstall:
   version: 1
   indentity:
-    hostname: ubuntu2004
+    hostname: ubuntu2204
     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
     username: root
-  # users:
-  #   - name: root
-  #     lock-passwd: false
-  #     disable_root: false
-  #     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
-  #     ssh_pwauth: true
-  #     runcmd:
-  #     - echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
   early-commands:
     - systemctl stop ssh # otherwise packer tries to connect and exceed max attempts
   network:
@@ -51,15 +43,16 @@ autoinstall:
     disable_root: false
     lock-passwd: false
     ssh_pwauth: true
-    hostname: ubuntu2004
+    hostname: ubuntu2204
     password: $6$B1yxqMfR$gj5FAxkfd16958twhq6w/IQ14GuTPucLDArz6o/VZftkT41PQi7.hoxpDMonWQdVBbyV/RlpxytLKXnc8MfXG/
     username: root
   late-commands:
     #- echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
     - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0 elevator=noop"/' /target/etc/default/grub
     - sed -ie 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /target/etc/ssh/sshd_config
-    - curtin in-target --target=/target -- update-grub2
-    - curtin in-target --target=/target -- apt-get -y install linux-cloud-tools-virtual||true
+    - curtin in-target -- update-grub2
+    # virtual package is required for some cloud images. Lack of it causes failure in communication.
+    - curtin in-target -- apt-get -y install linux-cloud-tools-virtual||true
 storage:
   config:
     - type: disk

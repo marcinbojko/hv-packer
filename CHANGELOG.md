@@ -1,5 +1,12 @@
 # Changelog
 
+## Version 1.9.9 2022-07-24
+
+* [Ubuntu] added `Ubuntu 22.04`
+* [Extra] set of fixes for Ubuntu 20.04 not properly behaving during `late_commands` stage
+* [Extra] fixes form mutual `arm64` and `amd64` builds
+* [Extra] fixes for ubuntu builds skipping SystemCenter agent installation
+
 ## Version 1.9.8 2022-06-25
 
 * [AlmaLinux] added `AlmaLinux 8.6`

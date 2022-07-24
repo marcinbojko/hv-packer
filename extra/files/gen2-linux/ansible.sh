@@ -4,7 +4,7 @@
 # vars
 # set ansible-core version due to python requirements in ansible 2.12
 
-ansible_core="2.11.11"
+ansible_core="2.13.1"
 
 usage() { echo "Usage: $0 [-i <true|false> Install or uninstall ansible ]" 1>&2; }
 
@@ -22,7 +22,7 @@ while getopts :i:  option
     done
 # what os we're dealing with
 OS=$(grep -e '^ID_LIKE=' /etc/os-release|tr -d '"'|sed -e "s/^ID_LIKE=//"|tr "[:upper:]" "[:lower:]")
-VERSION_ID=$(grep -e '^VERSION_ID=' /etc/os-release|tr -d '"'|sed -e "s/^VERSION_ID=//"|tr "[:upper:]" "[:lower:]")
+VERSION_ID=$(grep -e '^VERSION_ID=' /etc/os-release|tr -d '"'|sed -e "s/^VERSION_ID=//"|tr "[:upper:]" "[:lower:]"|cut -c1-1)
 
 if [ -z "$OS" ];then
 echo "Couldn't recognise os, exiting"
@@ -39,15 +39,20 @@ fi
 function install_ansible {
   echo "Starting ansible installation step, ansible-core in version: $ansible_core"
   /usr/bin/python3 -m pip install --upgrade pip
-  # let's prepare for ansible dependency in CentOS 7
-  if [ "$VERSION_ID" == '7' ];then
-    # RHEL 7, constrain ansible-core to 2.11.11
-    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==2.11.11 ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp
-  else
-    # RHEL 8 or higher
-    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp
-  fi
-
+  case "$VERSION_ID" in
+  "7")
+    echo "Found os: $OS and release: $VERSION_ID"
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==2.11.11 pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+  "8")
+    echo "Found os: $OS and release: $VERSION_ID"
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+  "9")
+    echo "Found os: $OS and release: $VERSION_ID"
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+   *)
+   echo "Found os: $OS and release: $VERSION_ID"
+   /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+  esac
   # build a block to supress warnings and other ansible configs
   mkdir -p /etc/ansible && chmod 755 /etc/ansible
   echo "[defaults]" > /etc/ansible/ansible.cfg
@@ -93,8 +98,16 @@ if [ "$INSTALL" == "true" ] && [[ "$OS" =~ rhel|centos|fedora ]];then
   $manager remove ansible ansible-base ansible-core -y -q ||true
   # repeat code from kickstart
   $manager install -y chrony mc curl wget yum-utils openssh-server openssh-clients openssh kernel-devel kernel-headers make patch gcc
-  $manager install ca-certificates python3 python3-devel python3-pip python3-wheel krb5-devel krb5-workstation -y
-  $manager install python3-setuptools python3-psutil -y
+  case "$VERSION_ID" in
+  "9")
+    echo "Found os: $OS and release: $VERSION_ID"
+    $manager install ca-certificates python3 python3-devel python3-pip krb5-devel krb5-workstation -y
+    $manager install python3-setuptools python3-psutil -y ;;
+   *)
+    echo "Found os: $OS and release: $VERSION_ID"
+    $manager install ca-certificates python3 python3-devel python3-pip python3-wheel krb5-devel krb5-workstation -y
+    $manager install python3-setuptools python3-psutil -y ;;
+  esac
   /usr/bin/python3 -m pip install --upgrade setuptools-rust
   install_ansible
   check_ansible

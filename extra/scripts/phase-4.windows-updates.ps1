@@ -105,7 +105,7 @@ whichWindows
   try {
           Write-Output "Phase-4 [INFO] - Updates pass started"
           Install-WindowsUpdate -AcceptAll -IgnoreReboot -ErrorAction SilentlyContinue
-          Get-WUHistory
+          #Get-WUHistory
           Write-Output "Phase-4 [INFO] - Updates pass completed"
   }
   catch {

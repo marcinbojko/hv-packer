@@ -124,12 +124,12 @@ build {
 
   provisioner "file" {
     destination = "/tmp/uefi.sh"
-    source      = "extra/files/gen2-ubuntu2004/uefi.sh"
+    source      = "extra/files/gen2-ubuntu2204/uefi.sh"
   }
 
   provisioner "file" {
     destination = "/tmp/provision.sh"
-    source      = "extra/files/gen2-ubuntu2004/provision.sh"
+    source      = "extra/files/gen2-ubuntu2204/provision.sh"
   }
 
   provisioner "file" {
@@ -151,22 +151,22 @@ build {
 
   provisioner "file" {
     destination = "/tmp/puppet.conf"
-    source      = "extra/files/gen2-ubuntu2004/puppet.conf"
+    source      = "extra/files/gen2-ubuntu2204/puppet.conf"
   }
 
   provisioner "file" {
     destination = "/tmp/motd.sh"
-    source      = "extra/files/gen2-ubuntu2004/motd.sh"
+    source      = "extra/files/gen2-ubuntu2204/motd.sh"
   }
 
   provisioner "file" {
     destination = "/tmp/prepare_neofetch.sh"
-    source      = "extra/files/gen2-ubuntu2004/prepare_neofetch.sh"
+    source      = "extra/files/gen2-ubuntu2204/prepare_neofetch.sh"
   }
 
   provisioner "file" {
     destination = "/tmp/zeroing.sh"
-    source      = "extra/files/gen2-ubuntu2004/zeroing.sh"
+    source      = "extra/files/gen2-ubuntu2204/zeroing.sh"
   }
 
   provisioner "shell" {
