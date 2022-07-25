@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.9.10 2022-07-25
+
+* [Extra] fixes for lacking `ansible` package in `ansible.sh` provisioning script
+
 ## Version 1.9.9 2022-07-24
 
 * [Ubuntu] added `Ubuntu 22.04`

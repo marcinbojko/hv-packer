@@ -4,7 +4,7 @@
 # vars
 # set ansible-core version due to python requirements in ansible 2.12
 
-ansible_core="2.13.1"
+ansible_core="2.11.12"
 
 usage() { echo "Usage: $0 [-i <true|false> Install or uninstall ansible ]" 1>&2; }
 
@@ -42,16 +42,16 @@ function install_ansible {
   case "$VERSION_ID" in
   "7")
     echo "Found os: $OS and release: $VERSION_ID"
-    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==2.11.11 pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==2.11.11 ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
   "8")
     echo "Found os: $OS and release: $VERSION_ID"
-    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
   "9")
     echo "Found os: $OS and release: $VERSION_ID"
-    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+    /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
    *)
    echo "Found os: $OS and release: $VERSION_ID"
-   /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
+   /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-core==$ansible_core ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp ;;
   esac
   # build a block to supress warnings and other ansible configs
   mkdir -p /etc/ansible && chmod 755 /etc/ansible
