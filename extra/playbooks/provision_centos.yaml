@@ -4,6 +4,7 @@
   hosts: all
   vars:
     install_epel: false
+    change_epel_priority: false
     install_webmin: false
     install_hyperv: false
     install_zabbix: false
@@ -59,6 +60,7 @@
           - "Extra volume prepare           :{{ docker_prepare }}"
           - "Install Cockpit                :{{ install_cockpit }}"
           - "Install EPEL                   :{{ install_epel }}"
+          - "Change EPEL priority           :{{ change_epel_priority }}"
           - "Install extra groups           :{{ install_extra_groups }}"
           - "Install Hyperv                 :{{ install_hyperv }}"
           - "Install MOTD                   :{{ install_motd }}"
@@ -105,8 +107,8 @@
       when: install_epel
     - name: enable_epel
       community.general.ini_file:
-        path: /etc/yum.repos.d/epel.repo
-        section: epel
+        path: "{{ epel.path }} | default ('/etc/yum.repos.d/epel.repo')"
+        section: "{{ epel.section }} | default ('epel')"
         option: enabled
         value: "1"
         mode: 0644
@@ -121,10 +123,10 @@
     # change priority for epel repo - mandatory for other settings
     - name: change_epel_priority
       community.general.ini_file:
-        path: /etc/yum.repos.d/epel.repo
+        path: "{{ epel.path }} | default('/etc/yum.repos.d/epel.repo')"
         section: epel
         option: priority
-        value: "{{ epel.priority|int }}"
+        value: "{{ epel.priority | int }}"
         mode: 0644
       retries: "{{ retries_count }}"
       delay: "{{ delay_time }}"
@@ -181,7 +183,9 @@
       register: r_set_linux_policy
       when: selinux.state is defined
     # start webmin block
-    - block:
+    - name: start_webmin_block
+      when: install_webmin
+      block:
         - name: add_webmin_repository
           ansible.builtin.yum_repository:
             name: Webmin
@@ -212,9 +216,10 @@
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           until: r_start_webmin is success
-      when: install_webmin == true
+
     # start zabbix block
-    - block:
+    - name: start_zabbix_block
+      block:
         - name: import_gpg_zabix_key
           ansible.builtin.rpm_key:
             key: "{{ item.gpgkey }}"
@@ -296,7 +301,8 @@
           when: r_zabbix_package is success
           changed_when: false
       when: install_zabbix
-    - block:
+    - name: start_cockpit_block
+      block:
         - name: install_cockpit
           ansible.builtin.package:
             name: cockpit
@@ -312,7 +318,8 @@
           until: r_start_cockpit is success
       when: install_cockpit is defined and install_cockpit
     # start puppet block
-    - block:
+    - name: start_puppet_block
+      block:
         - name: import_gpg_puppet_key
           ansible.builtin.rpm_key:
             key: "{{ item.gpgkey }}"
@@ -399,9 +406,10 @@
           delay: "{{ delay_time }}"
           until: r_add_puppet_config_options is success
           when: r_install_puppet_package is success
-      when: install_puppet == true
+      when: install_puppet
     # start neofetch block - requires changes from script to 'per option' settings
-    - block:
+    - name: start_neofetch_block
+      block:
         - name: add_neofetch_repository
           ansible.builtin.get_url:
             url: "{{ item.url }}"
@@ -413,7 +421,7 @@
           loop: "{{ neofetch.repository }}"
           until: r_neofetch_repository is success
           notify: makecache
-          when: "(ansible_distribution_major_version|int <8) and (ansible_distribution_major_version is defined)"
+          when: "(ansible_distribution_major_version | int < 8) and (ansible_distribution_major_version is defined)"
         - name: install_nefoetch
           ansible.builtin.package:
             name: "{{ neofetch.package.name }}"
@@ -474,7 +482,8 @@
             warn: false
           when: install_neofetch and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
       when: install_neofetch
-    - block:
+    - name: start_hyperv_block
+      block:
         - name: install_hyperv
           ansible.builtin.package:
             name: hyperv-daemons
@@ -496,9 +505,10 @@
             mode: 0644
             content: |
               SUBSYSTEM=="memory", ACTION=="add", ATTR{state}="online"
-          when: (r_install_hyperv_package is success and r_install_hyperv_package is defined) and ( r_enable_hyperv_services is success and  r_enable_hyperv_services is defined)
+          when: (r_install_hyperv_package is success and r_install_hyperv_package is defined) and (r_enable_hyperv_services is success and r_enable_hyperv_services is defined)
       when: install_hyperv
-    - block:
+    - name: start_extra_device_block
+      block:
         - name: check_for_device_existence
           ansible.builtin.stat:
             path: "/dev/{{ extra_device }}"
@@ -546,10 +556,11 @@
             opts: defaults
             state: mounted
             boot: true
-          when: ( ansible_devices[extra_device].partitions[extra_device + '1'].uuid|length >5) and (r_partition_docker_volume is success and r_partition_docker_volume is defined)
+          when: (ansible_devices[extra_device].partitions[extra_device + '1'].uuid | length > 5) and (r_partition_docker_volume is success and r_partition_docker_volume is defined)
       when: docker_prepare
     # os related block
-    - block:
+    - name: start_os_related_block
+      block:
         # set locale:
         - name: set_locale
           ansible.builtin.shell: |
@@ -564,7 +575,7 @@
           changed_when: false
         # set timezone
         - name: set_timezone
-          ansible.builtin.timezone:
+          community.general.system.timezone:
             name: "{{ timezone }}"
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -592,7 +603,8 @@
             - makecache
 
     # start firewalld block - danger Will Robinson, quite unstable in case of multiple interfaces
-    - block:
+    - name: start_firewalld_block
+      block:
         # let's start default profile
         - name: start_firewalld
           ansible.builtin.systemd:
@@ -716,7 +728,8 @@
           notify: reload_firewalld
           when: ansible_default_ipv4.interface is defined
     # last touch and cleaning block
-    - block:
+    - name: last_touch_and_cleaning_block
+      block:
         - name: get_info_about_services
           ansible.builtin.service_facts:
           register: r_service_status
@@ -762,7 +775,7 @@
             msg: "Machine type is: {{ machine_type }}"
           when: ansible_virtualization_role is defined
         - name: set_tuned_for_baremetal
-          ansible.builtin.shell: tuned-adm profile {{ tuned_profile }}
+          ansible.builtin.command: tuned-adm profile {{ tuned_profile }}
           args:
             warn: false
           retries: "{{ retries_count }}"
@@ -836,13 +849,13 @@
         warn: false
       changed_when: false
     - name: switch_default_firewalld_zone
-      ansible.builtin.shell: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
+      ansible.builtin.command: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
       args:
         warn: false
       changed_when: false
-      when: (firewalld.default_zone is defined) and (firewalld.default_zone|length>0)
+      when: (firewalld.default_zone is defined) and (firewalld.default_zone | length > 0)
     - name: reload_firewalld
-      ansible.builtin.shell: "firewall-cmd --reload"
+      ansible.builtin.command: "firewall-cmd --reload"
       args:
         warn: false
       changed_when: false

@@ -48,7 +48,7 @@
         shell: /bin/bash
         groups: wheel, root
         group: "{{ vagrant_username }}"
-        password: "{{ vagrant_password |password_hash('sha512') }}"
+        password: "{{ vagrant_password | password_hash('sha512') }}"
         home: "{{ vagrant_home }}"
         update_password: on_create
       register: r_create_vagrant_user

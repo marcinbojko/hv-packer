@@ -1,4 +1,15 @@
 # Set of Hashicorp's `Packer` templates to create Microsoft Hyper-V virtual machines
+
+![RockyLinux](https://img.shields.io/badge/Linux-Rocky-brightgreen)
+![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen)
+![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen)
+![CentosLinux](https://img.shields.io/badge/Linux-CentOS-brightgreen)
+![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange)
+
+![Windows2016](https://img.shields.io/badge/Windows-2016-blue)
+![Windows2019](https://img.shields.io/badge/Windows-2019-blue)
+![Windows2022](https://img.shields.io/badge/Windows-2022-blue)
+
 <!-- TOC -->
 
 - [Set of Hashicorp's Packer templates to create Microsoft Hyper-V virtual machines](#set-of-hashicorps-packer-templates-to-create-microsoft-hyper-v-virtual-machines)
@@ -32,10 +43,6 @@
   - [Templates Windows 2016](#templates-windows-2016)
     - [Hyper-V Generation 2 Windows Server 2016 Standard Image](#hyper-v-generation-2-windows-server-2016-standard-image)
       - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
-  - [Templates Windows Server](#templates-windows-server)
-    - [Hyper-V Generation 2 Windows Server 1909 Standard Image](#hyper-v-generation-2-windows-server-1909-standard-image)
-    - [Hyper-V Generation 2 Windows Server 2004 Standard Image](#hyper-v-generation-2-windows-server-2004-standard-image)
-    - [Hyper-V Generation 2 Windows Server 20H2 Standard Image](#hyper-v-generation-2-windows-server-20h2-standard-image)
   - [Templates Ubuntu](#templates-ubuntu)
     - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
@@ -45,6 +52,11 @@
     - [Hyper-V Generation 2 RockyLinux 8.6 Image](#hyper-v-generation-2-rockylinux-86-image)
     - [Hyper-V Generation 2 RockyLinux 8.6 Vagrant support](#hyper-v-generation-2-rockylinux-86-vagrant-support)
     - [Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume](#hyper-v-generation-2-rockylinux-86-image-with-extra-docker-volume)
+  - [Templates Rocky Linux 9](#templates-rocky-linux-9)
+    - [Warnings - RockyLinux 9](#warnings---rockylinux-9)
+    - [Hyper-V Generation 2 RockyLinux 9.0 Image](#hyper-v-generation-2-rockylinux-90-image)
+    - [Hyper-V Generation 2 RockyLinux 9.0 Vagrant support](#hyper-v-generation-2-rockylinux-90-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume](#hyper-v-generation-2-rockylinux-90-image-with-extra-docker-volume)
   - [Templates OracleLinux 8.x](#templates-oraclelinux-8x)
     - [Warnings - OracleLinux 8](#warnings---oraclelinux-8)
     - [Hyper-V Generation 2 OracleLinux 8.6 Image](#hyper-v-generation-2-oraclelinux-86-image)
@@ -88,13 +100,13 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.8.2 -y
+choco install packer --version=1.8.4 -y
 ```
 
 ### Install vagrant from Chocolatey
 
 ```cmd
-choco install vagrant --version=2.2.19 -y
+choco install vagrant --version=2.3.2 -y
 ```
 
 ### Use account with Administrator privileges for Hyper-V
@@ -363,35 +375,6 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-## Templates Windows Server
-
-### Hyper-V Generation 2 Windows Server 1909 Standard Image
-
-If you need changes For - prepare `secondary1909.iso` with folder structure:
-
-- ./extra/files/gen2-1909/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_winserver_1909.ps1`
-
-### Hyper-V Generation 2 Windows Server 2004 Standard Image
-
-If you need changes For - prepare `secondary2004.iso` with folder structure:
-
-- ./extra/files/gen2-2004/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_winserver_2004.ps1`
-
-### Hyper-V Generation 2 Windows Server 20H2 Standard Image
-
-If you need changes For - prepare `secondary20H2.iso` with folder structure:
-
-- ./extra/files/gen2-20H2/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-Run `hv_winserver_20H2.ps1`
-
 ## Templates Ubuntu
 
 ### Warnings - Ubuntu 20.x
@@ -435,6 +418,31 @@ Run `hv_rockylinux86_vagrant.ps1` for RockyLinux 8.6
 ### Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume
 
 Run `hv_rockylinux86_docker.ps1` for RockyLinux 8.6
+
+## Templates Rocky Linux 9
+
+### Warnings - RockyLinux 9
+
+- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+- if needed - change `iso_url` variable to a proper iso name
+- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+- credentials for Windows machines: Administrator/password (removed after sysprep)
+- credentials for Linux machines: root/password
+- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+
+### Hyper-V Generation 2 RockyLinux 9.0 Image
+
+Run `hv_rockylinux9.ps1`
+
+### Hyper-V Generation 2 RockyLinux 9.0 Vagrant support
+
+Run `hv_rockylinux9_vagrant.ps1` for RockyLinux 9.0
+
+### Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume
+
+Run `hv_rockylinux9_docker.ps1` for RockyLinux 9.0
+
 
 ## Templates OracleLinux 8.x
 

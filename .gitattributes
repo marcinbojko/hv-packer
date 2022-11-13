@@ -1,2 +1,4 @@
 *.sh		text eol=lf
+*.cfg   text eol=lf
 install text eol=lf
+*.ps1   text eol=crlf

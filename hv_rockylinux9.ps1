@@ -1,8 +1,12 @@
 # Build images
 
-$template_file="./templates/hv_winserver_g2.pkr.hcl"
-$var_file="./variables/variables_winserver_2004.pkvars.hcl"
-$machine="Windows Server 2004 Standard Gen-2"
+# Get Start Time
+$startDTM = (Get-Date)
+
+# Variables
+$template_file="./templates/hv_rockylinux9_g2.pkr.hcl"
+$var_file="./variables/variables_rockylinux9.pkvars.hcl"
+$machine="RockyLinux 9.0"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -31,3 +35,5 @@ else {
   exit (-1)
 }
 
+$endDTM = (Get-Date)
+Write-Host "[INFO]  - Elapsed Time: $(($endDTM-$startDTM).totalseconds) seconds" -ForegroundColor Yellow

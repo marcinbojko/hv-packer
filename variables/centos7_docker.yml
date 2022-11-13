@@ -4,7 +4,7 @@ install_hyperv:                true
 install_zabbix:                false
 install_zabbix_as_root:        false
 install_cockpit:               false
-install_puppet:                true
+install_puppet:                false
 install_docker_workaround:     true
 install_kubernetes_workaround: false
 remove_puppet_ssl_keys:        false

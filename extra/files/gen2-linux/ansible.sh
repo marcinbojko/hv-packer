@@ -25,10 +25,10 @@ OS=$(grep -e '^ID_LIKE=' /etc/os-release|tr -d '"'|sed -e "s/^ID_LIKE=//"|tr "[:
 VERSION_ID=$(grep -e '^VERSION_ID=' /etc/os-release|tr -d '"'|sed -e "s/^VERSION_ID=//"|tr "[:upper:]" "[:lower:]"|cut -c1-1)
 
 if [ -z "$OS" ];then
-echo "Couldn't recognise os, exiting"
-exit 1
+  echo "Couldn't recognise os, exiting"
+  exit 1
 else
-echo "Found: $OS"
+  echo "Found: $OS and version: $VERSION_ID"
 fi
 
 if [ -z "$INSTALL" ];then
@@ -82,7 +82,7 @@ function add_path {
   echo "Adding /usr/local/bin to PATH"
   echo "export PATH=/usr/local/bin:$PATH" >>~/.bashrc
   source ~/.bashrc
-  cat ~/.bashrc
+  #cat ~/.bashrc
 }
 
 if [ "$INSTALL" == "true" ] && [[ "$OS" =~ rhel|centos|fedora ]];then

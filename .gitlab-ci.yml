@@ -1,9 +1,10 @@
 variables:
-  packer_version: "1.8.2"
+  packer_version: "1.8.4"
   dind: 20.10-dind
   build_alma: "false"
   build_centos: "false"
-  build_rocky: "false"
+  build_rocky8: "false"
+  build_rocky9: "false"
   build_oracle: "false"
   build_ubuntu2004: "false"
   build_ubuntu2204: "false"
@@ -14,6 +15,7 @@ stages:
   - centos7-validate
   - alma8-validate
   - rocky8-validate
+  - rocky9-validate
   - oracle8-validate
   - ubuntu20-validate
   - windows2019-validate
@@ -21,14 +23,15 @@ stages:
   - ansible-lint
   - install_packer
   - build_alma
-  - build_rocky
+  - build_rocky8
+  - build_rocky9
   - build_centos
   - build_oracle
   - build_ubuntu
   - build_windows2022
 get-packer:
   stage: get-packer
-  image: alpine
+  image: hashicorp/packer:${packer_version}
   services:
     - docker:$dind
   artifacts:
@@ -36,11 +39,8 @@ get-packer:
     paths:
       - packer
   script:
-    - echo "Fetching packer"
-    - wget https://releases.hashicorp.com/packer/"$packer_version"/packer_"$packer_version"_linux_amd64.zip
-    - unzip packer_"$packer_version"_linux_amd64.zip
-    - chmod +x packer
-    - rm -rf packer_"$packer_version"_linux_amd64.zip
+    - pwd
+    - cp -p /bin/packer ./packer
   tags:
     - docker
     - packer
@@ -140,7 +140,7 @@ alma8-docker:
     - packer
   needs:
     - get-packer
-# Rocky
+# Rocky 8
 rocky8:
   stage: rocky8-validate
   image: alpine
@@ -181,6 +181,39 @@ rocky8-docker:
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
     - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+# Rocky 9
+rocky9:
+  stage: rocky9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_rockylinux9_g2.pkr.hcl"
+    - export var_file="./variables/variables_rockylinux9.pkvars.hcl"
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+rocky9-docker:
+  stage: rocky9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_rockylinux9_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_rockylinux9.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -401,7 +434,8 @@ lts2022-dc-vagrant:
     - get-packer
 ansible-lint:
   stage: ansible-lint
-  image: marcinbojko/pipetools-ansible
+  image: ${PIPELINE_IMAGE}:${PIPELINE_IMAGE_TAG}
+  allow_failure: true
   services:
     - docker:$dind
   before_script:
@@ -484,8 +518,8 @@ build_alma_vagrant:
   needs:
     - build_alma_docker
 # Rocky
-build_rocky:
-  stage: build_rocky
+build_rocky8:
+  stage: build_rocky8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
@@ -494,13 +528,13 @@ build_rocky:
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - .\hv_rockylinux86.ps1
   rules:
-    - if: $build_rocky == "true"
+    - if: $build_rocky8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
-build_rocky_docker:
-  stage: build_rocky
+build_rocky8_docker:
+  stage: build_rocky8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
@@ -509,15 +543,15 @@ build_rocky_docker:
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - .\hv_rockylinux86_docker.ps1
   rules:
-    - if: $build_rocky == "true"
+    - if: $build_rocky8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
   needs:
-    - build_rocky
-build_rocky_vagrant:
-  stage: build_rocky
+    - build_rocky8
+build_rocky8_vagrant:
+  stage: build_rocky8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
@@ -526,13 +560,63 @@ build_rocky_vagrant:
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - .\hv_rockylinux86_vagrant.ps1
   rules:
-    - if: $build_rocky == "true"
+    - if: $build_rocky8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
   needs:
-    - build_rocky_docker
+    - build_rocky8_docker
+# Rocky 9
+build_rocky9:
+  stage: build_rocky9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_rockylinux9.ps1
+  rules:
+    - if: $build_rocky9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_rocky9_docker:
+  stage: build_rocky9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_rockylinux9_docker.ps1
+  rules:
+    - if: $build_rocky9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_rocky9
+build_rocky9_vagrant:
+  stage: build_rocky9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - .\hv_rockylinux9_vagrant.ps1
+  rules:
+    - if: $build_rocky9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_rocky9_docker
 # Build Oracle
 build_oracle:
   stage: build_oracle

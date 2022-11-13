@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 2.0.0 2022-11-13
+
+* [BREAKING_CHANGE] Puppet repositories and puppet agent no longer is being installed by default. To change this behavior adjust vatiables for ansible playbooks in /variables/{distro-name}.yaml files
+* [BREAKING_CHANGE] System Center 2019 agent doesn't support RHEL 9/Rocky Linux 9 - instalation fails
+* [BREAKING_CHANGE] removal of all Windows SAC deployments - this repo will no longer support these editions
+* [Extra] `extra` scripts and playbooks optimizations
+* [RockyLinux] added `RockyLinux 9.0` support
+* [RockyLinux] added `RockyLinux 9.0 Docker` support
+* [RockyLinux] added `RockyLinux 9.0 Vagrant` support
+
 ## Version 1.9.10 2022-07-25
 
 * [Extra] fixes for lacking `ansible` package in `ansible.sh` provisioning script
