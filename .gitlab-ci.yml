@@ -148,7 +148,7 @@ rocky8:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux87.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -164,7 +164,7 @@ rocky8-vagrant:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_vagrant.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux87.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -180,7 +180,7 @@ rocky8-docker:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux86.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux87.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -197,7 +197,7 @@ rocky9:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux9_g2.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux9.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux91.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -213,7 +213,7 @@ rocky9-docker:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux9_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux9.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux91.pkvars.hcl"
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -526,7 +526,7 @@ build_rocky8:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux86.ps1
+    - .\hv_rockylinux87.ps1
   rules:
     - if: $build_rocky8 == "true"
       when: on_success
@@ -541,7 +541,7 @@ build_rocky8_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux86_docker.ps1
+    - .\hv_rockylinux87_docker.ps1
   rules:
     - if: $build_rocky8 == "true"
       when: on_success
@@ -558,7 +558,7 @@ build_rocky8_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux86_vagrant.ps1
+    - .\hv_rockylinux87_vagrant.ps1
   rules:
     - if: $build_rocky8 == "true"
       when: on_success
@@ -576,7 +576,7 @@ build_rocky9:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux9.ps1
+    - .\hv_rockylinux91.ps1
   rules:
     - if: $build_rocky9 == "true"
       when: on_success
@@ -591,7 +591,7 @@ build_rocky9_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux9_docker.ps1
+    - .\hv_rockylinux91_docker.ps1
   rules:
     - if: $build_rocky9 == "true"
       when: on_success
@@ -608,7 +608,7 @@ build_rocky9_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux9_vagrant.ps1
+    - .\hv_rockylinux91_vagrant.ps1
   rules:
     - if: $build_rocky9 == "true"
       when: on_success

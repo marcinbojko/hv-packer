@@ -14,8 +14,9 @@
 
 - [Set of Hashicorp's Packer templates to create Microsoft Hyper-V virtual machines](#set-of-hashicorps-packer-templates-to-create-microsoft-hyper-v-virtual-machines)
   - [Requirements](#requirements)
-  - [Usage](#usage)
+  - [Requirements - Quick Start](#requirements---quick-start)
     - [Install packer from Chocolatey](#install-packer-from-chocolatey)
+    - [Install required plugins](#install-required-plugins)
     - [Install vagrant from Chocolatey](#install-vagrant-from-chocolatey)
     - [Use account with Administrator privileges for Hyper-V](#use-account-with-administrator-privileges-for-hyper-v)
     - [Add firewal exclusions for TCP ports 8000-9000 default range](#add-firewal-exclusions-for-tcp-ports-8000-9000-default-range)
@@ -28,34 +29,34 @@
       - [Ansible Playbooks CentOS/AlmaLinux/RockyLinux/OracleLinux](#ansible-playbooks-centosalmalinuxrockylinuxoraclelinux)
   - [Templates Windows 2022](#templates-windows-2022)
     - [Hyper-V Generation 2 Windows Server 2022 Standard Image](#hyper-v-generation-2-windows-server-2022-standard-image)
-      - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
+      - [Windows 2022 Standard Generation 2 Prerequisites](#windows-2022-standard-generation-2-prerequisites)
     - [Hyper-V Generation 2 Windows Server 2022 Datacenter Image](#hyper-v-generation-2-windows-server-2022-datacenter-image)
-      - [Datacenter Generation 2 Prerequisites](#datacenter-generation-2-prerequisites)
+      - [Windows 2022 Datacenter Generation 2 Prerequisites](#windows-2022-datacenter-generation-2-prerequisites)
     - [[Experimental] Hyper-V generation 2 Windows Server 2022 Standard Vagrant support](#experimental-hyper-v-generation-2-windows-server-2022-standard-vagrant-support)
     - [[Experimental] Hyper-V generation 2 Windows Server 2022 Datacenter Vagrant support](#experimental-hyper-v-generation-2-windows-server-2022-datacenter-vagrant-support)
   - [Templates Windows 2019](#templates-windows-2019)
     - [Hyper-V Generation 2 Windows Server 2019 Standard Image](#hyper-v-generation-2-windows-server-2019-standard-image)
-      - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
+      - [Windows 2019 Standard Generation 2 Prerequisites](#windows-2019-standard-generation-2-prerequisites)
     - [Hyper-V Generation 2 Windows Server 2019 Datacenter Image](#hyper-v-generation-2-windows-server-2019-datacenter-image)
-      - [Datacenter Generation 2 Prerequisites](#datacenter-generation-2-prerequisites)
+      - [Windows 2019 Datacenter Generation 2 Prerequisites](#windows-2019-datacenter-generation-2-prerequisites)
     - [[Experimental] Hyper-V generation 2 Windows Server 2019 Standard Vagrant support](#experimental-hyper-v-generation-2-windows-server-2019-standard-vagrant-support)
     - [[Experimental] Hyper-V generation 2 Windows Server 2019 Datacenter Vagrant support](#experimental-hyper-v-generation-2-windows-server-2019-datacenter-vagrant-support)
   - [Templates Windows 2016](#templates-windows-2016)
     - [Hyper-V Generation 2 Windows Server 2016 Standard Image](#hyper-v-generation-2-windows-server-2016-standard-image)
-      - [Standard Generation 2 Prerequisites](#standard-generation-2-prerequisites)
+      - [Windows 2016 Standard Generation 2 Prerequisites](#windows-2016-standard-generation-2-prerequisites)
   - [Templates Ubuntu](#templates-ubuntu)
     - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
     - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
     - [Hyper-V Generation 2 Ubuntu 22.04 Image](#hyper-v-generation-2-ubuntu-2204-image)
   - [Templates RockyLinux 8.x](#templates-rockylinux-8x)
     - [Warnings - RockyLinux 8](#warnings---rockylinux-8)
-    - [Hyper-V Generation 2 RockyLinux 8.6 Image](#hyper-v-generation-2-rockylinux-86-image)
-    - [Hyper-V Generation 2 RockyLinux 8.6 Vagrant support](#hyper-v-generation-2-rockylinux-86-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 8.7 Image](#hyper-v-generation-2-rockylinux-87-image)
+    - [Hyper-V Generation 2 RockyLinux 8.7 Vagrant support](#hyper-v-generation-2-rockylinux-87-vagrant-support)
     - [Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume](#hyper-v-generation-2-rockylinux-86-image-with-extra-docker-volume)
   - [Templates Rocky Linux 9](#templates-rocky-linux-9)
     - [Warnings - RockyLinux 9](#warnings---rockylinux-9)
-    - [Hyper-V Generation 2 RockyLinux 9.0 Image](#hyper-v-generation-2-rockylinux-90-image)
-    - [Hyper-V Generation 2 RockyLinux 9.0 Vagrant support](#hyper-v-generation-2-rockylinux-90-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 9.1 Image](#hyper-v-generation-2-rockylinux-91-image)
+    - [Hyper-V Generation 2 RockyLinux 9.1 Vagrant support](#hyper-v-generation-2-rockylinux-91-vagrant-support)
     - [Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume](#hyper-v-generation-2-rockylinux-90-image-with-extra-docker-volume)
   - [Templates OracleLinux 8.x](#templates-oraclelinux-8x)
     - [Warnings - OracleLinux 8](#warnings---oraclelinux-8)
@@ -88,19 +89,27 @@
 <!-- /TOC -->
 ## Requirements
 
-- packer <=`1.8.2`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.8.4`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
 - [OPTIONAL] Vagrant >= `2.2.19` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 - be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 - properly constructed virtual switch in Hyper-v allowing virtual machine to get IP from DHCP and contact Hyper-V server on mentioned packer ports. This is a must, if kickstart is reachable over the network.
 
-## Usage
+## Requirements - Quick Start
 
 ### Install packer from Chocolatey
 
 ```cmd
 choco install packer --version=1.8.4 -y
+```
+
+### Install required plugins
+
+In root folder of a repository
+
+```cmd
+packer init --upgrade config.pkr.hcl
 ```
 
 ### Install vagrant from Chocolatey
@@ -116,18 +125,20 @@ choco install vagrant --version=2.3.2 -y
 ```powershell
 Remove-NetFirewallRule -DisplayName "Packer_http_server" -Verbose
 New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 8000-9000
-
 ```
 
 ### Adjust Hyper-V settings
 
 To adjust to your Hyper-V, please check variables below and/or in ./variables files
 
-- proper VLAN ID (possible passing as variable `-var 'vlan_id=0'` ). Look to your build server NIC setings.
-- proper Hyper-V Virtual Switch name (access to Internet will be required) (possible passing as variable `-var 'switch_name=vSwitch'`). Remember - creation of new switch by packer, instead of reusing existing one can cause lack of Internet access. If it's possible substitute variable with your current switch's name.
-- proper URL for ISO images in packer's template (possible passing as variable `-var 'iso_url=file.iso'` ). Be warned - using your own or different images can fail the build, as for example image index or image name used by your ISO can be different then specified by script. Look at the bottom of this Readme to read how to find or use image index.
-- proper checksum type (possible passing as variable `-var 'iso_checksum_type=sha256'` )
-- proper checksum  (possible passing as variable `-var 'iso_checksum=aaaabbbbbbbcccccccddddd'` )
+- (variable `vlan_id` in /variables/variables.*.pkvars.hcl) - proper VLAN ID . Look up to find your build server vEthernet setings.
+- (variable `switch_name` in /variables/variables.*.pkvars.hcl) - proper Hyper-V Virtual Switch name (access to Internet will be required). Make sure you're using pre-existing switch in your Hyper-V server - creation of new switch by packer, instead of reusing existing one can cause lack of Internet access, thus failing the build.
+
+```yaml
+# example of mentioned variables
+vlan_id = ""
+switch_name = "vSwitch"
+```
 
 ### Default passwords
 
@@ -241,7 +252,7 @@ install_motd:                  true  # install motd (neofetch run)
 
 Run `hv_win2022_std.ps1` (Windows)
 
-#### 2022 Standard Generation 2 Prerequisites
+#### Windows 2022 Standard Generation 2 Prerequisites
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
@@ -263,7 +274,7 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 
 Run `hv_win2022_dc.ps1` (Windows)
 
-#### 2022 Datacenter Generation 2 Prerequisites
+#### Windows 2022 Datacenter Generation 2 Prerequisites
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
@@ -299,7 +310,7 @@ hv_win2022_dc_vagrant.ps1
 
 Run `hv_win2019_std.ps1` (Windows)
 
-#### 2019 Standard Generation 2 Prerequisites
+#### Windows 2019 Standard Generation 2 Prerequisites
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
@@ -321,7 +332,7 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 
 Run `hv_win2019_dc.ps1` (Windows)
 
-#### 2019 Datacenter Generation 2 Prerequisites
+#### Windows 2019 Datacenter Generation 2 Prerequisites
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
@@ -357,7 +368,7 @@ hv_win2019_dc_vagrant.ps1
 
 Run `hv_win2016_std.ps1` (Windows)
 
-#### 2016 Standard Generation 2 Prerequisites
+#### Windows 2016 Standard Generation 2 Prerequisites
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
@@ -407,17 +418,17 @@ Run `hv_ubuntu2204.ps1`
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 RockyLinux 8.6 Image
+### Hyper-V Generation 2 RockyLinux 8.7 Image
 
-Run `hv_rockylinux86.ps1`
+Run `hv_rockylinux87.ps1`
 
-### Hyper-V Generation 2 RockyLinux 8.6 Vagrant support
+### Hyper-V Generation 2 RockyLinux 8.7 Vagrant support
 
-Run `hv_rockylinux86_vagrant.ps1` for RockyLinux 8.6
+Run `hv_rockylinux87_vagrant.ps1` for RockyLinux 8.7
 
 ### Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume
 
-Run `hv_rockylinux86_docker.ps1` for RockyLinux 8.6
+Run `hv_rockylinux87_docker.ps1` for RockyLinux 8.7
 
 ## Templates Rocky Linux 9
 
@@ -431,18 +442,17 @@ Run `hv_rockylinux86_docker.ps1` for RockyLinux 8.6
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 RockyLinux 9.0 Image
+### Hyper-V Generation 2 RockyLinux 9.1 Image
 
-Run `hv_rockylinux9.ps1`
+Run `hv_rockylinux91.ps1`
 
-### Hyper-V Generation 2 RockyLinux 9.0 Vagrant support
+### Hyper-V Generation 2 RockyLinux 9.1 Vagrant support
 
-Run `hv_rockylinux9_vagrant.ps1` for RockyLinux 9.0
+Run `hv_rockylinux91_vagrant.ps1` for RockyLinux 9.1
 
 ### Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume
 
-Run `hv_rockylinux9_docker.ps1` for RockyLinux 9.0
-
+Run `hv_rockylinux91_docker.ps1` for RockyLinux 9.1
 
 ## Templates OracleLinux 8.x
 

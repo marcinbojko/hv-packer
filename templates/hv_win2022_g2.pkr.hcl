@@ -1,3 +1,12 @@
+variable "memory" {
+  type    = string
+  default = "1024"
+}
+
+variable "cpus" {
+  type    = string
+  default = "1"
+}
 
 variable "disk_size" {
   type    = string
@@ -74,7 +83,7 @@ source "hyperv-iso" "vm" {
   boot_command          = ["a<enter><wait>a<enter><wait>a<enter><wait>a<enter>"]
   boot_wait             = "1s"
   communicator          = "winrm"
-  cpus                  = 4
+  cpus                  = "${var.cpus}"
   disk_size             = "${var.disk_size}"
   enable_dynamic_memory = "true"
   enable_secure_boot    = false
@@ -82,7 +91,7 @@ source "hyperv-iso" "vm" {
   guest_additions_mode  = "disable"
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
   iso_url               = "${var.iso_url}"
-  memory                = 4096
+  memory                = "${var.memory}"
   output_directory      = "${var.output_directory}"
   secondary_iso_images  = ["${var.secondary_iso_image}"]
   shutdown_timeout      = "30m"

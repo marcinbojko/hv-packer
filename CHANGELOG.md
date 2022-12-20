@@ -1,6 +1,22 @@
 # Changelog
 
+## Version 2.0.1 2022-12-20
+
+Codename: Jedwab - [https://www.youtube.com/watch?v=G_Lsdk88AYM](https://www.youtube.com/watch?v=G_Lsdk88AYM)
+
+* [Extra] `extra` scripts and playbooks optimizations
+* [RockyLinux] added `RockyLinux 9.1` support
+* [RockyLinux] added `RockyLinux 9.1 Docker` support
+* [RockyLinux] added `RockyLinux 9.1 Vagrant` support
+* [RockyLinux] added `RockyLinux 8.7` support
+* [RockyLinux] added `RockyLinux 8.7 Docker` support
+* [RockyLinux] added `RockyLinux 8.7 Vagrant` support
+* introduced required packer plugins
+* reworked README.md
+
 ## Version 2.0.0 2022-11-13
+
+Codename: Patience [https://www.youtube.com/watch?v=ErvgV4P6Fzc](https://www.youtube.com/watch?v=ErvgV4P6Fzc)
 
 * [BREAKING_CHANGE] Puppet repositories and puppet agent no longer is being installed by default. To change this behavior adjust vatiables for ansible playbooks in /variables/{distro-name}.yaml files
 * [BREAKING_CHANGE] System Center 2019 agent doesn't support RHEL 9/Rocky Linux 9 - instalation fails
@@ -11,6 +27,8 @@
 * [RockyLinux] added `RockyLinux 9.0 Vagrant` support
 
 ## Version 1.9.10 2022-07-25
+
+Codename: It's a sin
 
 * [Extra] fixes for lacking `ansible` package in `ansible.sh` provisioning script
 
