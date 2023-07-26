@@ -55,19 +55,29 @@
     - [Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume](#hyper-v-generation-2-rockylinux-86-image-with-extra-docker-volume)
   - [Templates Rocky Linux 9](#templates-rocky-linux-9)
     - [Warnings - RockyLinux 9](#warnings---rockylinux-9)
-    - [Hyper-V Generation 2 RockyLinux 9.1 Image](#hyper-v-generation-2-rockylinux-91-image)
-    - [Hyper-V Generation 2 RockyLinux 9.1 Vagrant support](#hyper-v-generation-2-rockylinux-91-vagrant-support)
+    - [Hyper-V Generation 2 RockyLinux 9.2 Image](#hyper-v-generation-2-rockylinux-92-image)
+    - [Hyper-V Generation 2 RockyLinux 9.2 Vagrant support](#hyper-v-generation-2-rockylinux-92-vagrant-support)
     - [Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume](#hyper-v-generation-2-rockylinux-90-image-with-extra-docker-volume)
   - [Templates OracleLinux 8.x](#templates-oraclelinux-8x)
     - [Warnings - OracleLinux 8](#warnings---oraclelinux-8)
     - [Hyper-V Generation 2 OracleLinux 8.6 Image](#hyper-v-generation-2-oraclelinux-86-image)
     - [Hyper-V Generation 2 OracleLinux 8.6 Vagrant support](#hyper-v-generation-2-oraclelinux-86-vagrant-support)
     - [Hyper-V Generation 2 OracleLinux 8.6 image with extra docker volume](#hyper-v-generation-2-oraclelinux-86-image-with-extra-docker-volume)
+  - [Templates OracleLinux 9.x](#templates-oraclelinux-9x)
+    - [Warnings - OracleLinux 9](#warnings---oraclelinux-9)
+    - [Hyper-V Generation 2 OracleLinux 9.2 Image](#hyper-v-generation-2-oraclelinux-92-image)
+    - [Hyper-V Generation 2 OracleLinux 9.2 Vagrant support](#hyper-v-generation-2-oraclelinux-92-vagrant-support)
+    - [Hyper-V Generation 2 OracleLinux 9.2 image with extra docker volume](#hyper-v-generation-2-oraclelinux-92-image-with-extra-docker-volume)
   - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
     - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
     - [Hyper-V Generation 2 AlmaLinux 8.6 Image](#hyper-v-generation-2-almalinux-86-image)
     - [Hyper-V Generation 2 AlmaLinux 8.6 Vagrant support](#hyper-v-generation-2-almalinux-86-vagrant-support)
     - [Hyper-V Generation 2 AlmaLinux 8.6 image with extra docker volume](#hyper-v-generation-2-almalinux-86-image-with-extra-docker-volume)
+  - [Templates AlmaLinux 9.x](#templates-almalinux-9x)
+    - [Warnings - AlmaLinux 9](#warnings---almalinux-9)
+    - [Hyper-V Generation 2 AlmaLinux 9.2 Image](#hyper-v-generation-2-almalinux-92-image)
+    - [Hyper-V Generation 2 AlmaLinux 9.2 Vagrant support](#hyper-v-generation-2-almalinux-92-vagrant-support)
+    - [Hyper-V Generation 2 AlmaLinux 9.2 image with extra docker volume](#hyper-v-generation-2-almalinux-92-image-with-extra-docker-volume)
   - [Templates CentOS 7.x](#templates-centos-7x)
     - [Warnings - CentOS Docker](#warnings---centos-docker)
     - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
@@ -87,12 +97,13 @@
   - [About](#about)
 
 <!-- /TOC -->
+
 ## Requirements
 
-- packer <=`1.8.4`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
+- packer <=`1.9.1`. Do not use packer below 1.7.0 version. For previous packer versions use previous releases from this repository
 - Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 - firewall exceptions for `packer` http server (look down below)
-- [OPTIONAL] Vagrant >= `2.2.19` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
+- [OPTIONAL] Vagrant >= `2.3.4` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 - be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 - properly constructed virtual switch in Hyper-v allowing virtual machine to get IP from DHCP and contact Hyper-V server on mentioned packer ports. This is a must, if kickstart is reachable over the network.
 
@@ -101,7 +112,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.8.4 -y
+choco install packer --version=1.9.1 -y
 ```
 
 ### Install required plugins
@@ -115,7 +126,7 @@ packer init --upgrade config.pkr.hcl
 ### Install vagrant from Chocolatey
 
 ```cmd
-choco install vagrant --version=2.3.2 -y
+choco install vagrant --version=2.3.4 -y
 ```
 
 ### Use account with Administrator privileges for Hyper-V
@@ -442,17 +453,17 @@ Run `hv_rockylinux87_docker.ps1` for RockyLinux 8.7
 - for Windows based machines adjust your settings in ./scripts/phase-2.ps1
 - for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
 
-### Hyper-V Generation 2 RockyLinux 9.1 Image
+### Hyper-V Generation 2 RockyLinux 9.2 Image
 
-Run `hv_rockylinux91.ps1`
+Run `hv_rockylinux92.ps1`
 
-### Hyper-V Generation 2 RockyLinux 9.1 Vagrant support
+### Hyper-V Generation 2 RockyLinux 9.2 Vagrant support
 
-Run `hv_rockylinux91_vagrant.ps1` for RockyLinux 9.1
+Run `hv_rockylinux92_vagrant.ps1` for RockyLinux 9.2
 
 ### Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume
 
-Run `hv_rockylinux91_docker.ps1` for RockyLinux 9.1
+Run `hv_rockylinux92_docker.ps1` for RockyLinux 9.2
 
 ## Templates OracleLinux 8.x
 
@@ -478,6 +489,30 @@ Run `hv_oraclelinux86_vagrant.ps1` for OracleLinux 8.5
 
 Run `hv_oraclelinux86_docker.ps1` for OracleLinux 8.6
 
+## Templates OracleLinux 9.x
+
+### Warnings - OracleLinux 9
+
+- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+- if needed - change `iso_url` variable to a proper iso name
+- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+- credentials for Windows machines: Administrator/password (removed after sysprep)
+- credentials for Linux machines: root/password
+- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+
+### Hyper-V Generation 2 OracleLinux 9.2 Image
+
+Run `hv_oraclelinux92.ps1`
+
+### Hyper-V Generation 2 OracleLinux 9.2 Vagrant support
+
+Run `hv_oraclelinux92_vagrant.ps1` for OracleLinux 9.2
+
+### Hyper-V Generation 2 OracleLinux 9.2 image with extra docker volume
+
+Run `hv_oraclelinux92_docker.ps1` for OracleLinux 9.2
+
 ## Templates AlmaLinux 8.x
 
 ### Warnings - AlmaLinux 8
@@ -501,6 +536,30 @@ Run `hv_almalinux86_vagrant.ps1` for AlmaLinux 8.6
 ### Hyper-V Generation 2 AlmaLinux 8.6 image with extra docker volume
 
 Run `hv_almalinux86_docker.ps1` for AlmaLinux 8.6
+
+## Templates AlmaLinux 9.x
+
+### Warnings - AlmaLinux 9
+
+- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
+- if needed - change `iso_url` variable to a proper iso name
+- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
+- credentials for Windows machines: Administrator/password (removed after sysprep)
+- credentials for Linux machines: root/password
+- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
+- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+
+### Hyper-V Generation 2 AlmaLinux 9.2 Image
+
+Run `hv_almalinux92.ps1`
+
+### Hyper-V Generation 2 AlmaLinux 9.2 Vagrant support
+
+Run `hv_almalinux92_vagrant.ps1` for AlmaLinux 9.2
+
+### Hyper-V Generation 2 AlmaLinux 9.2 image with extra docker volume
+
+Run `hv_almalinux92_docker.ps1` for AlmaLinux 9.2
 
 ## Templates CentOS 7.x
 

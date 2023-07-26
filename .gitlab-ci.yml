@@ -1,11 +1,13 @@
 variables:
-  packer_version: "1.8.4"
+  packer_version: "1.9.2"
   dind: 20.10-dind
-  build_alma: "false"
+  build_alma8: "false"
+  build_alma9: "false"
   build_centos: "false"
   build_rocky8: "false"
   build_rocky9: "false"
-  build_oracle: "false"
+  build_oracle8: "false"
+  build_oracle9: "false"
   build_ubuntu2004: "false"
   build_ubuntu2204: "false"
   build_windows2022_std: "false"
@@ -14,19 +16,23 @@ stages:
   - get-packer
   - centos7-validate
   - alma8-validate
+  - alma9-validate
   - rocky8-validate
   - rocky9-validate
   - oracle8-validate
+  - oracle9-validate
   - ubuntu20-validate
   - windows2019-validate
   - windows2022-validate
   - ansible-lint
   - install_packer
-  - build_alma
+  - build_alma8
+  - build_alma9
   - build_rocky8
   - build_rocky9
   - build_centos
-  - build_oracle
+  - build_oracle8
+  - build_oracle9
   - build_ubuntu
   - build_windows2022
 get-packer:
@@ -52,6 +58,7 @@ centos79:
   before_script:
     - export template_file="./templates/hv_centos7_g2.pkr.hcl"
     - export var_file="./variables/variables_centos79.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -68,6 +75,7 @@ centos79-docker:
   before_script:
     - export template_file="./templates/hv_centos7_g2_docker.pkr.hcl"
     - export var_file="./variables/variables_centos79.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -84,6 +92,7 @@ centos79-vagrant:
   before_script:
     - export template_file="./templates/hv_centos7_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_centos79.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -100,6 +109,7 @@ alma8:
   before_script:
     - export template_file="./templates/hv_almalinux8_g2.pkr.hcl"
     - export var_file="./variables/variables_almalinux86.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -116,6 +126,7 @@ alma8-vagrant:
   before_script:
     - export template_file="./templates/hv_almalinux8_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_almalinux86.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -132,6 +143,58 @@ alma8-docker:
   before_script:
     - export template_file="./templates/hv_almalinux8_g2_docker.pkr.hcl"
     - export var_file="./variables/variables_almalinux86.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+alma9:
+  stage: alma9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_almalinux9_g2.pkr.hcl"
+    - export var_file="./variables/variables_almalinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+alma9-docker:
+  stage: alma9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_almalinux9_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_almalinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+alma9-vagrant:
+  stage: alma9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_almalinux9_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_almalinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -149,6 +212,7 @@ rocky8:
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2.pkr.hcl"
     - export var_file="./variables/variables_rockylinux87.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -165,6 +229,7 @@ rocky8-vagrant:
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_rockylinux87.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -181,6 +246,7 @@ rocky8-docker:
   before_script:
     - export template_file="./templates/hv_rockylinux8_g2_docker.pkr.hcl"
     - export var_file="./variables/variables_rockylinux87.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -197,7 +263,8 @@ rocky9:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux9_g2.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux91.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -213,7 +280,25 @@ rocky9-docker:
     - docker:$dind
   before_script:
     - export template_file="./templates/hv_rockylinux9_g2_docker.pkr.hcl"
-    - export var_file="./variables/variables_rockylinux91.pkvars.hcl"
+    - export var_file="./variables/variables_rockylinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+rocky9-vagrant:
+  stage: rocky9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_rockylinux9_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_rockylinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -231,6 +316,7 @@ oracle8:
   before_script:
     - export template_file="./templates/hv_oraclelinux8_g2.pkr.hcl"
     - export var_file="./variables/variables_oraclelinux86.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -247,6 +333,7 @@ oracle8-vagrant:
   before_script:
     - export template_file="./templates/hv_oraclelinux8_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_oraclelinux86.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -263,6 +350,7 @@ oracle8-docker:
   before_script:
     - export template_file="./templates/hv_oraclelinux8_g2_docker.pkr.hcl"
     - export var_file="./variables/variables_oraclelinux86.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -271,6 +359,59 @@ oracle8-docker:
     - packer
   needs:
     - get-packer
+# Oracle 9 Validate
+oracle9:
+  stage: oracle9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_oraclelinux9_g2.pkr.hcl"
+    - export var_file="./variables/variables_oraclelinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+oracle9-docker:
+  stage: oracle9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_oraclelinux9_g2_docker.pkr.hcl"
+    - export var_file="./variables/variables_oraclelinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+oracle9-vagrant:
+  stage: oracle9-validate
+  image: alpine
+  services:
+    - docker:$dind
+  before_script:
+    - export template_file="./templates/hv_oraclelinux9_g2_vagrant.pkr.hcl"
+    - export var_file="./variables/variables_oraclelinux92.pkvars.hcl"
+    - ./packer init config.pkr.hcl
+  script:
+    - ./packer version --version
+    - ./packer validate -var-file="$var_file" "$template_file"
+  tags:
+    - docker
+    - packer
+  needs:
+    - get-packer
+# Ubuntu
 ubuntu2004:
   stage: ubuntu20-validate
   image: alpine
@@ -279,6 +420,7 @@ ubuntu2004:
   before_script:
     - export template_file="./templates/hv_ubuntu2004_g2.pkr.hcl"
     - export var_file="./variables/variables_ubuntu2004.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -295,6 +437,7 @@ ubuntu2204:
   before_script:
     - export template_file="./templates/hv_ubuntu2204_g2.pkr.hcl"
     - export var_file="./variables/variables_ubuntu2204.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -311,6 +454,7 @@ lts2019-std:
   before_script:
     - export template_file="./templates/hv_win2019_g2.pkr.hcl"
     - export var_file="./variables/variables_win2019_std.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -327,6 +471,7 @@ lts2019-std-vagrant:
   before_script:
     - export template_file="./templates/hv_win2019_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_win2019_std.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -343,6 +488,7 @@ lts2019-dc:
   before_script:
     - export template_file="./templates/hv_win2019_g2.pkr.hcl"
     - export var_file="./variables/variables_win2019_dc.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -359,6 +505,7 @@ lts2019-dc-vagrant:
   before_script:
     - export template_file="./templates/hv_win2019_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_win2019_dc.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -376,6 +523,7 @@ lts2022-std:
   before_script:
     - export template_file="./templates/hv_win2022_g2.pkr.hcl"
     - export var_file="./variables/variables_win2022_std.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -392,6 +540,7 @@ lts2022-dc:
   before_script:
     - export template_file="./templates/hv_win2022_g2.pkr.hcl"
     - export var_file="./variables/variables_win2022_dc.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -408,6 +557,7 @@ lts2022-std-vagrant:
   before_script:
     - export template_file="./templates/hv_win2022_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_win2022_std.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -424,6 +574,7 @@ lts2022-dc-vagrant:
   before_script:
     - export template_file="./templates/hv_win2022_g2_vagrant.pkr.hcl"
     - export var_file="./variables/variables_win2022_dc.pkvars.hcl"
+    - ./packer init config.pkr.hcl
   script:
     - ./packer version --version
     - ./packer validate -var-file="$var_file" "$template_file"
@@ -468,55 +619,110 @@ install_packer:
   tags:
     - windows
     - hyperv
-build_alma:
-  stage: build_alma
+build_alma8:
+  stage: build_alma8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
     - "Get-Vm -name packer-*|Stop-VM -Force -TurnOff -Verbose"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_almalinux86.ps1
   rules:
-    - if: $build_alma == "true"
+    - if: $build_alma8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
-build_alma_docker:
-  stage: build_alma
+build_alma8_docker:
+  stage: build_alma8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_almalinux86_docker.ps1
   rules:
-    - if: $build_alma == "true"
+    - if: $build_alma8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
   needs:
-    - build_alma
-build_alma_vagrant:
-  stage: build_alma
+    - build_alma8
+build_alma8_vagrant:
+  stage: build_alma8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_almalinux86_vagrant.ps1
   rules:
-    - if: $build_alma == "true"
+    - if: $build_alma8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
   needs:
-    - build_alma_docker
+    - build_alma8_docker
+build_alma9:
+  stage: build_alma9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force -TurnOff -Verbose"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
+    - .\hv_almalinux92.ps1
+  rules:
+    - if: $build_alma9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_alma9_docker:
+  stage: build_alma9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
+    - .\hv_almalinux92_docker.ps1
+  rules:
+    - if: $build_alma9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_alma9
+build_alma9_vagrant:
+  stage: build_alma9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
+    - .\hv_almalinux92_vagrant.ps1
+  rules:
+    - if: $build_alma9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_alma9_docker
 # Rocky
 build_rocky8:
   stage: build_rocky8
@@ -526,6 +732,7 @@ build_rocky8:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_rockylinux87.ps1
   rules:
     - if: $build_rocky8 == "true"
@@ -541,6 +748,7 @@ build_rocky8_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_rockylinux87_docker.ps1
   rules:
     - if: $build_rocky8 == "true"
@@ -558,6 +766,7 @@ build_rocky8_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_rockylinux87_vagrant.ps1
   rules:
     - if: $build_rocky8 == "true"
@@ -576,7 +785,8 @@ build_rocky9:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux91.ps1
+    - packer init config.pkr.hcl
+    - .\hv_rockylinux92.ps1
   rules:
     - if: $build_rocky9 == "true"
       when: on_success
@@ -591,7 +801,8 @@ build_rocky9_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux91_docker.ps1
+    - packer init config.pkr.hcl
+    - .\hv_rockylinux92_docker.ps1
   rules:
     - if: $build_rocky9 == "true"
       when: on_success
@@ -608,7 +819,8 @@ build_rocky9_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
-    - .\hv_rockylinux91_vagrant.ps1
+    - packer init config.pkr.hcl
+    - .\hv_rockylinux92_vagrant.ps1
   rules:
     - if: $build_rocky9 == "true"
       when: on_success
@@ -618,55 +830,112 @@ build_rocky9_vagrant:
   needs:
     - build_rocky9_docker
 # Build Oracle
-build_oracle:
-  stage: build_oracle
+build_oracle8:
+  stage: build_oracle8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_oraclelinux86.ps1
   rules:
-    - if: $build_oracle == "true"
+    - if: $build_oracle8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
-build_oracle_docker:
-  stage: build_oracle
+build_oracle8_docker:
+  stage: build_oracle8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_oraclelinux86_docker.ps1
   rules:
-    - if: $build_oracle == "true"
+    - if: $build_oracle8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
   needs:
-    - build_oracle
-build_oracle_vagrant:
-  stage: build_oracle
+    - build_oracle8
+build_oracle8_vagrant:
+  stage: build_oracle8
   script:
     - pwd
     - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_oraclelinux86_vagrant.ps1
   rules:
-    - if: $build_oracle == "true"
+    - if: $build_oracle8 == "true"
       when: on_success
   tags:
     - windows
     - hyperv
   needs:
-    - build_oracle
+    - build_oracle8
+# Oracle 9
+build_oracle9:
+  stage: build_oracle9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
+    - .\hv_oraclelinux92.ps1
+  rules:
+    - if: $build_oracle9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+build_oracle9_docker:
+  stage: build_oracle9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
+    - .\hv_oraclelinux92_docker.ps1
+  rules:
+    - if: $build_oracle9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_oracle9
+build_oracle9_vagrant:
+  stage: build_oracle9
+  script:
+    - pwd
+    - '$env:PACKER_CACHE_DIR="e:\packer_cache"'
+    - "Get-Vm -name packer-*|Stop-VM -Force"
+    - Sleep 120
+    - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
+    - .\hv_oraclelinux92_vagrant.ps1
+  rules:
+    - if: $build_oracle9 == "true"
+      when: on_success
+  tags:
+    - windows
+    - hyperv
+  needs:
+    - build_oracle9
+
 # CentOS
 build_centos:
   stage: build_centos
@@ -676,6 +945,7 @@ build_centos:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_centos79.ps1
   rules:
     - if: $build_centos == "true"
@@ -691,6 +961,7 @@ build_centos_docker:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_centos79_docker.ps1
   rules:
     - if: $build_centos == "true"
@@ -708,6 +979,7 @@ build_centos_vagrant:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_centos79_vagrant.ps1
   rules:
     - if: $build_centos == "true"
@@ -726,6 +998,7 @@ build_ubuntu2004:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_ubuntu2004.ps1
   rules:
     - if: $build_ubuntu2004 == "true"
@@ -741,6 +1014,7 @@ build_ubuntu2204:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_ubuntu2204.ps1
   rules:
     - if: $build_ubuntu2204 == "true"
@@ -757,6 +1031,7 @@ build_windows_2022_std:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_win2022_std.ps1
   rules:
     - if: $build_windows2022_std == "true"
@@ -772,6 +1047,7 @@ build_windows_2022_dc:
     - "Get-Vm -name packer-*|Stop-VM -Force"
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
+    - packer init config.pkr.hcl
     - .\hv_win2022_dc.ps1
   rules:
     - if: $build_windows2022_dc == "true"

@@ -20,8 +20,8 @@ $version=(Get-WMIObject win32_operatingsystem).name
             printWindowsVersion
         }
         '(Server 2022)' {
-                $global:os="2022"
-                printWindowsVersion
+            $global:os="2022"
+            printWindowsVersion
         }
         '(Microsoft Windows Server Standard|Microsoft Windows Server Datacenter)'{
             $ws_version=(Get-WmiObject win32_operatingsystem).buildnumber
@@ -176,8 +176,16 @@ if (-not $choco_install_success) {
     exit (1)
 }
 
-
-
+# Install PSWindowsUpdate
+Write-Output "Phase 1 [INFO] - Installing Nuget"
+Get-PackageProvider -Name "Nuget" -ForceBootstrap -Verbose -ErrorAction Stop
+Write-Output "Phase 1 [INFO] - Installing PSWindowsUpdate"
+Install-Module PSWindowsUpdate -Force -Confirm:$false -Verbose -ErrorAction Stop
+Import-Module PSWindowsUpdate
+Get-WUServiceManager
+if ($global:os -ne '2022') {
+  Add-WUServiceManager -ServiceID 7971f918-a847-4430-9279-4a52d1efe18d -Confirm:$false
+}
 #Remove 260 Character Path Limit
 if (Test-Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem') {
     Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -name "LongPathsEnabled" -Value 1 -Verbose -Force

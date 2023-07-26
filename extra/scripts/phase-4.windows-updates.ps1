@@ -2,6 +2,10 @@
 #install Windows Updates
 # For test run disable updates
 # exit
+param (
+    # when set to true, the script will not actually install any updates
+    [bool] $SkipUpdates = $False
+)
 $global:os=""
 function whichWindows {
     $version=(Get-WMIObject win32_operatingsystem).name
@@ -104,7 +108,13 @@ whichWindows
   }
   try {
           Write-Output "Phase-4 [INFO] - Updates pass started"
-          Install-WindowsUpdate -AcceptAll -IgnoreReboot -ErrorAction SilentlyContinue
+          if ($SkipUpdates) {
+              Write-Output "Phase-4 [INFO] - Skipping updates as $skipUpdates is set to true"
+          }
+          else {
+              Write-Output "Phase-4 [INFO] - Installing updates"
+              Install-WindowsUpdate -AcceptAll -IgnoreReboot -Verbose -ErrorAction SilentlyContinue
+          }
           #Get-WUHistory
           Write-Output "Phase-4 [INFO] - Updates pass completed"
   }

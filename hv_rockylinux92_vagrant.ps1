@@ -5,8 +5,8 @@ $startDTM = (Get-Date)
 
 # Variables
 $template_file="./templates/hv_rockylinux9_g2_vagrant.pkr.hcl"
-$var_file="./variables/variables_rockylinux91.pkvars.hcl"
-$vbox_file="./vbox/packer-rockylinux91-g2.box"
+$var_file="./variables/variables_rockylinux92.pkvars.hcl"
+$vbox_file="./vbox/packer-rockylinux92-g2.box"
 $machine="RockyLinux 9.1"
 $packer_log=0
 

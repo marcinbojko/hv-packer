@@ -4,10 +4,10 @@
 $startDTM = (Get-Date)
 
 # Variables
-$template_file="./templates/hv_rockylinux9_g2_docker.pkr.hcl"
-$var_file="./variables/variables_rockylinux91.pkvars.hcl"
-$override="./variables/rockylinux9_docker.yml"
-$machine="RockyLinux 9.1"
+$template_file="./templates/hv_almalinux9_g2_vagrant.pkr.hcl"
+$var_file="./variables/variables_almalinux92.pkvars.hcl"
+$vbox_file="./vbox/packer-almalinux92-g2.box"
+$machine="AlmaLinux 9.2"
 $packer_log=0
 
 if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
@@ -15,7 +15,7 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   Write-Output "Building: $machine"
   try {
     $env:PACKER_LOG=$packer_log
-    packer validate -var-file="$var_file" -var "ansible_override=$override" "$template_file"
+    packer validate -var-file="$var_file" "$template_file"
   }
   catch {
     Write-Output "Packer validation failed, exiting."
@@ -24,7 +24,11 @@ if ((Test-Path -Path "$template_file") -and (Test-Path -Path "$var_file")) {
   try {
     $env:PACKER_LOG=$packer_log
     packer version
-    packer build --force -var-file="$var_file" -var "ansible_override=$override" "$template_file"
+    packer build --force -var-file="$var_file" "$template_file"
+    if ($?) {
+      Write-Output "Calculating checksums"
+      Get-FileHash -Algorithm SHA256 -Path "$vbox_file"|Out-File "$vbox_file.sha256" -Verbose
+    }
   }
   catch {
     Write-Output "Packer build failed, exiting."

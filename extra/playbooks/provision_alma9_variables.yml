@@ -114,7 +114,7 @@ neofetch:
   options:
     - option: (\s*[^#]info "Packages" packages).*
       line: '    #info "Packages" packages'
-timezone: "Europe/Copenhagen"
+timezone: "UTC"
 remote_files:
   - url: https://raw.githubusercontent.com/marcinbojko/hv-packer/master/extra/files/gen2-linux/prepare_neofetch.sh
     dest: /tmp/prepare_neofetch.sh

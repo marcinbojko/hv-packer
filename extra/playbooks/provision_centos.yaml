@@ -51,6 +51,11 @@
       register: freespace
       tags:
         - assert
+    - name: fact_release
+      ansible.builtin.set_fact:
+        release: "{{ ansible_distribution_major_version }}"
+      changed_when: false
+      ignore_errors: false
   tasks:
     - name: display_initial_values
       ansible.builtin.debug:
@@ -111,7 +116,7 @@
         section: "{{ epel.section }} | default ('epel')"
         option: enabled
         value: "1"
-        mode: 0644
+        mode: "0644"
       retries: "{{ retries_count }}"
       delay: "{{ delay_time }}"
       when: r_install_epel is success and install_epel
@@ -127,7 +132,7 @@
         section: epel
         option: priority
         value: "{{ epel.priority | int }}"
-        mode: 0644
+        mode: "0644"
       retries: "{{ retries_count }}"
       delay: "{{ delay_time }}"
       when: r_install_epel is success and r_enable_epel is success and install_epel
@@ -219,6 +224,7 @@
 
     # start zabbix block
     - name: start_zabbix_block
+      when: install_zabbix
       block:
         - name: import_gpg_zabix_key
           ansible.builtin.rpm_key:
@@ -245,7 +251,7 @@
             section: zabbix-non-supported
             option: enabled
             value: "0"
-            mode: 0644
+            mode: "0644"
           when: r_zabbix_repository is success
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -257,7 +263,7 @@
             section: "{{ item.name }}"
             option: "priority"
             value: "{{ item.priority }}"
-            mode: 0644
+            mode: "0644"
           when: r_zabbix_repository is success
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -287,6 +293,7 @@
               [Service]
               User=root
               Group=root
+            mode: "0644"
           when: install_zabbix_as_root is defined and install_zabbix_as_root
         - name: start_zabbix
           ansible.builtin.systemd:
@@ -300,8 +307,9 @@
           until: r_start_zabbix is success
           when: r_zabbix_package is success
           changed_when: false
-      when: install_zabbix
+
     - name: start_cockpit_block
+      when: install_cockpit is defined and install_cockpit
       block:
         - name: install_cockpit
           ansible.builtin.package:
@@ -316,9 +324,10 @@
           delay: "{{ delay_time }}"
           retries: "{{ retries_count }}"
           until: r_start_cockpit is success
-      when: install_cockpit is defined and install_cockpit
+
     # start puppet block
     - name: start_puppet_block
+      when: install_puppet
       block:
         - name: import_gpg_puppet_key
           ansible.builtin.rpm_key:
@@ -344,7 +353,7 @@
             section: "{{ item.name }}"
             option: "priority"
             value: "{{ item.priority }}"
-            mode: 0644
+            mode: "0644"
           when: r_puppet_repository is success
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -399,16 +408,17 @@
             section: main
             option: "{{ item.key }}"
             value: "{{ item.value }}"
-            mode: 0644
+            mode: "0644"
           loop: "{{ puppet.config.agent }}"
           register: r_add_puppet_config_options
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           until: r_add_puppet_config_options is success
           when: r_install_puppet_package is success
-      when: install_puppet
+
     # start neofetch block - requires changes from script to 'per option' settings
     - name: start_neofetch_block
+      when: install_neofetch
       block:
         - name: add_neofetch_repository
           ansible.builtin.get_url:
@@ -435,8 +445,9 @@
           ansible.builtin.command: neofetch
           when: r_neofetch_repository is success
           changed_when: false
-          ignore_errors: true
+#          ignore_errors: true
           any_errors_fatal: false
+          failed_when: false
         - name: create_config_folder
           ansible.builtin.file:
             path: /etc/neofetch
@@ -452,8 +463,8 @@
             src: /root/.config/neofetch/config.conf
             dest: /etc/neofetch/config.conf
             remote_src: true
-            mode: 0755
-            force: no
+            mode: "0755"
+            force: false
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           register: r_copy_neofetch_config
@@ -478,11 +489,10 @@
         # run neofetch script - to be replaced
         - name: run_prepare_neofetch
           ansible.builtin.shell: chmod +x /tmp/prepare_neofetch.sh; sh /tmp/prepare_neofetch.sh
-          args:
-            warn: false
           when: install_neofetch and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
-      when: install_neofetch
+          changed_when: false
     - name: start_hyperv_block
+      when: install_hyperv
       block:
         - name: install_hyperv
           ansible.builtin.package:
@@ -502,12 +512,12 @@
         - name: create_ballooning rule
           ansible.builtin.copy:
             dest: /etc/udev/rules.d/100-balloon.rules
-            mode: 0644
+            mode: "0644"
             content: |
               SUBSYSTEM=="memory", ACTION=="add", ATTR{state}="online"
           when: (r_install_hyperv_package is success and r_install_hyperv_package is defined) and (r_enable_hyperv_services is success and r_enable_hyperv_services is defined)
-      when: install_hyperv
     - name: start_extra_device_block
+      when: docker_prepare
       block:
         - name: check_for_device_existence
           ansible.builtin.stat:
@@ -546,18 +556,18 @@
           ansible.builtin.file:
             name: /var/lib/docker
             state: directory
-            mode: 0644
+            mode: "0644"
           when: (r_create_docker_filesystem is defined and r_create_docker_filesystem is success)
         - name: mount_extra_volume
           ansible.posix.mount:
             path: /var/lib/docker
-            src:  "UUID={{ ansible_devices[extra_device].partitions[extra_device + '1'].uuid }}"
+            src: "UUID={{ ansible_devices[extra_device].partitions[extra_device + '1'].uuid }}"
             fstype: ext4
             opts: defaults
             state: mounted
             boot: true
           when: (ansible_devices[extra_device].partitions[extra_device + '1'].uuid | length > 5) and (r_partition_docker_volume is success and r_partition_docker_volume is defined)
-      when: docker_prepare
+
     # os related block
     - name: start_os_related_block
       block:
@@ -575,7 +585,7 @@
           changed_when: false
         # set timezone
         - name: set_timezone
-          community.general.system.timezone:
+          community.general.timezone:
             name: "{{ timezone }}"
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -584,9 +594,9 @@
         - name: create_motd
           ansible.builtin.copy:
             dest: /etc/profile.d/motd.sh
-            mode: 0755
+            mode: "0755"
             content: "{{ motd }}"
-            force: no
+            force: false
           when: install_motd and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
         - name: update_all_packages
           ansible.builtin.package:
@@ -783,48 +793,72 @@
           register: r_set_tuned
           until: r_set_tuned is success
           when: machine_type != "guest" and machine_type is defined
+          changed_when: false
         - name: update_rkhunter
           ansible.builtin.command: rkhunter --propupd
-          ignore_errors: true
+          failed_when: false
           any_errors_fatal: false
           changed_when: false
         - name: get_info_from_grubby
           ansible.builtin.command: grubby --info=ALL
           register: r_grubby_info
           any_errors_fatal: false
-          ignore_errors: true
+          failed_when: false
           changed_when: false
           until: r_grubby_info is success
           when: (install_docker_workaround is defined and install_docker_workaround) or (install_kubernetes_workaround is defined and install_kubernetes_workaround)
         - name: update_grub_fsck_options_for_all_machines
           ansible.builtin.command: grubby --args "fsck.repair=yes" --update-kernel=ALL
           when: (install_docker_workaround is defined and install_docker_workaround) and ("fsck.repair=yes" not in r_grubby_info.stdout)
+          changed_when: false
+          failed_when: false
         - name: update_grub_accounting_options_for_kubernetes
           ansible.builtin.command: grubby --args "cgroup.memory=nokmem" --update-kernel=ALL
           when: (install_kubernetes_workaround is defined and install_kubernetes_workaround) and (r_grubby_info is defined and "cgroup.memory=nokmem" not in r_grubby_info.stdout)
+          changed_when: false
+          failed_when: false
+        # cleanup kernels in post 8 releases
+        - name: cleanup_kernels_post_8
+          ansible.builtin.shell: "dnf -y remove --oldinstallonly --setopt installonly_limit=2 kernel|| true"
+          register: r_cleanup_kernels_post_8
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_cleanup_kernels_post_8 is success
+          when: release is defined and release | int > 7
+          changed_when: false
+          ignore_errors: true
+          any_errors_fatal: false
+        - name: cleanup_kernels_7
+          ansible.builtin.command: "package-cleanup --oldkernels --count=2 -y -v"
+          register: r_cleanup_kernels_7
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_cleanup_kernels_7 is success
+          when: release is defined and release | int < 8
+          changed_when: false
+          ignore_errors: true
+          any_errors_fatal: false
         # create stampfile
         - name: create_stampfile
           ansible.builtin.copy:
             dest: "/etc/packerinfo"
-            mode: 0644
+            mode: "0644"
             content: |
               { "creationDate": "{{ ansible_date_time.date }}" }
         # let's clean logs and leftovers
         - name: cleaning_stuff
           ansible.builtin.shell: |
-             package-cleanup --oldkernels --count=2 -y -v
              truncate -s 0 /var/log/*
              truncate -s 0 -c /var/log/**/*
              find /var/log -type f -name \"*.[0-99].gz\" -exec rm {} +
+             rm -rfv /etc/ansible/*
              rm -rfv /var/log/anaconda/*
              rm -rfv /var/cache/libvirt/*
              rm -rfv /var/cache/powertop/*
              rm -rfv /var/crash/*
              rm -rfv /var/tmp/*
-          args:
-            warn: false
           any_errors_fatal: false
-          ignore_errors: true
+          failed_when: false
           changed_when: false
           notify:
             - clean-metadata
