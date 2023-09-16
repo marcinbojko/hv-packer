@@ -1,50 +1,16 @@
 # Changelog
 
-## Version 2.0.2 2023-07-26
+## Version 3.0.0 2023-09-16
 
-Codename: BAD - [https://www.youtube.com/watch?v=dsUXAEzaC3Q](https://www.youtube.com/watch?v=dsUXAEzaC3Q)
-
-* [BREAKING_CHANGE] for packer >= 1.9.0 hyperv-iso module was moved from core to plugins. Proper change was already set in `config.pkr.hcl`, but you have to remember to run `packer init --upgrade config.pkr.hcl` before running `packer build` command
-
-    ```hcl
-    packer {
-    required_plugins {
-      windows-update = {
-        version = "0.14.1"
-        source = "github.com/rgl/windows-update"
-    }
-      hyperv = {
-        version = ">= 1.1.0"
-        source  = "github.com/hashicorp/hyperv"
-      }
-    }
-    }
-    ```
-
-* [Extra] `extra` scripts and playbooks optimizations
-* [Extra] `ks.cgf` files for all RHEL 9 clones - switching timezone to UTC during build
-* [Extra] ansible-lint fixes over playbooks
-* [Extra] resized partitions (/boot and /boot/EFI) to fit bigger kernel and initrd files as well as more kernels in Oracle Linux UEK. This will allow for UEK an standard kernels to coexist.
-
-    ```ini
-    part /boot/efi --fstype="vfat" --size=400
-
-    part /boot --fstype="ext4" --size=2048
-
-    part swap --fstype="swap" --size=8192
-
-    part / --fstype="ext4" --grow --size=1
-    ```
-
-* [RockyLinux] added `RockyLinux 9.2` support
-* [RockyLinux] added `RockyLinux 9.2` Docker support
-* [RockyLinux] added `RockyLinux 9.2` Vagrant support
-* [OracleLinux] added `OracleLinux 9.2` support
-* [OracleLinux] added `OracleLinux 9.2` Docker support
-* [OracleLinux] added `OracleLinux 9.2` Vagrant support
-* [AlmaLinux] added `AlmaLinux 9.2` support
-* [AlmaLinux] added `AlmaLinux 9.2` Docker support
-* [AlmaLinux] added `AlmaLinux 9.2` Vagrant support
+* [BREAKING_CHANGE] complete redesign of building process. Instead od separate scripts now you're presented with generic `hv_generic.ps1` script run with proper parameters. This will allow for easier maintenance and less clutter in repository
+* [BREAKING_CHANGE] complete redesign of `extra` folder structure. Instead of primary structure based on hypervisor, current structure focuses on OS type, then if needed on hypervisor or cloud model. This will allow for easier maintenance and less clutter in repository
+* [BREAKING_CHANGE] complete redesign of Windows Update process. Instead of Nuget-based module, now we're presented with packer `windows-update` plugin. This will allow for easier maintenance and less clutter in repository
+* [BREAKING_CHANGE] complete redesing of templates. Instead of separate files for each template, now we're presented with generic family template (windows/rhel/ubuntu) This will allow for easier maintenance and less clutter in repository. Since packer doesn't support conditions, we're using `empty` resources to change its flow.
+* [BREAKING_CHANGE] dropping support for Vagrant builds. This can be introduced later, but for now, these builds are removed.
+* [BREAKING_CHANGE] dropping support for extra volumes for Docker. This is related both with removal of Docker from Kubernetes in favor of containerd, which forces different paths for containers.
+* [BREAKING_CHANGE] dropping customization image tendencies. We'll try to generate images as much generic as possible, without ground changes in them. Non-generic changes like adding Zabbix or Puppet will be removed in next releases, as I do believe this is not the `Packer's` role.
+* [BREAKING_CHANGE] dropping support for CentOS 7.x
+* [BREAKING_CHANGE] dropping support for Windows Server 2016
 
 ## Version 2.0.1 2022-12-20
 

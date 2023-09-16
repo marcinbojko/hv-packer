@@ -1,0 +1,913 @@
+# Pass true in variables
+# ansible-galaxy collection install ansible.posix
+- name: prepare_centos_machine
+  hosts: all
+  vars:
+    install_epel: false
+    change_epel_priority: false
+    install_webmin: false
+    install_hyperv: false
+    install_zabbix: false
+    install_zabbix_as_root: false
+    install_cockpit: false
+    install_puppet: false
+    install_docker_workaround: false
+    install_kubernetes_workaround: false
+    install_motd: false
+    remove_puppet_ssl_keys: false
+    install_neofetch: false
+    install_updates: false
+    install_extra_groups: false
+    docker_prepare: false
+    extra_device: ""
+    delay_time: 15
+    retries_count: 2
+    reboot_server: false
+  become: true
+  gather_facts: false
+  pre_tasks:
+    - name: verify_ansible_meets_version_requirements
+      ansible.builtin.assert:
+        that: "ansible_version.full is version_compare('2.10', '>=')"
+        msg: >
+          "You must update Ansible to at least 2.10 to use this version of playbook"
+      tags:
+        - assert
+    - name: run_initial_setup_instead_of_gather_facts
+      ansible.builtin.setup:
+        gather_timeout: 60
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: setup_status
+      until: setup_status is success
+      changed_when: false
+      tags:
+        - assert
+    - name: assert_root_partition_has_16_GB_of_free_space
+      ansible.builtin.assert: {that: item.mount == '/' or item.size_available > 17179869184}
+      loop: '{{ ansible_mounts }}'
+      ignore_errors: false
+      when: item.mount == '/'
+      register: freespace
+      tags:
+        - assert
+    - name: fact_release
+      ansible.builtin.set_fact:
+        release: "{{ ansible_distribution_major_version }}"
+      changed_when: false
+      ignore_errors: false
+  tasks:
+    - name: display_initial_values
+      ansible.builtin.debug:
+        msg:
+          - "Ansible package manager        :{{ ansible_pkg_mgr | lower }}"
+          - "Extra volume name              :{{ extra_device }}"
+          - "Extra volume prepare           :{{ docker_prepare | lower }}"
+          - "Install Cockpit                :{{ install_cockpit | lower }}"
+          - "Install EPEL                   :{{ install_epel | lower }}"
+          - "Change EPEL priority           :{{ change_epel_priority | lower }}"
+          - "Install extra groups           :{{ install_extra_groups | lower }}"
+          - "Install Hyperv                 :{{ install_hyperv | lower }}"
+          - "Install MOTD                   :{{ install_motd | lower }}"
+          - "Install Neofetch               :{{ install_neofetch | lower }}"
+          - "Install Puppet                 :{{ install_puppet | lower }}"
+          - "Install updates                :{{ install_updates | lower }}"
+          - "Install Webmin                 :{{ install_webmin | lower }}"
+          - "Install Zabbix                 :{{ install_zabbix | lower }}"
+          - "Install Zabbix Agent as root   :{{ install_zabbix_as_root | lower }}"
+          - "Reboot server                  :{{ reboot_server | lower }}"
+    # initial cleaning and refreshing metadata for packages
+    - name: initial_clean
+      ansible.builtin.debug:
+        msg: "Starting provision"
+      notify: clean-metadata
+      changed_when: true
+    - name: install_initial_packages
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: latest
+      loop: "{{ initial_packages }}"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: r_initial_packages
+      until: r_initial_packages is success
+      any_errors_fatal: true
+      tags:
+        - packages
+        - base
+    # enable epel repo - mandatory for other settings
+    - name: install_epel
+      ansible.builtin.yum:
+        name: "{{ item }}"
+        state: latest
+        disable_gpg_check: true
+      retries: "{{ retries_count }}"
+      loop: "{{ epel_package }}"
+      delay: "{{ delay_time }}"
+      register: r_install_epel
+      until: r_install_epel is success
+      tags:
+        - packages
+        - base
+      when: install_epel
+    - name: enable_epel
+      community.general.ini_file:
+        path: "{{ epel.path }} | default ('/etc/yum.repos.d/epel.repo')"
+        section: "{{ epel.section }} | default ('epel')"
+        option: enabled
+        value: "1"
+        mode: "0644"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      when: r_install_epel is success and install_epel
+      register: r_enable_epel
+      until: r_enable_epel is success
+      tags:
+        - packages
+        - base
+    # change priority for epel repo - mandatory for other settings
+    - name: change_epel_priority
+      community.general.ini_file:
+        path: "{{ epel.path }} | default('/etc/yum.repos.d/epel.repo')"
+        section: epel
+        option: priority
+        value: "{{ epel.priority | int }}"
+        mode: "0644"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      when: r_install_epel is success and r_enable_epel is success and install_epel
+      notify: makecache
+      register: r_change_epel_priority
+      until: r_change_epel_priority is success
+      tags:
+        - packages
+        - base
+    # let's install extra yumgroups
+    - name: refresh_repos
+      ansible.builtin.debug:
+        msg: "Refreshing repos"
+      notify: makecache
+      changed_when: true
+    - name: install_extra_groups
+      ansible.builtin.package:
+        name: '{{ item }}'
+        state: present
+      loop: "{{ yum_extra_groups }}"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: r_install_extra_groups
+      until: r_install_extra_groups is success
+      when: install_extra_groups
+    # let's install extra packages
+    - name: install_extra_packages
+      ansible.builtin.package:
+        name: '{{ item }}'
+        state: present
+      loop: "{{ yum_extra_packages }}"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: r_install_extra_packages
+      until: r_install_extra_packages is success
+    # let's install extra_epel_packages
+    - name: install_extra_epel_packages
+      ansible.builtin.package:
+        name: '{{ item }}'
+        state: present
+      loop: "{{ yum_extra_epel_packages }}"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: r_install_extra_packages
+      until: r_install_extra_packages is success
+      when: r_install_epel is success and r_enable_epel is success and install_epel
+    # set selinux policy
+    - name: set_selinux_policy
+      ansible.posix.selinux:
+        state: "{{ selinux.state }}"
+      retries: "{{ retries_count }}"
+      delay: "{{ delay_time }}"
+      register: r_set_linux_policy
+      when: selinux.state is defined
+    # start webmin block
+    - name: start_webmin_block
+      when: install_webmin
+      block:
+        - name: add_webmin_repository
+          ansible.builtin.yum_repository:
+            name: Webmin
+            description: "{{ item.name }}"
+            mirrorlist: "{{ item.mirrorlist }}"
+            enabled: "{{ item.enabled }} "
+            file: "{{ item.file }}"
+            gpgkey: "{{ item.gpgkey }}"
+          register: r_webmin_repository
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          loop: "{{ webmin }}"
+          until: r_webmin_repository is success
+          notify: makecache
+        - name: add_webmin_package
+          ansible.builtin.package:
+            name: webmin
+            state: latest
+          register: r_webmin_package
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_webmin_package is success
+        - name: start_webmin
+          ansible.builtin.systemd:
+            name: webmin
+            enabled: true
+          register: r_start_webmin
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_start_webmin is success
+
+    # start zabbix block
+    - name: start_zabbix_block
+      when: install_zabbix
+      block:
+        - name: import_gpg_zabix_key
+          ansible.builtin.rpm_key:
+            key: "{{ item.gpgkey }}"
+            state: present
+            validate_certs: false
+          loop: "{{ zabbix.repository }}"
+          notify:
+            - clean-metadata
+            - makecache
+        - name: install_zabbix_repository
+          ansible.builtin.package:
+            name: "{{ item.url }}"
+            state: present
+          loop: "{{ zabbix.repository }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_zabbix_repository
+          until: r_zabbix_repository is success
+          notify: makecache
+        - name: disable_zabbix_test_repos
+          community.general.ini_file:
+            path: /etc/yum.repos.d/zabbix.repo
+            section: zabbix-non-supported
+            option: enabled
+            value: "0"
+            mode: "0644"
+          when: r_zabbix_repository is success
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_zabbix_non_supported_disable
+          until: r_zabbix_non_supported_disable is success
+        - name: change_zabbix_priority
+          community.general.ini_file:
+            path: "{{ item.path }}"
+            section: "{{ item.name }}"
+            option: "priority"
+            value: "{{ item.priority }}"
+            mode: "0644"
+          when: r_zabbix_repository is success
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_change_zabbix_priority
+          loop: "{{ zabbix.priorities }}"
+          until: r_change_zabbix_priority is success
+          notify: makecache
+        - name: install_zabbix_agent_package
+          ansible.builtin.package:
+            name: "{{ item.name }}"
+            state: latest
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_zabbix_package
+          loop: "{{ zabbix.repository }}"
+          until: r_zabbix_package is success
+        - name: zabbix_agent_tweaks_folder
+          ansible.builtin.file:
+            path: "/etc/systemd/system/{{ zabbix.package.service }}.service.d"
+            state: directory
+            mode: '0755'
+          when: install_zabbix_as_root is defined and install_zabbix_as_root
+        - name: zabbix_agent_tweaks_content
+          ansible.builtin.copy:
+            dest: "/etc/systemd/system/{{ zabbix.package.service }}.service.d/override.conf"
+            content: |
+              [Service]
+              User=root
+              Group=root
+            mode: "0644"
+          when: install_zabbix_as_root is defined and install_zabbix_as_root
+        - name: start_zabbix
+          ansible.builtin.systemd:
+            name: "{{ zabbix.package.service }}"
+            state: restarted
+            enabled: true
+            daemon_reload: true
+          register: r_start_zabbix
+          delay: "{{ delay_time }}"
+          retries: "{{ retries_count }}"
+          until: r_start_zabbix is success
+          when: r_zabbix_package is success
+          changed_when: false
+
+    - name: start_cockpit_block
+      when: install_cockpit is defined and install_cockpit
+      block:
+        - name: install_cockpit
+          ansible.builtin.package:
+            name: cockpit
+            state: latest
+        - name: set_cockpit_service_to_start
+          ansible.builtin.systemd:
+            name: cockpit.socket
+            state: started
+            enabled: true
+          register: r_start_cockpit
+          delay: "{{ delay_time }}"
+          retries: "{{ retries_count }}"
+          until: r_start_cockpit is success
+
+    # start puppet block
+    - name: start_puppet_block
+      when: install_puppet
+      block:
+        - name: import_gpg_puppet_key
+          ansible.builtin.rpm_key:
+            key: "{{ item.gpgkey }}"
+            state: present
+          loop: "{{ puppet.repository }}"
+          notify:
+            - clean-metadata
+            - makecache
+        - name: install_puppet_repository
+          ansible.builtin.yum:
+            name: "{{ item.url }}"
+            state: present
+          loop: "{{ puppet.repository }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_puppet_repository
+          notify: makecache
+          until: r_puppet_repository is success
+        - name: puppet_repository_priority
+          community.general.ini_file:
+            path: "{{ item.path }}"
+            section: "{{ item.name }}"
+            option: "priority"
+            value: "{{ item.priority }}"
+            mode: "0644"
+          when: r_puppet_repository is success
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_puppet_repository_priority
+          loop: "{{ puppet.priorities }}"
+          until: r_puppet_repository_priority is success
+          notify: makecache
+        - name: install_puppet_package
+          ansible.builtin.yum:
+            name: "{{ puppet.package.name }}"
+            state: latest
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_install_puppet_package
+          until: r_install_puppet_package is success
+        - name: set_puppet_service_state
+          ansible.builtin.systemd:
+            name: "{{ item.name }}"
+            state: "{{ item.state }}"
+            enabled: "{{ item.enabled }}"
+          loop: "{{ puppet.service }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_set_puppet_service
+          until: r_set_puppet_service is success
+          when: r_install_puppet_package is success
+        - name: remove_temp_ssl_keys
+          ansible.builtin.file:
+            path: /etc/puppetlabs/puppet/ssl
+            state: absent
+          register: r_remove_temp_ssl_keys
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_remove_temp_ssl_keys is success
+          when: r_install_puppet_package is success and remove_puppet_ssl_keys
+        - name: create_puppet_config
+          ansible.builtin.file:
+            path: "{{ puppet.config.location }}"
+            state: touch
+            mode: "{{ puppet.config.mode }}"
+            modification_time: preserve
+            access_time: preserve
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_create_puppet_config
+          until: r_create_puppet_config is success
+          when: r_install_puppet_package is success
+        - name: add_puppet_config_options
+          community.general.ini_file:
+            path: "{{ puppet.config.location }}"
+            state: present
+            section: main
+            option: "{{ item.key }}"
+            value: "{{ item.value }}"
+            mode: "0644"
+          loop: "{{ puppet.config.agent }}"
+          register: r_add_puppet_config_options
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_add_puppet_config_options is success
+          when: r_install_puppet_package is success
+
+    # start neofetch block - requires changes from script to 'per option' settings
+    - name: start_neofetch_block
+      when: install_neofetch
+      block:
+        - name: add_neofetch_repository
+          ansible.builtin.get_url:
+            url: "{{ item.url }}"
+            dest: "{{ item.dest }}"
+            mode: '0644'
+          register: r_neofetch_repository
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          loop: "{{ neofetch.repository }}"
+          until: r_neofetch_repository is success
+          notify: makecache
+          when: "(ansible_distribution_major_version | int < 8) and (ansible_distribution_major_version is defined)"
+        - name: install_nefoetch
+          ansible.builtin.package:
+            name: "{{ neofetch.package.name }}"
+            state: latest
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_install_neofetch_package
+          until: r_install_neofetch_package is success
+          when: r_neofetch_repository is success
+        - name: neofetch_first_run
+          ansible.builtin.command: neofetch
+          when: r_neofetch_repository is success
+          changed_when: false
+#          ignore_errors: true
+          any_errors_fatal: false
+          failed_when: false
+        - name: create_config_folder
+          ansible.builtin.file:
+            path: /etc/neofetch
+            state: directory
+            mode: "0655"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_create_config_folder
+          until: r_create_config_folder is success
+          when: r_neofetch_repository is success
+        - name: copy_config_to_etc
+          ansible.builtin.copy:
+            src: /root/.config/neofetch/config.conf
+            dest: /etc/neofetch/config.conf
+            remote_src: true
+            mode: "0755"
+            force: false
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_copy_neofetch_config
+          until: r_copy_neofetch_config is success
+          when: r_create_config_folder is success
+        - name: check_for_prepare_neofetch
+          ansible.builtin.stat:
+            path: /tmp/prepare_neofetch.sh
+          register: r_check_for_prepare_neofetch
+        # download neofetch scripts and files that we didn't create - to be replaced by file content section
+        - name: get_extra_files
+          ansible.builtin.get_url:
+            url: "{{ item.url }}"
+            dest: "{{ item.dest }}"
+            mode: "{{ item.mode }}"
+          loop: "{{ remote_files }}"
+          register: r_get_extra_files
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_get_extra_files is success
+          when: (r_check_for_prepare_neofetch is defined) and (not r_check_for_prepare_neofetch.stat.exists)
+        # run neofetch script - to be replaced
+        - name: run_prepare_neofetch
+          ansible.builtin.shell: chmod +x /tmp/prepare_neofetch.sh; sh /tmp/prepare_neofetch.sh
+          when: install_neofetch and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
+          changed_when: false
+    - name: start_hyperv_block
+      when: install_hyperv
+      block:
+        - name: install_hyperv
+          ansible.builtin.package:
+            name: hyperv-daemons
+            state: latest
+          register: r_install_hyperv_package
+          until: r_install_hyperv_package is success
+        - name: enable_hyperv_services
+          ansible.builtin.systemd:
+            name: "{{ item.name }}"
+            state: started
+            enabled: true
+          loop: "{{ hyperv }}"
+          when: r_install_hyperv_package is success and r_install_hyperv_package is defined
+          register: r_enable_hyperv_services
+          until: r_enable_hyperv_services is success
+        - name: create_ballooning rule
+          ansible.builtin.copy:
+            dest: /etc/udev/rules.d/100-balloon.rules
+            mode: "0644"
+            content: |
+              SUBSYSTEM=="memory", ACTION=="add", ATTR{state}="online"
+          when: (r_install_hyperv_package is success and r_install_hyperv_package is defined) and (r_enable_hyperv_services is success and r_enable_hyperv_services is defined)
+    - name: start_extra_device_block
+      when: docker_prepare
+      block:
+        - name: check_for_device_existence
+          ansible.builtin.stat:
+            path: "/dev/{{ extra_device }}"
+          register: r_check_for_extra_device
+        - name: partition_docker_volume
+          community.general.parted:
+            device: "/dev/{{ extra_device }}"
+            number: 1
+            label: gpt
+            part_end: 100%
+            state: present
+          when: r_check_for_extra_device.stat.exists and r_check_for_extra_device is defined
+          register: r_partition_docker_volume
+        - name: display_info
+          ansible.builtin.debug:
+            var: r_partition_docker_volume
+        - name: create_docker_filesystem
+          community.general.filesystem:
+            fstype: ext4
+            dev: "/dev/{{ extra_device }}1"
+            state: present
+            resizefs: true
+            opts: -L docker
+          register: r_create_docker_filesystem
+          when: (r_partition_docker_volume is defined and r_partition_docker_volume is success) and (r_check_for_extra_device.stat.exists and r_check_for_extra_device is defined)
+        - name: rerun_setup
+          ansible.builtin.setup:
+            gather_timeout: 30
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: setup_status
+          until: setup_status is success
+          changed_when: false
+        - name: prepare_docker_folder
+          ansible.builtin.file:
+            name: /var/lib/docker
+            state: directory
+            mode: "0644"
+          when: (r_create_docker_filesystem is defined and r_create_docker_filesystem is success)
+        - name: mount_extra_volume
+          ansible.posix.mount:
+            path: /var/lib/docker
+            src: "UUID={{ ansible_devices[extra_device].partitions[extra_device + '1'].uuid }}"
+            fstype: ext4
+            opts: defaults
+            state: mounted
+            boot: true
+          when: (ansible_devices[extra_device].partitions[extra_device + '1'].uuid | length > 5) and (r_partition_docker_volume is success and r_partition_docker_volume is defined)
+
+    # os related block
+    - name: start_os_related_block
+      block:
+        # set locale:
+        - name: set_locale
+          ansible.builtin.shell: |
+            localectl set-locale LANG={{ locale.language }}
+            localectl set-keymap {{ locale.keymap }}
+            localectl set-x11-keymap {{ locale.keymap }}
+          register: r_set_locale
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_set_locale is success
+          any_errors_fatal: false
+          changed_when: false
+        # set timezone
+        - name: set_timezone
+          community.general.timezone:
+            name: "{{ timezone }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          any_errors_fatal: false
+        # create motd
+        - name: create_motd
+          ansible.builtin.copy:
+            dest: /etc/profile.d/motd.sh
+            mode: "0755"
+            content: "{{ motd }}"
+            force: false
+          when: install_motd and (r_install_neofetch_package is success and r_install_neofetch_package is defined)
+        - name: update_all_packages
+          ansible.builtin.package:
+            name: "*"
+            state: latest
+            update_cache: true
+          when: install_updates
+          register: r_initial_updates
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_initial_updates is success
+          notify:
+            - clean-metadata
+            - makecache
+
+    # start firewalld block - danger Will Robinson, quite unstable in case of multiple interfaces
+    - name: start_firewalld_block
+      block:
+        # let's start default profile
+        - name: start_firewalld
+          ansible.builtin.systemd:
+            name: firewalld
+            state: started
+            enabled: true
+          register: r_start_firewalld
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_start_firewalld is success
+        # set default zone
+        - name: display_interface_info
+          ansible.builtin.debug:
+            msg: "Primary network interface is: {{ ansible_default_ipv4.interface }}"
+          when: ansible_default_ipv4.interface is defined
+        - name: make_default_zone
+          ansible.posix.firewalld:
+            zone: "{{ firewalld.default_zone }}"
+            permanent: true
+            immediate: true
+            interface: "{{ ansible_default_ipv4.interface }}"
+            state: enabled
+          when: ansible_default_ipv4.interface is defined
+          notify:
+            - switch_default_firewalld_zone
+            - reload_firewalld
+        # default zone SHOULD'N be public zone
+        - name: remove_from_public
+          ansible.posix.firewalld:
+            zone: public
+            permanent: true
+            immediate: true
+            interface: "{{ ansible_default_ipv4.interface }}"
+            state: disabled
+          when: ansible_default_ipv4.interface is defined
+          notify:
+            - switch_default_firewalld_zone
+            - reload_firewalld
+        # respond with REJECT
+        - name: make_icmp_block
+          ansible.posix.firewalld:
+            zone: "{{ firewalld.default_zone }}"
+            permanent: true
+            immediate: true
+            state: enabled
+            icmp_block: echo-request
+          when: ansible_default_ipv4.interface is defined
+          notify:
+            - switch_default_firewalld_zone
+            - reload_firewalld
+        # add rich rules from variables
+        - name: add_rich_rules
+          ansible.posix.firewalld:
+            rich_rule: "{{ item.rule }}"
+            zone: "{{ firewalld.default_zone }}"
+            immediate: true
+            state: enabled
+            permanent: true
+          loop: "{{ firewalld.rich_rules }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_add_rich_rules
+          until: r_add_rich_rules is success
+          notify: reload_firewalld
+          when: ansible_default_ipv4.interface is defined
+        - name: add_zabbix_rich_rules
+          ansible.posix.firewalld:
+            rich_rule: "{{ item.rule }}"
+            zone: "{{ firewalld.default_zone }}"
+            immediate: true
+            state: enabled
+            permanent: true
+          loop: "{{ firewalld.zabbix_rich_rules }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_add_zabbix_rich_rules
+          until: r_add_zabbix_rich_rules is success
+          notify: reload_firewalld
+          when: ansible_default_ipv4.interface is defined and install_zabbix
+        - name: add_webmin_rich_rules
+          ansible.posix.firewalld:
+            rich_rule: "{{ item.rule }}"
+            zone: "{{ firewalld.default_zone }}"
+            immediate: true
+            state: enabled
+            permanent: true
+          loop: "{{ firewalld.webmin_rich_rules }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_add_webmin_rich_rules
+          until: r_add_webmin_rich_rules is success
+          notify: reload_firewalld
+          when: ansible_default_ipv4.interface is defined and install_webmin
+        - name: add_cockpit_rich_rules
+          ansible.posix.firewalld:
+            rich_rule: "{{ item.rule }}"
+            zone: "{{ firewalld.default_zone }}"
+            immediate: true
+            state: enabled
+            permanent: true
+          loop: "{{ firewalld.cockpit_rich_rules }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_add_cockpit_rich_rules
+          until: r_add_cockpit_rich_rules is success
+          notify: reload_firewalld
+          when: ansible_default_ipv4.interface is defined and install_cockpit
+        # remove services which overlaps with rich rules
+        - name: remove_redundand_services
+          ansible.posix.firewalld:
+            service: "{{ item }}"
+            zone: "{{ firewalld.default_zone }}"
+            permanent: true
+            state: disabled
+            immediate: true
+          loop: "{{ firewalld.services_remove }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_remove_redundand_services
+          until: r_remove_redundand_services is success
+          notify: reload_firewalld
+          when: ansible_default_ipv4.interface is defined
+    # last touch and cleaning block
+    - name: last_touch_and_cleaning_block
+      block:
+        - name: get_info_about_services
+          ansible.builtin.service_facts:
+          register: r_service_status
+        # services are required
+        - name: make_sure_services_are_running
+          ansible.builtin.systemd:
+            name: "{{ item.name }}"
+            state: "{{ item.state }}"
+            enabled: "{{ item.enabled }}"
+          loop: "{{ services }}"
+          register: r_make_sure_services_are_running
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          ignore_errors: true
+          any_errors_fatal: false
+          until: r_make_sure_services_are_running is success
+        - name: change_sshd_dns_settings
+          ansible.builtin.lineinfile:
+            path: /etc/ssh/sshd_config
+            regexp: 'UseDNS'
+            line: 'UseDNS no'
+            backrefs: true
+            state: present
+        # required sysctl entries
+        - name: make_sure_sysctl_entries
+          ansible.posix.sysctl:
+            name: "{{ item.key }}"
+            value: "{{ item.value }}"
+            state: "{{ item.state }}"
+            sysctl_file: /etc/sysctl.d/90_packer_bootstrap.conf
+          loop: "{{ sysctl }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_make_sure_sysctl_entries
+          until: r_make_sure_sysctl_entries is success
+        # start for tuned
+        - name: check_if_machine_is_virtual
+          ansible.builtin.set_fact:
+            machine_type: "{{ ansible_virtualization_role }}"
+          when: ansible_virtualization_role is defined
+        - name: display_machine_type
+          ansible.builtin.debug:
+            msg: "Machine type is: {{ machine_type }}"
+          when: ansible_virtualization_role is defined
+        - name: set_tuned_for_baremetal
+          ansible.builtin.command: tuned-adm profile {{ tuned_profile }}
+          args:
+            warn: false
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_set_tuned
+          until: r_set_tuned is success
+          when: machine_type != "guest" and machine_type is defined
+          changed_when: false
+        - name: Enable synchronize system clock
+          ansible.builtin.shell: timedatectl set-ntp true
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_set_ntp
+          until: r_set_ntp is success
+          failed_when: false
+          changed_when: false
+        - name: Restart chronyd service
+          ansible.builtin.systemd:
+            name: chronyd
+            state: restarted
+            enabled: true
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_restart_chronyd
+          until: r_restart_chronyd is success
+          changed_when: false
+        - name: update_rkhunter
+          ansible.builtin.command: rkhunter --propupd
+          failed_when: false
+          any_errors_fatal: false
+          changed_when: false
+        - name: get_info_from_grubby
+          ansible.builtin.command: grubby --info=ALL
+          register: r_grubby_info
+          any_errors_fatal: false
+          failed_when: false
+          changed_when: false
+          until: r_grubby_info is success
+          when: (install_docker_workaround is defined and install_docker_workaround) or (install_kubernetes_workaround is defined and install_kubernetes_workaround)
+        - name: update_grub_fsck_options_for_all_machines
+          ansible.builtin.command: grubby --args "fsck.repair=yes" --update-kernel=ALL
+          when: (install_docker_workaround is defined and install_docker_workaround) and ("fsck.repair=yes" not in r_grubby_info.stdout)
+          changed_when: false
+          failed_when: false
+        - name: update_grub_accounting_options_for_kubernetes
+          ansible.builtin.command: grubby --args "cgroup.memory=nokmem" --update-kernel=ALL
+          when: (install_kubernetes_workaround is defined and install_kubernetes_workaround) and (r_grubby_info is defined and "cgroup.memory=nokmem" not in r_grubby_info.stdout)
+          changed_when: false
+          failed_when: false
+        # cleanup kernels in post 8 releases
+        - name: cleanup_kernels_post_8
+          ansible.builtin.shell: "dnf -y remove --oldinstallonly --setopt installonly_limit=2 kernel|| true"
+          register: r_cleanup_kernels_post_8
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_cleanup_kernels_post_8 is success
+          when: release is defined and release | int > 7
+          changed_when: false
+          ignore_errors: true
+          any_errors_fatal: false
+        - name: cleanup_kernels_7
+          ansible.builtin.command: "package-cleanup --oldkernels --count=2 -y -v"
+          register: r_cleanup_kernels_7
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_cleanup_kernels_7 is success
+          when: release is defined and release | int < 8
+          changed_when: false
+          ignore_errors: true
+          any_errors_fatal: false
+        # create stampfile
+        - name: create_stampfile
+          ansible.builtin.copy:
+            dest: "/etc/packerinfo"
+            mode: "0644"
+            content: |
+              { "creationDate": "{{ ansible_date_time.date }}" }
+        # let's clean logs and leftovers
+        - name: cleaning_stuff
+          ansible.builtin.shell: |
+             truncate -s 0 /var/log/*
+             truncate -s 0 -c /var/log/**/*
+             find /var/log -type f -name \"*.[0-99].gz\" -exec rm {} +
+             rm -rfv /etc/ansible/*
+             rm -rfv /var/log/anaconda/*
+             rm -rfv /var/cache/libvirt/*
+             rm -rfv /var/cache/powertop/*
+             rm -rfv /var/crash/*
+             rm -rfv /var/tmp/*
+          any_errors_fatal: false
+          failed_when: false
+          changed_when: false
+          notify:
+            - clean-metadata
+    - name: reboot_server
+      ansible.builtin.reboot:
+        pre_reboot_delay: 20
+        post_reboot_delay: 20
+        reboot_timeout: 1200
+      when: reboot_server
+    # end play
+    - name: end_host
+      ansible.builtin.meta: end_host
+  handlers:
+    - name: makecache
+      ansible.builtin.command: "{{ ansible_pkg_mgr }} makecache -y"
+      args:
+        warn: false
+      changed_when: false
+    - name: clean-metadata
+      ansible.builtin.command: "{{ ansible_pkg_mgr }} clean metadata all -y"
+      args:
+        warn: false
+      changed_when: false
+    - name: switch_default_firewalld_zone
+      ansible.builtin.command: "firewall-cmd --set-default-zone={{ firewalld.default_zone }}"
+      args:
+        warn: false
+      changed_when: false
+      when: (firewalld.default_zone is defined) and (firewalld.default_zone | length > 0)
+    - name: reload_firewalld
+      ansible.builtin.command: "firewall-cmd --reload"
+      args:
+        warn: false
+      changed_when: false

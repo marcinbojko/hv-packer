@@ -14,6 +14,8 @@ initial_packages:
   - glibc-all-langpacks
   - ca-certificates
   - yum-utils
+  - sendmail
+  - cockpit-pcp
 yum_extra_groups:
   - "@base"
   - "@core"
@@ -105,9 +107,9 @@ puppet:
       - key: server
         value: foreman.example.com
 neofetch:
-  repository:
-    - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-8/konimex-neofetch-epel-8.repo
-      dest: /etc/yum.repos.d/konimex-neofetch.repo
+  # repository:
+  #   - url: https://copr.fedorainfracloud.org/coprs/konimex/neofetch/repo/epel-8/konimex-neofetch-epel-8.repo
+  #     dest: /etc/yum.repos.d/konimex-neofetch.repo
   package:
     name: neofetch
   options:
@@ -138,6 +140,12 @@ services:
     state: started
     enabled: true
   - name: sshd
+    state: started
+    enabled: true
+  - name: cockpit.socket
+    state: started
+    enabled: true
+  - name: pmlogger.service
     state: started
     enabled: true
 sysctl:

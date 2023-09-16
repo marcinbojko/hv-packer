@@ -3,12 +3,13 @@
 ![RockyLinux](https://img.shields.io/badge/Linux-Rocky-brightgreen)
 ![OracleLinux](https://img.shields.io/badge/Linux-Oracle-brightgreen)
 ![AlmaLinux](https://img.shields.io/badge/Linux-Alma-brightgreen)
-![CentosLinux](https://img.shields.io/badge/Linux-CentOS-brightgreen)
 ![UbuntuLinux](https://img.shields.io/badge/Linux-Ubuntu-orange)
-
-![Windows2016](https://img.shields.io/badge/Windows-2016-blue)
 ![Windows2019](https://img.shields.io/badge/Windows-2019-blue)
 ![Windows2022](https://img.shields.io/badge/Windows-2022-blue)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
+
+Consider buying me a coffee if you like my work. All donations are appreciated. All donations will be used to pay for pipeline running costs
 
 <!-- TOC -->
 
@@ -17,72 +18,27 @@
   - [Requirements - Quick Start](#requirements---quick-start)
     - [Install packer from Chocolatey](#install-packer-from-chocolatey)
     - [Install required plugins](#install-required-plugins)
-    - [Install vagrant from Chocolatey](#install-vagrant-from-chocolatey)
     - [Use account with Administrator privileges for Hyper-V](#use-account-with-administrator-privileges-for-hyper-v)
     - [Add firewal exclusions for TCP ports 8000-9000 default range](#add-firewal-exclusions-for-tcp-ports-8000-9000-default-range)
     - [Adjust Hyper-V settings](#adjust-hyper-v-settings)
     - [Default passwords](#default-passwords)
-    - [Enable Packer debug logging](#enable-packer-debug-logging)
   - [Scripts](#scripts)
     - [Windows Machines](#windows-machines)
     - [Linux Machines](#linux-machines)
       - [Ansible Playbooks CentOS/AlmaLinux/RockyLinux/OracleLinux](#ansible-playbooks-centosalmalinuxrockylinuxoraclelinux)
-  - [Templates Windows 2022](#templates-windows-2022)
-    - [Hyper-V Generation 2 Windows Server 2022 Standard Image](#hyper-v-generation-2-windows-server-2022-standard-image)
-      - [Windows 2022 Standard Generation 2 Prerequisites](#windows-2022-standard-generation-2-prerequisites)
-    - [Hyper-V Generation 2 Windows Server 2022 Datacenter Image](#hyper-v-generation-2-windows-server-2022-datacenter-image)
-      - [Windows 2022 Datacenter Generation 2 Prerequisites](#windows-2022-datacenter-generation-2-prerequisites)
-    - [[Experimental] Hyper-V generation 2 Windows Server 2022 Standard Vagrant support](#experimental-hyper-v-generation-2-windows-server-2022-standard-vagrant-support)
-    - [[Experimental] Hyper-V generation 2 Windows Server 2022 Datacenter Vagrant support](#experimental-hyper-v-generation-2-windows-server-2022-datacenter-vagrant-support)
-  - [Templates Windows 2019](#templates-windows-2019)
-    - [Hyper-V Generation 2 Windows Server 2019 Standard Image](#hyper-v-generation-2-windows-server-2019-standard-image)
-      - [Windows 2019 Standard Generation 2 Prerequisites](#windows-2019-standard-generation-2-prerequisites)
-    - [Hyper-V Generation 2 Windows Server 2019 Datacenter Image](#hyper-v-generation-2-windows-server-2019-datacenter-image)
-      - [Windows 2019 Datacenter Generation 2 Prerequisites](#windows-2019-datacenter-generation-2-prerequisites)
-    - [[Experimental] Hyper-V generation 2 Windows Server 2019 Standard Vagrant support](#experimental-hyper-v-generation-2-windows-server-2019-standard-vagrant-support)
-    - [[Experimental] Hyper-V generation 2 Windows Server 2019 Datacenter Vagrant support](#experimental-hyper-v-generation-2-windows-server-2019-datacenter-vagrant-support)
-  - [Templates Windows 2016](#templates-windows-2016)
-    - [Hyper-V Generation 2 Windows Server 2016 Standard Image](#hyper-v-generation-2-windows-server-2016-standard-image)
-      - [Windows 2016 Standard Generation 2 Prerequisites](#windows-2016-standard-generation-2-prerequisites)
-  - [Templates Ubuntu](#templates-ubuntu)
-    - [Warnings - Ubuntu 20.x](#warnings---ubuntu-20x)
-    - [Hyper-V Generation 2 Ubuntu 20.04 Image](#hyper-v-generation-2-ubuntu-2004-image)
-    - [Hyper-V Generation 2 Ubuntu 22.04 Image](#hyper-v-generation-2-ubuntu-2204-image)
-  - [Templates RockyLinux 8.x](#templates-rockylinux-8x)
-    - [Warnings - RockyLinux 8](#warnings---rockylinux-8)
-    - [Hyper-V Generation 2 RockyLinux 8.7 Image](#hyper-v-generation-2-rockylinux-87-image)
-    - [Hyper-V Generation 2 RockyLinux 8.7 Vagrant support](#hyper-v-generation-2-rockylinux-87-vagrant-support)
-    - [Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume](#hyper-v-generation-2-rockylinux-86-image-with-extra-docker-volume)
-  - [Templates Rocky Linux 9](#templates-rocky-linux-9)
-    - [Warnings - RockyLinux 9](#warnings---rockylinux-9)
-    - [Hyper-V Generation 2 RockyLinux 9.2 Image](#hyper-v-generation-2-rockylinux-92-image)
-    - [Hyper-V Generation 2 RockyLinux 9.2 Vagrant support](#hyper-v-generation-2-rockylinux-92-vagrant-support)
-    - [Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume](#hyper-v-generation-2-rockylinux-90-image-with-extra-docker-volume)
-  - [Templates OracleLinux 8.x](#templates-oraclelinux-8x)
-    - [Warnings - OracleLinux 8](#warnings---oraclelinux-8)
-    - [Hyper-V Generation 2 OracleLinux 8.6 Image](#hyper-v-generation-2-oraclelinux-86-image)
-    - [Hyper-V Generation 2 OracleLinux 8.6 Vagrant support](#hyper-v-generation-2-oraclelinux-86-vagrant-support)
-    - [Hyper-V Generation 2 OracleLinux 8.6 image with extra docker volume](#hyper-v-generation-2-oraclelinux-86-image-with-extra-docker-volume)
-  - [Templates OracleLinux 9.x](#templates-oraclelinux-9x)
-    - [Warnings - OracleLinux 9](#warnings---oraclelinux-9)
-    - [Hyper-V Generation 2 OracleLinux 9.2 Image](#hyper-v-generation-2-oraclelinux-92-image)
-    - [Hyper-V Generation 2 OracleLinux 9.2 Vagrant support](#hyper-v-generation-2-oraclelinux-92-vagrant-support)
-    - [Hyper-V Generation 2 OracleLinux 9.2 image with extra docker volume](#hyper-v-generation-2-oraclelinux-92-image-with-extra-docker-volume)
-  - [Templates AlmaLinux 8.x](#templates-almalinux-8x)
-    - [Warnings - AlmaLinux 8](#warnings---almalinux-8)
-    - [Hyper-V Generation 2 AlmaLinux 8.6 Image](#hyper-v-generation-2-almalinux-86-image)
-    - [Hyper-V Generation 2 AlmaLinux 8.6 Vagrant support](#hyper-v-generation-2-almalinux-86-vagrant-support)
-    - [Hyper-V Generation 2 AlmaLinux 8.6 image with extra docker volume](#hyper-v-generation-2-almalinux-86-image-with-extra-docker-volume)
-  - [Templates AlmaLinux 9.x](#templates-almalinux-9x)
-    - [Warnings - AlmaLinux 9](#warnings---almalinux-9)
-    - [Hyper-V Generation 2 AlmaLinux 9.2 Image](#hyper-v-generation-2-almalinux-92-image)
-    - [Hyper-V Generation 2 AlmaLinux 9.2 Vagrant support](#hyper-v-generation-2-almalinux-92-vagrant-support)
-    - [Hyper-V Generation 2 AlmaLinux 9.2 image with extra docker volume](#hyper-v-generation-2-almalinux-92-image-with-extra-docker-volume)
-  - [Templates CentOS 7.x](#templates-centos-7x)
-    - [Warnings - CentOS Docker](#warnings---centos-docker)
-    - [Hyper-V Generation 2 CentOS 7.9](#hyper-v-generation-2-centos-79)
-    - [Hyper-V Generation 2 CentOS 7.9 Image with extra docker volume](#hyper-v-generation-2-centos-79-image-with-extra-docker-volume)
-    - [Hyper-V Generation 2 CentOS 7.9 Vagrant support](#hyper-v-generation-2-centos-79-vagrant-support)
+  - [Usage](#usage)
+    - [hv_generic.ps1 parameters](#hv_genericps1-parameters)
+    - [Building Microsoft Windows](#building-microsoft-windows)
+      - [Building iso files needed for provisioning](#building-iso-files-needed-for-provisioning)
+      - [Examples for Windows](#examples-for-windows)
+    - [Building AlmaLinux Machines](#building-almalinux-machines)
+      - [Examples for AlmaLinux](#examples-for-almalinux)
+    - [Building RockyLinux Machines](#building-rockylinux-machines)
+      - [Examples for RockyLinux](#examples-for-rockylinux)
+    - [Building OracleLinux Machines](#building-oraclelinux-machines)
+      - [Examples for OracleLinux](#examples-for-oraclelinux)
+    - [Building Ubuntu Machines](#building-ubuntu-machines)
+      - [Examples for Ubuntu](#examples-for-ubuntu)
   - [Known issues](#known-issues)
     - [I have general problem not covered here](#i-have-general-problem-not-covered-here)
     - [I'd like to contribute](#id-like-to-contribute)
@@ -123,11 +79,11 @@ In root folder of a repository
 packer init --upgrade config.pkr.hcl
 ```
 
-### Install vagrant from Chocolatey
+<!-- ### Install vagrant from Chocolatey
 
 ```cmd
 choco install vagrant --version=2.3.4 -y
-```
+``` -->
 
 ### Use account with Administrator privileges for Hyper-V
 
@@ -156,22 +112,9 @@ switch_name = "vSwitch"
 |OS|username|password|
 |--|--------|--------|
 |Windows|Administrator|password|
-||vagrant|vagrant|
 |CentOS/RHEL|root|password|
-||vagrant|vagrant|
 |Ubuntu|ubuntu|password|
-||vagrant|vagrant|
 |||
-
-### Enable Packer debug logging
-
-Soon to be parametrized
-
-In building script set `packet_log`  variable to 1
-
-```powershell
-$packer_log=1
-```
 
 ## Scripts
 
@@ -181,15 +124,12 @@ $packer_log=1
 - latest version of chocolatey
 - packages from a list below:
 
-  |Package|Version|
-  |-------|-------|
-  |conemu|latest|
-  |dotnetfx|latest|
-  |sysinternals|latest|
-  |puppet|7.14.0|
-  |tabby|latest|
+  |Package|Version|Mandatory/Optional|
+  |-------|-------|------------------|
+  |dotnetfx|latest|Mandatory|
+  |sysinternals|latest|Mandatory|
+  |tabby|latest|Optional|
 
-- latest Nuget poweshell module
 - `phase3.ps1` Puppet agent settings will be customized (`server=foreman.example.com`) with parameters:
   - `Version` - puppet chocolatey version, for example "6.26.0"
   - `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
@@ -215,19 +155,16 @@ $packer_log=1
 
 - Repositories:
 
-  |Repository|Package|switch|
-  |----------|------------|---|
-  |Epel 7/8/9|epel-release|can be switched off by setting "install_epel" to `false`|
-  |Zabbix 6.0|zabbix-agent|can be switched on by setting "install_zabbix" to `true`|
-  |Puppet 7  |puppet-agent|can be switched off by setting "install_puppet" to false|
-  |Webmin |webmin|can be switched on by setting "install_webmin" to `false`|
-  |Cockpit |cockpit|can be switched on by setting "install_zabbix" to `true`|
-  |Hyper-V |SCVMM Agent|can be switched off by setting "install_hyperv" to `false`|
-  |Neofetch  |neofetch|can be switched off by setting "install_neofetch" to `false`|
+  |Repository|Package|switch|default
+  |----------|------------|---|---|
+  |Epel 7/8/9|epel-release|can be switched off by setting "install_epel" to `false`|true|
+  |Zabbix 6.0|zabbix-agent|can be switched on by setting "install_zabbix" to `true`|false|
+  |Puppet 7  |puppet-agent|can be switched off by setting "install_puppet" to false|false|
+  |Webmin |webmin|can be switched on by setting "install_webmin" to `false`|false|
+  |Cockpit |cockpit|can be switched on by setting "install_zabbix" to `true`|true|
+  |Hyper-V |SCVMM Agent|can be switched off by setting "install_hyperv" to `false`|true|
+  |Neofetch  |neofetch|can be switched off by setting "install_neofetch" to `false`|true|
   ||||
-
-- [Optional] Linux machine with separated disk for docker
-- [Optional] Linux machine for vagrant
 
   Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
 
@@ -257,18 +194,22 @@ extra_device:                  ""    # prepare mkfs and mount extra block device
 install_motd:                  true  # install motd (neofetch run)
 ```
 
-## Templates Windows 2022
+## Usage
 
-### Hyper-V Generation 2 Windows Server 2022 Standard Image
+Building machines is realised through a dedicated script `hv_generic.ps1` with proper parameters.
 
-Run `hv_win2022_std.ps1` (Windows)
+### `hv_generic.ps1` parameters
 
-#### Windows 2022 Standard Generation 2 Prerequisites
+### Building Microsoft Windows
+
+#### Building iso files needed for provisioning
 
 For Generation 2 prepare `secondary.iso` with folder structure:
 
-- ./extra/files/gen2-2022/std/Autounattend.xml     => /Autounattend.xml
+```example
+- ./extra/files/windows/2022/std/Autounattend.xml     => /Autounattend.xml
 - ./extra/scripts/hyper-v/bootstrap.ps1            => /bootstrap.ps1
+```
 
 This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
 
@@ -281,310 +222,96 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-### Hyper-V Generation 2 Windows Server 2022 Datacenter Image
+|Action|Version|Template|Log|OS|
+|-------|-------|--------|---|-|
+|`build`|windows_server_2019_std|windows|0/1|Microsoft Server 2019 Standard|
+|`build`|windows_server_2019_dc|windows|0/1|Microsoft Server 2019 Datacenter|
+|`build`|windows_server_2022_std|windows|0/1|Microsoft Server 2022 Standard|
+|`build`|windows_server_2022_dc|windows|0/1|Microsoft Server 2022 Datacenter|
 
-Run `hv_win2022_dc.ps1` (Windows)
-
-#### Windows 2022 Datacenter Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary.iso` with folder structure:
-
-- ./extra/files/gen2-2022/dc/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1            => /bootstrap.ps1
-
-This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
-
-```xml
-<InstallFrom>
-    <MetaData wcm:action="add">
-        <Key>/IMAGE/NAME </Key>
-        <Value>Windows Server 2022 SERVERDATACENTER</Value>
-    </MetaData>
-</InstallFrom>
-```
-
-### [Experimental] Hyper-V generation 2 Windows Server 2022 Standard Vagrant support
+#### Examples for Windows
 
 ```powershell
-hv_win2022_std_vagrant.ps1
-```
 
-### [Experimental] Hyper-V generation 2 Windows Server 2022 Datacenter Vagrant support
+Example for Windows 2019 Standard
 
 ```powershell
-hv_win2022_dc_vagrant.ps1
+./hv_generic.ps1 -Action build -Version windows_server_2019_std -Template windows -Log 0
 ```
 
-## Templates Windows 2019
-
-### Hyper-V Generation 2 Windows Server 2019 Standard Image
-
-Run `hv_win2019_std.ps1` (Windows)
-
-#### Windows 2019 Standard Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary.iso` with folder structure:
-
-- ./extra/files/gen2-2019/std/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1            => /bootstrap.ps1
-
-This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
-
-```xml
-<InstallFrom>
-    <MetaData wcm:action="add">
-        <Key>/IMAGE/NAME </Key>
-        <Value>Windows Server 2019 SERVERSTANDARD</Value>
-    </MetaData>
-</InstallFrom>
-```
-
-### Hyper-V Generation 2 Windows Server 2019 Datacenter Image
-
-Run `hv_win2019_dc.ps1` (Windows)
-
-#### Windows 2019 Datacenter Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary.iso` with folder structure:
-
-- ./extra/files/gen2-2019/dc/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1            => /bootstrap.ps1
-
-This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
-
-```xml
-<InstallFrom>
-    <MetaData wcm:action="add">
-        <Key>/IMAGE/NAME </Key>
-        <Value>Windows Server 2019 SERVERDATACENTER</Value>
-    </MetaData>
-</InstallFrom>
-```
-
-### [Experimental] Hyper-V generation 2 Windows Server 2019 Standard Vagrant support
+Example for Windows 2019 Datacenter
 
 ```powershell
-hv_win2019_std_vagrant.ps1
+./hv_generic.ps1 -Action build -Version windows_server_2019_dc -Template windows -Log 0
 ```
 
-### [Experimental] Hyper-V generation 2 Windows Server 2019 Datacenter Vagrant support
+Example for Windows 2022 Standard
 
 ```powershell
-hv_win2019_dc_vagrant.ps1
+./hv_generic.ps1 -Action build -Version windows_server_2022_std -Template windows -Log 0
 ```
 
-## Templates Windows 2016
+Example for Windows 2022 Datacenter
 
-### Hyper-V Generation 2 Windows Server 2016 Standard Image
-
-Run `hv_win2016_std.ps1` (Windows)
-
-#### Windows 2016 Standard Generation 2 Prerequisites
-
-For Generation 2 prepare `secondary.iso` with folder structure:
-
-- ./extra/files/gen2-2016/Autounattend.xml     => /Autounattend.xml
-- ./extra/scripts/hyper-v/bootstrap.ps1        => /bootstrap.ps1
-
-This template uses this image name in Autounattendes.xml. If youre using different ISO you'll have to adjust that part in proper file and rebuild `secondary.iso` image.
-
-```xml
-<InstallFrom>
-    <MetaData wcm:action="add">
-        <Key>/IMAGE/NAME </Key>
-        <Value>Windows Server 2016 SERVERSTANDARD</Value>
-    </MetaData>
-</InstallFrom>
+```powershell
+./hv_generic.ps1 -Action build -Version windows_server_2022_dc -Template windows -Log 0
 ```
 
-## Templates Ubuntu
+### Building AlmaLinux Machines
 
-### Warnings - Ubuntu 20.x
+|Action|Version|Template|Log|OS|
+|-------|-------|--------|---|-|
+|`build`|almalinux-8.8|rhel|0/1|Alma Linux 8.8|
+|`build`|almalinux-9.2|rhel|0/1|Alma Linux 9.2|
 
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-{{os}}/provision.sh and ./files/gen2-{{os}}/puppet.conf
+#### Examples for AlmaLinux
 
-### Hyper-V Generation 2 Ubuntu 20.04 Image
+```powershell
+.\hv_generic.ps1 -Action build -Version almalinux-8.8 -Template rhel -Log 0
+.\hv_generic.ps1 -Action build -Version almalinux-9.2 -Template rhel -Log 0
+```
 
-Run `hv_ubuntu2004.ps1`
+### Building RockyLinux Machines
 
-### Hyper-V Generation 2 Ubuntu 22.04 Image
+|Action|Version|Template|Log|OS|
+|-------|-------|--------|---|-|
+|`build`|rockylinux-8.8|rhel|0/1|Rocky Linux 8.8|
+|`build`|rockyinux-9.2|rhel|0/1|Rocky Linux 9.2|
 
-Run `hv_ubuntu2204.ps1`
+#### Examples for RockyLinux
 
-## Templates RockyLinux 8.x
+```powershell
+.\hv_generic.ps1 -Action build -Version rockylinux-8.8 -Template rhel -Log 0
+.\hv_generic.ps1 -Action build -Version rockylinux-9.2 -Template rhel -Log 0
+```
 
-### Warnings - RockyLinux 8
+### Building OracleLinux Machines
 
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
+|Action|Version|Template|Log|OS|
+|-------|-------|--------|---|-|
+|`build`|oraclelinux-8.8|rhel|0/1|Oracle Linux 8.8|
+|`build`|oraclelinux-9.2|rhel|0/1|Oracle Linux 9.2|
 
-### Hyper-V Generation 2 RockyLinux 8.7 Image
+#### Examples for OracleLinux
 
-Run `hv_rockylinux87.ps1`
+```powershell
+.\hv_generic.ps1 -Action build -Version oraclelinux-8.8 -Template rhel -Log 0
+.\hv_generic.ps1 -Action build -Version oraclelinux-9.2 -Template rhel -Log 0
+```
 
-### Hyper-V Generation 2 RockyLinux 8.7 Vagrant support
+### Building Ubuntu Machines
 
-Run `hv_rockylinux87_vagrant.ps1` for RockyLinux 8.7
+|Action|Version|Template|Log|OS|
+|-------|-------|--------|---|-|
+|`build`|ubuntu-20.04|ubuntu|0/1|Ubuntu 20.04|
+|`build`|ubuntu-22.04|ubuntu|0/1|Ubuntu 22.04|
 
-### Hyper-V Generation 2 RockyLinux 8.6 image with extra docker volume
+#### Examples for Ubuntu
 
-Run `hv_rockylinux87_docker.ps1` for RockyLinux 8.7
-
-## Templates Rocky Linux 9
-
-### Warnings - RockyLinux 9
-
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-
-### Hyper-V Generation 2 RockyLinux 9.2 Image
-
-Run `hv_rockylinux92.ps1`
-
-### Hyper-V Generation 2 RockyLinux 9.2 Vagrant support
-
-Run `hv_rockylinux92_vagrant.ps1` for RockyLinux 9.2
-
-### Hyper-V Generation 2 RockyLinux 9.0 image with extra docker volume
-
-Run `hv_rockylinux92_docker.ps1` for RockyLinux 9.2
-
-## Templates OracleLinux 8.x
-
-### Warnings - OracleLinux 8
-
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-
-### Hyper-V Generation 2 OracleLinux 8.6 Image
-
-Run `hv_oraclelinux86.ps1`
-
-### Hyper-V Generation 2 OracleLinux 8.6 Vagrant support
-
-Run `hv_oraclelinux86_vagrant.ps1` for OracleLinux 8.5
-
-### Hyper-V Generation 2 OracleLinux 8.6 image with extra docker volume
-
-Run `hv_oraclelinux86_docker.ps1` for OracleLinux 8.6
-
-## Templates OracleLinux 9.x
-
-### Warnings - OracleLinux 9
-
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-
-### Hyper-V Generation 2 OracleLinux 9.2 Image
-
-Run `hv_oraclelinux92.ps1`
-
-### Hyper-V Generation 2 OracleLinux 9.2 Vagrant support
-
-Run `hv_oraclelinux92_vagrant.ps1` for OracleLinux 9.2
-
-### Hyper-V Generation 2 OracleLinux 9.2 image with extra docker volume
-
-Run `hv_oraclelinux92_docker.ps1` for OracleLinux 9.2
-
-## Templates AlmaLinux 8.x
-
-### Warnings - AlmaLinux 8
-
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-
-### Hyper-V Generation 2 AlmaLinux 8.6 Image
-
-Run `hv_almalinux86.ps1`
-
-### Hyper-V Generation 2 AlmaLinux 8.6 Vagrant support
-
-Run `hv_almalinux86_vagrant.ps1` for AlmaLinux 8.6
-
-### Hyper-V Generation 2 AlmaLinux 8.6 image with extra docker volume
-
-Run `hv_almalinux86_docker.ps1` for AlmaLinux 8.6
-
-## Templates AlmaLinux 9.x
-
-### Warnings - AlmaLinux 9
-
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./files/gen2-centos/provision.sh and ./files/gen2-centos/puppet.conf
-
-### Hyper-V Generation 2 AlmaLinux 9.2 Image
-
-Run `hv_almalinux92.ps1`
-
-### Hyper-V Generation 2 AlmaLinux 9.2 Vagrant support
-
-Run `hv_almalinux92_vagrant.ps1` for AlmaLinux 9.2
-
-### Hyper-V Generation 2 AlmaLinux 9.2 image with extra docker volume
-
-Run `hv_almalinux92_docker.ps1` for AlmaLinux 9.2
-
-## Templates CentOS 7.x
-
-### Warnings - CentOS Docker
-
-- if required change `switch_name` parameter to switch's name you're using. In most situations packer manages it fine but there were a cases when it created new 'internal' switches without access to Internet. By design this setup will fail to download and apply updates.
-- if needed - change `iso_url` variable to a proper iso name
-- packer generates v8 machine configuration files (Windows 2016/Hyper-V 2016 as host) and v9 for Windows Server 2019/Windows 10 1809
-- credentials for Windows machines: Administrator/password (removed after sysprep)
-- credentials for Linux machines: root/password
-- for Windows based machines adjust your settings in ./scripts/phase-2.ps1
-- for Linux based machines adjust your settings in ./values/centos7.yml or ./values/centos7_docker.yml
-- no `docker` repo will be added  and no `docker-related` packages will be installed - this build only creates and mounts separated volume (size specified by variable) for docker
-
-### Hyper-V Generation 2 CentOS 7.9
-
-Run `hv_centos79.ps1`
-
-### Hyper-V Generation 2 CentOS 7.9 Image with extra docker volume
-
-Run `hv_centos79_docker.ps1`
-
-### Hyper-V Generation 2 CentOS 7.9 Vagrant support
-
-Run `hv_centos79_vagrant.ps1`
+```powershell
+.\hv_generic.ps1 -Action build -Version ubuntu-20.04 -Template ubuntu -Log 0
+.\hv_generic.ps1 -Action build -Version ubuntu-22.04 -Template ubuntu -Log 0
+```
 
 ## Known issues
 
@@ -649,6 +376,12 @@ Increase variable  `update_timeout` in `./variables/*.json` file - this will cre
 ### Why don't you use ansible instead of shell scripts for provisioning
 
 I wish. In short - Windows. These builds should be done with minimum effort (Hyper-V role is enough). Building custom ansible station with lots of checks right now fails in my tryouts.
+
+## Support me
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/marcinbojko)
+
+Consider buying me a coffee if you like my work. All donations are appreciated. All donations will be used to pay for pipeline running costs
 
 ## About
 

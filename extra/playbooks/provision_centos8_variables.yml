@@ -14,6 +14,8 @@ initial_packages:
   - glibc-all-langpacks
   - ca-certificates
   - yum-utils
+  - sendmail
+  - cockpit-pcp
 yum_extra_groups:
   - "@base"
   - "@core"
@@ -138,6 +140,12 @@ services:
     state: started
     enabled: true
   - name: sshd
+    state: started
+    enabled: true
+  - name: cockpit.socket
+    state: started
+    enabled: true
+  - name: pmlogger.service
     state: started
     enabled: true
 sysctl:
