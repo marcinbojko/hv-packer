@@ -119,7 +119,7 @@ source "hyperv-iso" "vm" {
   memory                = "${var.memory}"
   output_directory      = "${var.output_directory}"
   shutdown_command      = "echo 'password' | sudo -S shutdown -P now"
-  shutdown_timeout      = "30m"
+  shutdown_timeout      = "4h"
   ssh_password          = "${var.ssh_password}"
   ssh_timeout           = "4h"
   ssh_username          = "root"

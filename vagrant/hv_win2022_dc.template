@@ -4,8 +4,8 @@
 Vagrant.require_version ">= 1.6.2"
 
 Vagrant.configure("2") do |config|
-    config.vm.define "vagrant-w2k19-dc-trial"
-    config.vm.box = "w2k19-dc-trial"
+    config.vm.define "vagrant-w2k22-dc-trial"
+    config.vm.box = "w2k22-dc-trial"
     config.vm.communicator = "winrm"
     # Admin user name and password
     config.winrm.username = "vagrant"

@@ -1,5 +1,5 @@
 variables:
-  packer_version: "1.9.2"
+  packer_version: "1.9.4"
   dind: 24.0-dind
   build_alma8: "false"
   build_alma9: "false"
@@ -16,7 +16,7 @@ variables:
 
 default:
   artifacts:
-    expire_in: 1 hour
+    expire_in: 4 hour
     when: always
   retry:
     max: 2
@@ -49,7 +49,7 @@ alma8:
     - pwd
     - '$env:PACKER_CACHE_DIR="d:\packer_cache"'
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action verify -Version almalinux-8.8 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action verify -Version almalinux-8.9 -Template rhel -Log 0
   tags:
     - windows
     - hyperv
@@ -59,7 +59,7 @@ alma9:
     - pwd
     - '$env:PACKER_CACHE_DIR="d:\packer_cache"'
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action verify -Version almalinux-9.2 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action verify -Version almalinux-9.3 -Template rhel -Log 0
   tags:
     - windows
     - hyperv
@@ -69,7 +69,7 @@ rocky8:
     - pwd
     - '$env:PACKER_CACHE_DIR="d:\packer_cache"'
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action verify -Version rockylinux-8.8 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action verify -Version rockylinux-8.9 -Template rhel -Log 0
   tags:
     - windows
     - hyperv
@@ -79,7 +79,7 @@ rocky9:
     - pwd
     - '$env:PACKER_CACHE_DIR="d:\packer_cache"'
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action verify -Version rockylinux-9.2 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action verify -Version rockylinux-9.3 -Template rhel -Log 0
   tags:
     - windows
     - hyperv
@@ -89,7 +89,7 @@ oracle8:
     - pwd
     - '$env:PACKER_CACHE_DIR="d:\packer_cache"'
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action verify -Version oraclelinux-8.8 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action verify -Version oraclelinux-8.9 -Template rhel -Log 0
   tags:
     - windows
     - hyperv
@@ -99,7 +99,7 @@ oracle9:
     - pwd
     - '$env:PACKER_CACHE_DIR="d:\packer_cache"'
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action verify -Version oraclelinux-9.2 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action verify -Version oraclelinux-9.3 -Template rhel -Log 0
   tags:
     - windows
     - hyperv
@@ -217,7 +217,7 @@ alma8_build:
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action build -Version almalinux-8.8 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action build -Version almalinux-8.9 -Template rhel -Log 0
   rules:
     - if: $build_alma8 == "true"
       when: on_success
@@ -234,7 +234,7 @@ alma9_build:
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action build -Version almalinux-9.2 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action build -Version almalinux-9.3 -Template rhel -Log 0
   rules:
     - if: $build_alma9 == "true"
       when: on_success
@@ -250,7 +250,7 @@ rocky8_build:
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action build -Version rockylinux-8.8 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action build -Version rockylinux-8.9 -Template rhel -Log 0
   rules:
     - if: $build_rocky8 == "true"
       when: on_success
@@ -266,7 +266,7 @@ rocky9_build:
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action build -Version rockylinux-9.2 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action build -Version rockylinux-9.3 -Template rhel -Log 0
   rules:
     - if: $build_rocky9 == "true"
       when: on_success
@@ -282,7 +282,7 @@ oracle8_build:
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action build -Version oraclelinux-8.8 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action build -Version oraclelinux-8.9 -Template rhel -Log 0
   rules:
     - if: $build_oracle8 == "true"
       when: on_success
@@ -298,7 +298,7 @@ oracle9_build:
     - Sleep 120
     - "Get-Vm -name packer-*|Remove-VM -Force"
     - packer init config.pkr.hcl
-    - .\hv_generic.ps1 -Action build -Version oraclelinux-9.2 -Template rhel -Log 0
+    - .\hv_generic.ps1 -Action build -Version oraclelinux-9.3 -Template rhel -Log 0
   rules:
     - if: $build_oracle9 == "true"
       when: on_success

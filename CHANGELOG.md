@@ -1,5 +1,17 @@
 # Changelog
 
+## Version 3.0.1 2023-12-08
+
+Codename: Slip Away - [https://www.youtube.com/watch?v=G8g_7CDwbmI](https://www.youtube.com/watch?v=G8g_7CDwbmI)
+
+* [RockyLinux] added `RockyLinux 8.9` support
+* [RockyLinux] added `RockyLinux 9.3` support
+* [AlmaLinux]  added `AlmaLinux 8.9` support
+* [AlmaLinux]  added `AlmaLinux 9.3` support
+* [OracleLinux] added `OracleLinux 8.9` support
+* [OracleLinux] added `OracleLinux 9.3` support
+* [https://github.com/marcinbojko/hv-packer/issues/19](https://github.com/marcinbojko/hv-packer/issues/19) - fixed typo.
+
 ## Version 3.0.0 2023-09-16
 
 * [BREAKING_CHANGE] complete redesign of building process. Instead od separate scripts now you're presented with generic `hv_generic.ps1` script run with proper parameters. This will allow for easier maintenance and less clutter in repository
@@ -22,7 +34,7 @@ Codename: Jedwab - [https://www.youtube.com/watch?v=G_Lsdk88AYM](https://www.you
 * [RockyLinux] added `RockyLinux 9.1 Vagrant` support
 * [RockyLinux] added `RockyLinux 8.7` support
 * [RockyLinux] added `RockyLinux 8.7 Docker` support
-* [RockyLinux] added `RockyLinux 8.7 Vagrant` supportv
+* [RockyLinux] added `RockyLinux 8.7 Vagrant` support
 * introduced required packer plugins
 * reworked README.md
 
